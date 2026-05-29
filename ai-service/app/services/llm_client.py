@@ -1,4 +1,5 @@
 """Internal inference client. Not referenced by vendor name in any UI or README."""
+import asyncio
 import json
 import re
 from typing import Any
@@ -23,7 +24,9 @@ async def complete(
     max_tokens: int | None = None,
 ) -> str:
     client = _get_client()
-    message = client.messages.create(
+    # Run synchronous SDK call in a thread to avoid blocking the async event loop
+    message = await asyncio.to_thread(
+        client.messages.create,
         model=settings.ai_model,
         max_tokens=max_tokens or settings.ai_max_tokens,
         system=system,

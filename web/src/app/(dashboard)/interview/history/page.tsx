@@ -57,8 +57,8 @@ export default function InterviewHistoryPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl p-4 flex items-center gap-4 transition-colors"
-            >
+              className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl transition-colors"
+            ><Link href={`/interview/history/${s.id}`} className="flex items-center gap-4 p-4 w-full">
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
                 s.session_mode === "voice" ? "bg-violet-500/10" : "bg-blue-500/10")}>
                 <Mic className={cn("w-5 h-5", s.session_mode === "voice" ? "text-violet-400" : "text-blue-400")} />
@@ -79,7 +79,7 @@ export default function InterviewHistoryPage() {
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-600" />
               </div>
-            </motion.div>
+            </Link></motion.div>
           ))}
         </div>
       )}
