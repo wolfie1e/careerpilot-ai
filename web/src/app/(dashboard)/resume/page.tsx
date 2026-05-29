@@ -1,0 +1,172 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { FileText, TrendingUp, Zap, ArrowRight, Loader2, CheckCircle, AlertCircle, Lightbulb } from "lucide-react";
+import ResumeDropzone from "@/components/resume/ResumeDropzone";
+import ATSScorePanel from "@/components/resume/ATSScorePanel";
+import { api } from "@/lib/api-client";
+import { toast } from "sonner";
+import { cn, scoreColor } from "@/lib/utils";
+
+interface ResumeData {
+  id: string;
+  filename: string;
+  parsed_sections: Record<string, unknown>;
+}
+
+interface AnalysisData {
+  overall_score: number;
+  section_scores: Record<string, number>;
+  strengths: string[];
+  weaknesses: string[];
+  suggestions: Array<{ section: string; type: string; message: string; priority: string }>;
+  ats_score: number;
+  ats_breakdown: Record<string, number>;
+}
+
+export default function ResumePage() {
+  const [resume, setResume] = useState<ResumeData | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [activeTab, setActiveTab] = useState<"analysis" | "ats" | "rewrite" | "jd">("analysis");
+
+  async function handleAnalyze() {
+    if (!resume) return;
+    setAnalyzing(true);
+    try {
+      const data = await api.post<AnalysisData>(`/resume/${resume.id}/analyze`);
+      setAnalysis(data);
+      toast.success("Analysis complete!");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Analysis failed");
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
+  return (
+    <div className="max-w-5xl space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold text-white mb-1">Resume Manager</h2>
+        <p className="text-sm text-gray-400">Upload your resume to get your ATS score, section feedback, and improvement plan</p>
+      </div>
+
+      {/* Upload */}
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <h3 className="font-medium text-white mb-4 flex items-center gap-2">
+          <FileText className="w-4 h-4 text-blue-400" />
+          Upload Resume
+        </h3>
+        <ResumeDropzone onUploaded={setResume} />
+
+        {resume && !analysis && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
+            <button
+              onClick={handleAnalyze}
+              disabled={analyzing}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white font-semibold rounded-xl transition-all text-sm"
+            >
+              {analyzing ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing…</> : <><Zap className="w-4 h-4" />Run Full Analysis</>}
+            </button>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Analysis results */}
+      {analysis && (
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+          {/* Tab bar */}
+          <div className="flex gap-1 bg-gray-900 border border-gray-800 rounded-xl p-1 mb-4 w-fit">
+            {(["analysis", "ats"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-medium rounded-lg capitalize transition-all",
+                  activeTab === tab ? "bg-blue-600 text-white" : "text-gray-400 hover:text-white"
+                )}
+              >
+                {tab === "ats" ? "ATS Score" : "Analysis"}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === "analysis" && (
+            <div className="grid lg:grid-cols-3 gap-4">
+              {/* Overall score */}
+              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center">
+                <div className="text-4xl font-extrabold mb-1" style={{ color: analysis.overall_score >= 80 ? "#10b981" : analysis.overall_score >= 60 ? "#f59e0b" : "#ef4444" }}>
+                  {analysis.overall_score}
+                </div>
+                <div className="text-sm text-gray-400">Resume Score</div>
+
+                <div className="mt-4 space-y-2">
+                  {Object.entries(analysis.section_scores || {}).map(([sec, score]) => (
+                    <div key={sec} className="flex items-center justify-between text-xs">
+                      <span className="text-gray-500 capitalize">{sec}</span>
+                      <span className={cn("font-medium", scoreColor(score))}>{score}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Strengths + Weaknesses */}
+              <div className="lg:col-span-2 space-y-4">
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                  <h4 className="text-sm font-semibold text-emerald-400 flex items-center gap-2 mb-3">
+                    <CheckCircle className="w-4 h-4" />Strengths
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {analysis.strengths?.map((s, i) => (
+                      <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="text-emerald-400 mt-0.5">•</span>{s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                  <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-2 mb-3">
+                    <AlertCircle className="w-4 h-4" />Weaknesses
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {analysis.weaknesses?.map((w, i) => (
+                      <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="text-amber-400 mt-0.5">•</span>{w}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                  <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-3">
+                    <Lightbulb className="w-4 h-4" />Priority Improvements
+                  </h4>
+                  <div className="space-y-2">
+                    {analysis.suggestions?.filter((s) => s.priority === "high").map((s, i) => (
+                      <div key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="shrink-0 px-1.5 py-0.5 text-xs bg-rose-500/20 text-rose-400 rounded font-medium">HIGH</span>
+                        {s.message}
+                      </div>
+                    ))}
+                    {analysis.suggestions?.filter((s) => s.priority !== "high").slice(0, 3).map((s, i) => (
+                      <div key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="shrink-0 px-1.5 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded font-medium capitalize">{s.priority}</span>
+                        {s.message}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "ats" && (
+            <ATSScorePanel atsScore={analysis.ats_score} breakdown={analysis.ats_breakdown as any} />
+          )}
+        </motion.div>
+      )}
+    </div>
+  );
+}
