@@ -113,7 +113,7 @@ def _score_action_verbs(text: str) -> float:
         return 30
     strong = sum(
         1 for b in bullets
-        if b.split()[0].rstrip(".,;").lower() in _ACTION_VERBS
+        if b.split() and b.split()[0].rstrip(".,;").lower() in _ACTION_VERBS
     )
     ratio = strong / len(bullets)
     return min(100, ratio * 120)

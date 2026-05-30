@@ -35,9 +35,15 @@ Resume text:
 Target role (optional): {target_role}"""
 
 
+_DEFAULT_SECTIONS = {k: 0 for k in ["contact", "summary", "experience", "education", "skills", "projects"]}
+
+
 async def analyze_resume(resume_text: str, target_role: str = "") -> dict:
     user = _USER_TMPL.format(
         resume_text=resume_text[:6000],
         target_role=target_role or "general software engineering"
     )
-    return await complete_json(_SYSTEM, user)
+    result = await complete_json(_SYSTEM, user)
+    # Ensure all section keys are present even if LLM omitted some
+    result["section_scores"] = {**_DEFAULT_SECTIONS, **result.get("section_scores", {})}
+    return result

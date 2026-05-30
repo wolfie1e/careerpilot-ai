@@ -258,14 +258,14 @@ def _format_answer(answer: InterviewAnswer | None) -> dict | None:
 
 
 async def _maybe_complete_session(session: InterviewSession, session_id: str, db: AsyncSession) -> None:
+    # Flush first so the new answer being added is counted
+    await db.flush()
     a_res = await db.execute(
         select(InterviewAnswer).where(InterviewAnswer.session_id == session_id)
     )
     answers_so_far = a_res.scalars().all()
-    if len(answers_so_far) + 1 >= session.question_count:
-        all_feedback = [
-            {"score": a.score} for a in answers_so_far
-        ]
+    if len(answers_so_far) >= session.question_count:
+        all_feedback = [{"score": a.score} for a in answers_so_far]
         summary_data = await generate_session_summary(all_feedback, session.role_title)
         session.status = "completed"
         session.overall_score = summary_data.get("avg_score")
