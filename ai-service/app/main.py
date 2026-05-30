@@ -1,12 +1,20 @@
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.core.database import get_db
 from app.core.middleware import RequestLoggingMiddleware
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 @asynccontextmanager
@@ -25,6 +33,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
@@ -36,8 +47,17 @@ app.add_middleware(RequestLoggingMiddleware)
 
 
 @app.get("/health", tags=["Health"])
-async def health_check():
-    return {"status": "healthy", "service": "careerpilot-ai"}
+async def health_check(db: AsyncSession = Depends(get_db)):
+    try:
+        await db.execute(text("SELECT 1"))
+        db_status = "healthy"
+    except Exception:
+        db_status = "unhealthy"
+    return {
+        "status": "healthy" if db_status == "healthy" else "degraded",
+        "service": "careerpilot-ai",
+        "database": db_status,
+    }
 
 
 # Routers are imported lazily to avoid circular imports at startup

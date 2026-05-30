@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
 from app.dependencies import get_current_user
+from app.main import limiter
 from app.models.user import User
 from app.models.resume import Resume
 from app.models.interview_session import InterviewSession
@@ -28,7 +29,9 @@ class CreateSessionRequest(BaseModel):
 
 
 @router.post("/sessions", status_code=201)
+@limiter.limit("10/minute")
 async def create_session(
+    request: Request,
     body: CreateSessionRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),

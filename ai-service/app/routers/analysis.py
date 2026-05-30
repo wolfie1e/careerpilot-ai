@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.core.database import get_db
 from app.dependencies import get_current_user
+from app.main import limiter
 from app.models.user import User
 from app.models.resume import Resume
 from app.models.resume_analysis import ResumeAnalysis
@@ -29,7 +30,9 @@ async def _get_resume_or_404(resume_id: str, user_id: str, db: AsyncSession) -> 
 
 
 @router.post("/{resume_id}/analyze")
+@limiter.limit("10/minute")
 async def analyze(
+    request: Request,
     resume_id: str,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -83,7 +86,9 @@ class BulletRewriteRequest(BaseModel):
 
 
 @router.post("/{resume_id}/rewrite")
+@limiter.limit("15/minute")
 async def rewrite(
+    request: Request,
     resume_id: str,
     body: BulletRewriteRequest,
     db: AsyncSession = Depends(get_db),
@@ -102,7 +107,9 @@ class SectionImproveRequest(BaseModel):
 
 
 @router.post("/{resume_id}/improve")
+@limiter.limit("10/minute")
 async def improve(
+    request: Request,
     resume_id: str,
     body: SectionImproveRequest,
     db: AsyncSession = Depends(get_db),
@@ -119,7 +126,9 @@ class ProjectsRequest(BaseModel):
 
 
 @router.post("/{resume_id}/projects")
+@limiter.limit("10/minute")
 async def projects(
+    request: Request,
     resume_id: str,
     body: ProjectsRequest,
     db: AsyncSession = Depends(get_db),

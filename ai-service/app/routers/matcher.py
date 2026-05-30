@@ -1,11 +1,12 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.core.database import get_db
 from app.dependencies import get_current_user
+from app.main import limiter
 from app.models.user import User
 from app.models.resume import Resume
 from app.models.job_description import JobDescription
@@ -26,7 +27,9 @@ class MatchRequest(BaseModel):
 
 
 @router.post("/match")
+@limiter.limit("10/minute")
 async def match(
+    request: Request,
     body: MatchRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
