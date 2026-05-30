@@ -83,6 +83,43 @@ async def overview(
         if r.overall_score is not None
     ]
 
+    # Interview type distribution
+    type_res = await db.execute(
+        select(InterviewSession.interview_type, func.count(InterviewSession.id).label("count"))
+        .where(InterviewSession.user_id == current_user.id)
+        .group_by(InterviewSession.interview_type)
+    )
+    interview_by_type = {row.interview_type: row.count for row in type_res.fetchall()}
+
+    # Skill coverage from last 5 match results
+    skill_res = await db.execute(
+        select(MatchResult.skills_matched, MatchResult.skills_missing, MatchResult.skills_critical)
+        .where(MatchResult.user_id == current_user.id)
+        .order_by(MatchResult.created_at.desc())
+        .limit(5)
+    )
+    matched_total = missing_total = critical_total = 0
+    for row in skill_res.fetchall():
+        matched_total += len(row.skills_matched or [])
+        missing_total += len(row.skills_missing or [])
+        critical_total += len(row.skills_critical or [])
+    skill_coverage = {"matched": matched_total, "missing": missing_total, "critical": critical_total}
+
+    # Latest match score
+    latest_match_res = await db.execute(
+        select(MatchResult.overall_score)
+        .where(MatchResult.user_id == current_user.id)
+        .order_by(MatchResult.created_at.desc())
+        .limit(1)
+    )
+    latest_match = latest_match_res.scalar()
+
+    # Readiness score: weighted blend
+    avg_int = round(avg_interview) if avg_interview else 0
+    readiness_score = int(
+        (latest_ats or 0) * 0.4 + avg_int * 0.4 + (latest_match or 0) * 0.2
+    )
+
     return {
         "latest_ats_score": latest_ats,
         "avg_interview_score": round(avg_interview) if avg_interview else None,
@@ -91,4 +128,7 @@ async def overview(
         "ats_trend": ats_trend,
         "interview_trend": interview_trend,
         "match_trend": match_trend,
+        "interview_by_type": interview_by_type,
+        "skill_coverage": skill_coverage,
+        "readiness_score": readiness_score,
     }

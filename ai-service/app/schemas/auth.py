@@ -27,5 +27,7 @@ class UserResponse(BaseModel):
     avatar_url: str | None
     plan: str
     is_active: bool
+    total_resumes: int = 0
+    total_interviews: int = 0
 
     model_config = {"from_attributes": True}
