@@ -57,9 +57,17 @@ export default function ReportsPage() {
           <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
         </div>
       ) : resumes.length === 0 ? (
-        <div className="bg-gray-900 border border-gray-800 border-dashed rounded-2xl p-12 text-center">
-          <FileText className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-gray-400">Upload and analyze a resume to generate reports</p>
+        <div className="bg-gray-900 border border-gray-800 border-dashed rounded-2xl p-14 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-4">
+            <Download className="w-7 h-7 text-blue-400" />
+          </div>
+          <h3 className="font-semibold text-white mb-1.5">No reports yet</h3>
+          <p className="text-sm text-gray-400 mb-4 max-w-xs mx-auto">
+            Upload and analyze a resume to generate a detailed PDF or Markdown report.
+          </p>
+          <a href="/resume" className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors font-medium">
+            Go to Resume Manager →
+          </a>
         </div>
       ) : (
         <div className="divide-y divide-gray-800 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">

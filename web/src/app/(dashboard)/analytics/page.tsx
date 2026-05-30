@@ -53,12 +53,19 @@ export default function AnalyticsPage() {
           <h2 className="text-xl font-semibold text-white">Analytics</h2>
           <p className="text-sm text-gray-400 mt-1">Score trends and progress tracking</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 border-dashed rounded-2xl p-12 text-center">
-          <BarChart className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <h3 className="font-semibold text-white mb-2">No data yet</h3>
-          <p className="text-sm text-gray-400 max-w-sm mx-auto">
-            Upload and analyze a resume, or complete a mock interview session to start seeing your progress here.
+        <div className="bg-gray-900 border border-gray-800 border-dashed rounded-2xl p-14 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-4">
+            <TrendingUp className="w-7 h-7 text-violet-400" />
+          </div>
+          <h3 className="font-semibold text-white mb-1.5">Your progress charts will appear here</h3>
+          <p className="text-sm text-gray-400 max-w-sm mx-auto mb-4">
+            Analyze a resume to see your first ATS data point, or complete a mock interview to track score improvement.
           </p>
+          <div className="flex justify-center gap-3">
+            <a href="/resume" className="text-sm text-blue-400 hover:text-blue-300 transition-colors font-medium">Analyze Resume →</a>
+            <span className="text-gray-700">·</span>
+            <a href="/interview/setup" className="text-sm text-violet-400 hover:text-violet-300 transition-colors font-medium">Start Interview →</a>
+          </div>
         </div>
       </div>
     );
