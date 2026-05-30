@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Zap, Loader2, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { registerSchema } from "@/lib/validations";
 
 const perks = [
   "Free ATS score analysis",
@@ -18,6 +19,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
   const [form, setForm] = useState({ email: "", username: "", password: "", full_name: "" });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -26,10 +28,14 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (form.password.length < 8) {
-      toast.error("Password must be at least 8 characters");
+    const result = registerSchema.safeParse(form);
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      result.error.errors.forEach((err) => { if (err.path[0]) errs[String(err.path[0])] = err.message; });
+      setFieldErrors(errs);
       return;
     }
+    setFieldErrors({});
     setLoading(true);
     try {
       await register(form.email, form.username, form.password, form.full_name || undefined);

@@ -21,6 +21,14 @@ async function request<T>(
   });
 
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      // Lazy import to avoid circular dependency
+      const { useAuthStore } = await import("@/store/auth.store");
+      useAuthStore.getState().clearAuth();
+      const from = encodeURIComponent(window.location.pathname);
+      window.location.href = `/login?from=${from}`;
+      throw new ApiError(401, "Session expired. Please log in again.");
+    }
     const body = await res.json().catch(() => ({ detail: "Request failed" }));
     throw new ApiError(res.status, body.detail || body.message || "Request failed");
   }
