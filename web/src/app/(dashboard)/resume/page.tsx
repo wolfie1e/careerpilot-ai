@@ -27,6 +27,7 @@ interface AnalysisData {
   suggestions: Array<{ section: string; type: string; message: string; priority: string }>;
   ats_score: number;
   ats_breakdown: Record<string, number>;
+  created_at?: string;
 }
 
 interface MatchResult {
@@ -67,8 +68,16 @@ export default function ResumePage() {
       .catch(() => setShowDropzone(true));
   }, []);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [analysisHistory, setAnalysisHistory] = useState<AnalysisData[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("analysis");
   const [lastMatch, setLastMatch] = useState<MatchResult | null>(null);
+
+  async function loadAnalysisHistory(resumeId: string) {
+    try {
+      const data = await api.get<AnalysisData[]>(`/resume/${resumeId}/analyses`);
+      setAnalysisHistory(Array.isArray(data) ? data : []);
+    } catch { /* silent */ }
+  }
 
   async function handleAnalyze() {
     if (!resume) return;
@@ -76,6 +85,7 @@ export default function ResumePage() {
     try {
       const data = await api.post<AnalysisData>(`/resume/${resume.id}/analyze`);
       setAnalysis(data);
+      loadAnalysisHistory(resume.id);
       toast.success("Analysis complete!");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Analysis failed");
@@ -211,6 +221,23 @@ export default function ResumePage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Analysis history */}
+          {activeTab === "analysis" && analysis && analysisHistory.length > 1 && (
+            <div className="mt-4 bg-gray-900 border border-gray-800 rounded-2xl p-4">
+              <h4 className="text-xs text-gray-500 uppercase tracking-wide mb-3">Analysis History</h4>
+              <div className="flex flex-wrap gap-2">
+                {analysisHistory.slice(0, 5).map((a, i) => (
+                  <button key={i} onClick={() => setAnalysis(a)}
+                    className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs border transition-all",
+                      analysis === a ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white")}>
+                    <span className={scoreColor(a.overall_score)}>{a.overall_score}/100</span>
+                    {a.created_at && <span className="text-gray-600">{new Date(a.created_at).toLocaleDateString()}</span>}
+                  </button>
+                ))}
               </div>
             </div>
           )}
