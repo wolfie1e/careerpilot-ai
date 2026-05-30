@@ -1,11 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, Loader2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
+
+const PROGRESS_STEPS = [
+  "Parsing job description…",
+  "Matching skills and computing semantic similarity…",
+  "Generating learning roadmap…",
+];
+
+function MatchingProgress() {
+  const [step, setStep] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setStep((s) => Math.min(s + 1, PROGRESS_STEPS.length - 1));
+    }, 2200);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, []);
+
+  return (
+    <div className="space-y-2 py-4">
+      {PROGRESS_STEPS.map((label, i) => (
+        <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+          className="flex items-center gap-3">
+          <div className={cn("w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all",
+            i < step ? "bg-emerald-500/20" : i === step ? "bg-blue-500/20" : "bg-gray-800")}>
+            {i < step ? (
+              <CheckCircle className="w-3 h-3 text-emerald-400" />
+            ) : i === step ? (
+              <Loader2 className="w-3 h-3 text-blue-400 animate-spin" />
+            ) : (
+              <div className="w-1.5 h-1.5 rounded-full bg-gray-600" />
+            )}
+          </div>
+          <span className={cn("text-sm transition-colors",
+            i < step ? "text-gray-500 line-through" : i === step ? "text-white" : "text-gray-600")}>
+            {label}
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
 interface MatchResult {
   match_id: string;
@@ -79,8 +121,9 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           disabled={loading || !jdText.trim()}
           className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl transition-all text-sm"
         >
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing match…</> : <><Target className="w-4 h-4" />Match Resume to JD</>}
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing…</> : <><Target className="w-4 h-4" />Match Resume to JD</>}
         </button>
+        {loading && <MatchingProgress />}
       </div>
 
       {/* Results */}

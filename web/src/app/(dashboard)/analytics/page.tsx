@@ -15,9 +15,12 @@ interface AnalyticsData {
   avg_interview_score: number | null;
   total_resumes_analyzed: number;
   total_interviews: number;
+  readiness_score: number;
   ats_trend: Array<{ date: string; score: number }>;
   interview_trend: Array<{ date: string; score: number }>;
   match_trend: Array<{ date: string; score: number }>;
+  interview_by_type: Record<string, number>;
+  skill_coverage: { matched: number; missing: number; critical: number };
 }
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b"];
@@ -82,6 +85,25 @@ export default function AnalyticsPage() {
         <p className="text-sm text-gray-400 mt-1">Your career readiness over time</p>
       </div>
 
+      {/* Readiness score hero */}
+      {data.readiness_score > 0 && (
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
+          className="bg-gradient-to-br from-blue-950/60 to-violet-950/60 border border-blue-800/30 rounded-2xl p-6 flex items-center gap-6">
+          <div className="w-20 h-20 rounded-full border-4 border-blue-500/40 flex items-center justify-center shrink-0">
+            <span className={`text-2xl font-extrabold ${data.readiness_score >= 75 ? "text-emerald-400" : data.readiness_score >= 50 ? "text-amber-400" : "text-rose-400"}`}>
+              {data.readiness_score}
+            </span>
+          </div>
+          <div>
+            <div className="text-sm text-gray-400 mb-1">Career Readiness Score</div>
+            <div className="text-lg font-bold text-white">
+              {data.readiness_score >= 75 ? "Interview Ready 🚀" : data.readiness_score >= 50 ? "Almost Ready — Keep Practicing" : "Developing — More Practice Needed"}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">Weighted blend of ATS score, interview score, and job match</div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Latest ATS Score" value={data.latest_ats_score ? `${data.latest_ats_score}/100` : "—"} icon={FileText} color="blue" />
@@ -126,6 +148,54 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </motion.div>
       )}
+
+      {/* Bottom row: Donut + Radar */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        {/* Interview type donut */}
+        {Object.keys(data.interview_by_type).length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+            className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-medium text-white mb-4">Interview Practice by Type</h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={Object.entries(data.interview_by_type).map(([name, value]) => ({ name, value }))}
+                  cx="50%" cy="50%" innerRadius={55} outerRadius={80}
+                  paddingAngle={3} dataKey="value"
+                >
+                  {Object.keys(data.interview_by_type).map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                <Legend wrapperStyle={{ color: "#9ca3af", fontSize: 11 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </motion.div>
+        )}
+
+        {/* Skill coverage radar */}
+        {(data.skill_coverage.matched + data.skill_coverage.missing) > 0 && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h3 className="font-medium text-white mb-4">Skill Coverage Overview</h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <RadarChart data={[
+                { skill: "Matched", value: data.skill_coverage.matched },
+                { skill: "Missing", value: data.skill_coverage.missing },
+                { skill: "Critical", value: data.skill_coverage.critical },
+                { skill: "ATS Score", value: data.latest_ats_score ?? 0 },
+                { skill: "Interview", value: data.avg_interview_score ?? 0 },
+              ]}>
+                <PolarGrid stroke="#1f2937" />
+                <PolarAngleAxis dataKey="skill" tick={{ fill: "#6b7280", fontSize: 11 }} />
+                <Radar name="Coverage" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
+                <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

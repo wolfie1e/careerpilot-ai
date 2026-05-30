@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb } from "lucide-react";
+import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, ChevronDown, Plus } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -11,7 +11,7 @@ import SectionImprover from "@/components/resume/SectionImprover";
 import ProjectRecommendations from "@/components/resume/ProjectRecommendations";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
-import { cn, scoreColor } from "@/lib/utils";
+import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
 
 interface ResumeData {
   id: string;
@@ -34,6 +34,13 @@ interface MatchResult {
   skills_critical: string[];
 }
 
+interface ResumeListItem {
+  id: string;
+  filename: string;
+  file_type: string;
+  created_at: string;
+}
+
 type Tab = "analysis" | "ats" | "jd" | "rewrite" | "improve" | "projects";
 
 const TABS: { id: Tab; label: string }[] = [
@@ -46,8 +53,19 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 export default function ResumePage() {
+  const [pastResumes, setPastResumes] = useState<ResumeListItem[]>([]);
+  const [showDropzone, setShowDropzone] = useState(false);
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+
+  useEffect(() => {
+    api.get<ResumeListItem[]>("/resume")
+      .then((data) => {
+        setPastResumes(data);
+        if (data.length === 0) setShowDropzone(true);
+      })
+      .catch(() => setShowDropzone(true));
+  }, []);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("analysis");
   const [lastMatch, setLastMatch] = useState<MatchResult | null>(null);
@@ -68,6 +86,13 @@ export default function ResumePage() {
 
   const showTabs = resume !== null;
 
+  function handleUploaded(r: ResumeData) {
+    setResume(r);
+    setAnalysis(null);
+    setShowDropzone(false);
+    setPastResumes((prev) => [{ id: r.id, filename: r.filename, file_type: "pdf", created_at: new Date().toISOString() }, ...prev.filter((p) => p.id !== r.id)]);
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -75,13 +100,41 @@ export default function ResumePage() {
         <p className="text-sm text-gray-400">Upload your resume to get your ATS score, section feedback, and improvement plan</p>
       </div>
 
+      {/* Resume history switcher */}
+      {pastResumes.length > 0 && !showDropzone && (
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <FileText className="w-4 h-4 text-blue-400" />My Resumes
+            </h3>
+            <button onClick={() => { setShowDropzone(true); setResume(null); setAnalysis(null); }}
+              className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors">
+              <Plus className="w-3 h-3" />Upload New
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {pastResumes.map((r) => (
+              <button key={r.id} onClick={() => { setResume({ id: r.id, filename: r.filename, parsed_sections: {} }); setAnalysis(null); }}
+                className={cn("flex items-center gap-2 px-3 py-2 rounded-xl text-sm border transition-all",
+                  resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"
+                )}>
+                <FileText className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate max-w-[140px]">{r.filename}</span>
+                <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Upload */}
+      {(showDropzone || pastResumes.length === 0) && (
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
         <h3 className="font-medium text-white mb-4 flex items-center gap-2">
           <FileText className="w-4 h-4 text-blue-400" />
           Upload Resume
         </h3>
-        <ResumeDropzone onUploaded={(r) => { setResume(r); setAnalysis(null); }} />
+        <ResumeDropzone onUploaded={handleUploaded} />
 
         {resume && !analysis && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
@@ -95,6 +148,7 @@ export default function ResumePage() {
           </motion.div>
         )}
       </div>
+      )}
 
       {/* Feature tabs — shown as soon as resume is uploaded */}
       {showTabs && (
