@@ -213,6 +213,20 @@ pytest tests/ -v
 
 Tests cover: ATS scorer (rule-based), resume parser (section extraction, contact parsing), JD matcher (skill extraction, gap detection, critical skill classification).
 
+## Health Checks
+
+The AI service exposes `GET /health` for local and container probes. The response includes service status, database status, app version, and current environment so deploy tooling can distinguish a degraded database from a fully unavailable API.
+
+```json
+{
+  "status": "healthy",
+  "service": "careerpilot-ai",
+  "version": "1.0.0",
+  "environment": "development",
+  "database": "healthy"
+}
+```
+
 ---
 
 ## Future Roadmap
