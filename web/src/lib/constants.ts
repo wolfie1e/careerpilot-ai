@@ -26,6 +26,23 @@ export const DIFFICULTY_LEVELS = [
 
 export const QUESTION_COUNTS = [3, 5, 7, 10] as const;
 
+export const ROLE_PRESETS = [
+  "Frontend Engineer",
+  "Backend Engineer",
+  "Full Stack Engineer",
+  "Product Manager",
+  "Data Analyst",
+  "Machine Learning Engineer",
+] as const;
+
+export const INTERVIEW_PREP_TIPS = {
+  behavioral: "Focus on STAR stories with measurable outcomes.",
+  technical: "Expect tradeoffs, debugging steps, and fundamentals.",
+  hr: "Prepare concise motivation, teamwork, and conflict examples.",
+  mixed: "Balance role knowledge with communication and ownership.",
+  system_design: "Lead with requirements, constraints, and architecture tradeoffs.",
+} as const;
+
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "LayoutDashboard" },
   { href: "/resume", label: "Resume", icon: "FileText" },
