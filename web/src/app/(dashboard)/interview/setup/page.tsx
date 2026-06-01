@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
+import { Clock, Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ export default function InterviewSetupPage() {
 
   const update = (field: string, value: unknown) => setForm((f) => ({ ...f, [field]: value }));
   const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];
+  const estimatedMinutes = form.question_count * (form.session_mode === "voice" ? 4 : 3);
 
   async function handleStart() {
     if (!form.role_title.trim()) {
@@ -189,6 +190,11 @@ export default function InterviewSetupPage() {
             <>Start Interview <ChevronRight className="w-4 h-4" /></>
           )}
         </button>
+
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+          <Clock className="w-3.5 h-3.5" />
+          Estimated session time: {estimatedMinutes}-{estimatedMinutes + 5} minutes
+        </div>
       </div>
     </div>
   );
