@@ -56,6 +56,8 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     return {
         "status": "healthy" if db_status == "healthy" else "degraded",
         "service": "careerpilot-ai",
+        "version": app.version,
+        "environment": settings.environment,
         "database": db_status,
     }
 
