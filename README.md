@@ -148,6 +148,7 @@ docker-compose up --build
 | `AI_API_KEY` | Inference API key |
 | `JWT_SECRET_KEY` | Secret for signing auth tokens (change in production) |
 | `AI_SERVICE_URL` | Internal URL for FastAPI service (Next.js → FastAPI) |
+| `AI_PROXY_TIMEOUT_MS` | Frontend proxy timeout for AI service requests |
 | `WHISPER_MODEL` | Transcription model (`base.en` recommended for CPU) |
 | `EMBEDDING_MODEL` | Sentence transformer model (`all-MiniLM-L6-v2`) |
 
