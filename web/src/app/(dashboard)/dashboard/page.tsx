@@ -100,6 +100,12 @@ export default function DashboardPage() {
   const previousAts = analytics?.ats_trend?.at(-2)?.score ?? null;
   const atsDelta = formatDelta(latestAts, previousAts);
   const atsTrend = atsDelta.startsWith("+") ? "up" : atsDelta.startsWith("-") ? "down" : "neutral";
+  const nextStep =
+    resumes.length === 0
+      ? { href: "/resume", label: "Upload a resume", desc: "Start with an ATS scan and section feedback." }
+      : sessions.length === 0
+        ? { href: "/interview/setup", label: "Practice an interview", desc: "Turn your resume work into answer confidence." }
+        : { href: "/analytics", label: "Review progress", desc: "Compare score trends and choose your next focus area." };
 
   function dismissOnboarding() {
     localStorage.setItem(ONBOARDING_KEY, "true");
@@ -212,6 +218,20 @@ export default function DashboardPage() {
           </>
         )}
       </div>
+
+      {!loading && (
+        <Link
+          href={nextStep.href}
+          className="flex items-center justify-between gap-4 bg-gray-900 border border-gray-800 hover:border-blue-700/60 rounded-2xl px-5 py-4 transition-colors"
+        >
+          <div>
+            <div className="text-xs uppercase tracking-wider text-gray-500 mb-1">Recommended Next Step</div>
+            <div className="text-sm font-semibold text-white">{nextStep.label}</div>
+            <div className="text-xs text-gray-500 mt-0.5">{nextStep.desc}</div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-500 shrink-0" />
+        </Link>
+      )}
 
       {/* Quick actions */}
       <div>
