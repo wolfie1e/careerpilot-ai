@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { Clock, Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";

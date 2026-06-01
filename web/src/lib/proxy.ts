@@ -17,7 +17,7 @@ export async function proxyToAI(
   const headers: Record<string, string> = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  let fetchOptions: RequestInit = {
+  const fetchOptions: RequestInit = {
     method: options.method || req.method,
     headers,
   };

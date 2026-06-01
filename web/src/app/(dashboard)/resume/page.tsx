@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, ChevronDown, Plus } from "lucide-react";
+import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
