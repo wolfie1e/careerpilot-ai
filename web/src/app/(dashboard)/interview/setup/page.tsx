@@ -7,7 +7,7 @@ import { Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS } from "@/lib/constants";
+import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS, INTERVIEW_PREP_TIPS, ROLE_PRESETS } from "@/lib/constants";
 
 interface SessionResponse {
   session_id: string;
@@ -26,6 +26,7 @@ export default function InterviewSetupPage() {
   const [loading, setLoading] = useState(false);
 
   const update = (field: string, value: unknown) => setForm((f) => ({ ...f, [field]: value }));
+  const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];
 
   async function handleStart() {
     if (!form.role_title.trim()) {
@@ -62,6 +63,18 @@ export default function InterviewSetupPage() {
             placeholder="e.g. Senior Software Engineer, Product Manager, Data Scientist"
             className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
           />
+          <div className="flex flex-wrap gap-2 mt-3">
+            {ROLE_PRESETS.map((role) => (
+              <button
+                key={role}
+                type="button"
+                onClick={() => update("role_title", role)}
+                className="px-2.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-xs text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+              >
+                {role}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Interview type */}
@@ -83,6 +96,7 @@ export default function InterviewSetupPage() {
               </button>
             ))}
           </div>
+          <p className="text-xs text-gray-500 mt-3">{prepTip}</p>
         </div>
 
         {/* Difficulty */}
