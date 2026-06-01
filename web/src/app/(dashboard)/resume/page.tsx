@@ -76,7 +76,19 @@ export default function ResumePage() {
     try {
       const data = await api.get<AnalysisData[]>(`/resume/${resumeId}/analyses`);
       setAnalysisHistory(Array.isArray(data) ? data : []);
+      return Array.isArray(data) ? data : [];
     } catch { /* silent */ }
+    return [];
+  }
+
+  async function selectPastResume(r: ResumeListItem) {
+    setResume({ id: r.id, filename: r.filename, parsed_sections: {} });
+    setAnalysis(null);
+    setActiveTab("analysis");
+    const history = await loadAnalysisHistory(r.id);
+    if (history.length > 0) {
+      setAnalysis(history[0]);
+    }
   }
 
   async function handleAnalyze() {
@@ -124,7 +136,7 @@ export default function ResumePage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {pastResumes.map((r) => (
-              <button key={r.id} onClick={() => { setResume({ id: r.id, filename: r.filename, parsed_sections: {} }); setAnalysis(null); }}
+              <button key={r.id} onClick={() => selectPastResume(r)}
                 className={cn("flex items-center gap-2 px-3 py-2 rounded-xl text-sm border transition-all",
                   resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"
                 )}>
