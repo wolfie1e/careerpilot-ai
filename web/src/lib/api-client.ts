@@ -7,6 +7,17 @@ class ApiError extends Error {
   }
 }
 
+function getErrorMessage(body: unknown): string {
+  if (typeof body === "object" && body !== null) {
+    const detail = "detail" in body ? (body as { detail?: unknown }).detail : undefined;
+    const message = "message" in body ? (body as { message?: unknown }).message : undefined;
+    if (typeof detail === "string") return detail;
+    if (typeof message === "string") return message;
+    if (Array.isArray(detail)) return detail.map((item) => String(item)).join(", ");
+  }
+  return "Request failed";
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
@@ -30,7 +41,7 @@ async function request<T>(
       throw new ApiError(401, "Session expired. Please log in again.");
     }
     const body = await res.json().catch(() => ({ detail: "Request failed" }));
-    throw new ApiError(res.status, body.detail || body.message || "Request failed");
+    throw new ApiError(res.status, getErrorMessage(body));
   }
 
   if (res.status === 204) return undefined as T;
