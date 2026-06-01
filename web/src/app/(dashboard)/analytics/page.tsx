@@ -44,7 +44,11 @@ export default function AnalyticsPage() {
     );
   }
 
-  const hasData = data && (data.ats_trend.length > 0 || data.interview_trend.length > 0);
+  const hasData = data && (
+    data.ats_trend.length > 0 ||
+    data.interview_trend.length > 0 ||
+    data.match_trend.length > 0
+  );
 
   if (!hasData) {
     return (
