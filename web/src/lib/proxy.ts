@@ -1,8 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { AI_SERVICE_URL, COOKIE_NAME } from "./constants";
-
-const AI_PROXY_TIMEOUT_MS = 60_000;
+import { AI_PROXY_TIMEOUT_MS, AI_SERVICE_URL, COOKIE_NAME } from "./constants";
 
 export async function proxyToAI(
   req: NextRequest,

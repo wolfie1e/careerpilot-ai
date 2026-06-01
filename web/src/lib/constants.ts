@@ -3,6 +3,7 @@ export const APP_DESCRIPTION = "Your AI Career Coach for Resumes, Interviews, an
 
 export const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export const AI_PROXY_TIMEOUT_MS = Number(process.env.AI_PROXY_TIMEOUT_MS || 60_000);
 
 export const COOKIE_NAME = "careerpilot_token";
 
