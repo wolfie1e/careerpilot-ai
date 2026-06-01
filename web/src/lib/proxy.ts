@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { AI_SERVICE_URL, COOKIE_NAME } from "./constants";
 
+const AI_PROXY_TIMEOUT_MS = 60_000;
+
 export async function proxyToAI(
   req: NextRequest,
   path: string,
@@ -40,7 +42,25 @@ export async function proxyToAI(
     }
   }
 
-  const res = await fetch(`${AI_SERVICE_URL}${path}`, fetchOptions);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), AI_PROXY_TIMEOUT_MS);
+  let res: Response;
+
+  try {
+    res = await fetch(`${AI_SERVICE_URL}${path}`, {
+      ...fetchOptions,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    const isTimeout = error instanceof DOMException && error.name === "AbortError";
+    return NextResponse.json(
+      { detail: isTimeout ? "AI service request timed out" : "AI service is unavailable" },
+      { status: isTimeout ? 504 : 502 }
+    );
+  } finally {
+    clearTimeout(timeout);
+  }
+
   const data = await res.json().catch(() => null);
 
   return NextResponse.json(data, { status: res.status });
