@@ -9,6 +9,7 @@ import {
 import { TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
+import { scoreLabel, scoreTone } from "@/lib/utils";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -121,6 +122,19 @@ export default function AnalyticsPage() {
         <StatCard title="Avg Interview Score" value={data.avg_interview_score ? `${data.avg_interview_score}/100` : "—"} icon={Mic} color="violet" />
         <StatCard title="Resumes Analyzed" value={data.total_resumes_analyzed} icon={Target} color="emerald" />
         <StatCard title="Interviews Done" value={data.total_interviews} icon={TrendingUp} color="amber" />
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        {[
+          ["ATS health", data.latest_ats_score],
+          ["Interview readiness", data.avg_interview_score],
+          ["Overall readiness", data.readiness_score],
+        ].map(([label, score]) => (
+          <div key={label as string} className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+            <div className="text-xs text-gray-500 mb-1">{label}</div>
+            <div className={`text-sm font-semibold ${scoreTone(score as number | null)}`}>{scoreLabel(score as number | null)}</div>
+          </div>
+        ))}
       </div>
 
       {/* Score trends */}
