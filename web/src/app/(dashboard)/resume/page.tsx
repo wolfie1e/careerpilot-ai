@@ -192,6 +192,21 @@ export default function ResumePage() {
             ))}
           </div>
 
+          {activeTab === "analysis" && !analysis && (
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+              <Zap className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+              <h3 className="text-sm font-semibold text-white mb-1">No analysis yet</h3>
+              <p className="text-sm text-gray-500 mb-4">Run a full analysis to unlock scoring, ATS feedback, and improvement suggestions.</p>
+              <button
+                onClick={handleAnalyze}
+                disabled={analyzing}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white font-semibold rounded-xl transition-all text-sm"
+              >
+                {analyzing ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing...</> : <><Zap className="w-4 h-4" />Run Full Analysis</>}
+              </button>
+            </div>
+          )}
+
           {/* Analysis tab */}
           {activeTab === "analysis" && analysis && (
             <div className="grid lg:grid-cols-3 gap-4">
