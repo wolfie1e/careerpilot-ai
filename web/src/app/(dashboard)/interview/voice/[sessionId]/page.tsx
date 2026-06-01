@@ -3,12 +3,11 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Square, RotateCcw, Send, Loader2, CheckCircle, AlertCircle, Trophy } from "lucide-react";
+import { Mic, Square, RotateCcw, Loader2, CheckCircle, AlertCircle, Trophy } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
-import { AI_SERVICE_URL } from "@/lib/constants";
 
 interface Question {
   id: string;
@@ -39,7 +38,6 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
   const [processing, setProcessing] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [done, setDone] = useState(false);
-  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     api.get<SessionData>(`/interview/sessions/${sessionId}`)

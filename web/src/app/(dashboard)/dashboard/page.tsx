@@ -63,11 +63,9 @@ export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [onboardingDismissed, setOnboardingDismissed] = useState(true);
-
-  useEffect(() => {
-    setOnboardingDismissed(localStorage.getItem(ONBOARDING_KEY) === "true");
-  }, []);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(
+    () => typeof window !== "undefined" && localStorage.getItem(ONBOARDING_KEY) === "true"
+  );
 
   useEffect(() => {
     Promise.all([

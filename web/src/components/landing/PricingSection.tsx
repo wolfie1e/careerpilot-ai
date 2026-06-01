@@ -78,7 +78,7 @@ export default function PricingSection() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white">
             Simple, transparent pricing
           </h2>
-          <p className="mt-4 text-gray-400">Start free. Upgrade when you're ready to accelerate.</p>
+          <p className="mt-4 text-gray-400">Start free. Upgrade when you&apos;re ready to accelerate.</p>
         </motion.div>
 
         <div className="grid sm:grid-cols-3 gap-6">

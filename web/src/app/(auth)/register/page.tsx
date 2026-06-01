@@ -104,6 +104,7 @@ export default function RegisterPage() {
                 placeholder="you@example.com"
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
               />
+              {fieldErrors.email && <p className="text-xs text-rose-400 mt-1">{fieldErrors.email}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Username</label>
@@ -116,6 +117,7 @@ export default function RegisterPage() {
                 placeholder="alex_dev"
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
               />
+              {fieldErrors.username && <p className="text-xs text-rose-400 mt-1">{fieldErrors.username}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
@@ -137,6 +139,7 @@ export default function RegisterPage() {
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {fieldErrors.password && <p className="text-xs text-rose-400 mt-1">{fieldErrors.password}</p>}
             </div>
 
             <button
