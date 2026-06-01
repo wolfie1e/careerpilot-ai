@@ -8,7 +8,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api-client";
-import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
+import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -96,6 +96,10 @@ export default function DashboardPage() {
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < 4;
+  const latestAts = analytics?.ats_trend?.at(-1)?.score ?? null;
+  const previousAts = analytics?.ats_trend?.at(-2)?.score ?? null;
+  const atsDelta = formatDelta(latestAts, previousAts);
+  const atsTrend = atsDelta.startsWith("+") ? "up" : atsDelta.startsWith("-") ? "down" : "neutral";
 
   function dismissOnboarding() {
     localStorage.setItem(ONBOARDING_KEY, "true");
@@ -182,6 +186,8 @@ export default function DashboardPage() {
               title="ATS Score" icon={FileText} color="blue"
               value={analytics?.latest_ats_score ? `${analytics.latest_ats_score}/100` : "—"}
               subtitle={analytics?.latest_ats_score ? "Latest scan" : "No resume yet"}
+              trend={latestAts !== null && previousAts !== null ? atsTrend : undefined}
+              trendValue={latestAts !== null && previousAts !== null ? atsDelta : undefined}
             />
             <StatCard
               title="Job Match" icon={Target} color="violet"
