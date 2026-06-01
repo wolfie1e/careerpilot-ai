@@ -39,6 +39,28 @@ export function scoreBg(score: number): string {
   return "bg-rose-500";
 }
 
+export function scoreLabel(score: number | null | undefined): string {
+  if (score == null || Number.isNaN(score)) return "Not started";
+  if (score >= 85) return "Excellent";
+  if (score >= 70) return "Strong";
+  if (score >= 55) return "Needs focus";
+  return "Needs work";
+}
+
+export function scoreTone(score: number | null | undefined): string {
+  if (score == null || Number.isNaN(score)) return "text-gray-500";
+  if (score >= 80) return "text-emerald-400";
+  if (score >= 60) return "text-amber-400";
+  return "text-rose-400";
+}
+
+export function formatDelta(current?: number | null, previous?: number | null): string {
+  if (current == null || previous == null) return "No prior data";
+  const delta = Math.round(current - previous);
+  if (delta === 0) return "No change";
+  return `${delta > 0 ? "+" : ""}${delta} pts`;
+}
+
 export function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen) + "...";
