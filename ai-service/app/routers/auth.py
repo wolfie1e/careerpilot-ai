@@ -6,8 +6,8 @@ from app.core.database import get_db
 from app.dependencies import get_current_user
 from app.models.resume import Resume
 from app.models.interview_session import InterviewSession
-from app.schemas.auth import LoginRequest, RegisterRequest, UserResponse
-from app.services.auth_service import login_user, register_user
+from app.schemas.auth import ChangePasswordRequest, LoginRequest, RegisterRequest, UpdateProfileRequest, UserResponse
+from app.services.auth_service import change_user_password, login_user, register_user, update_user_profile
 from app.config import settings
 
 router = APIRouter()
@@ -57,3 +57,34 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=dict)
 async def get_me(current_user=Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await _build_user_response(current_user, db)
+
+
+@router.patch("/me", response_model=dict)
+async def update_me(
+    payload: UpdateProfileRequest,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    updated = await update_user_profile(
+        db,
+        current_user,
+        username=payload.username,
+        full_name=payload.full_name,
+        avatar_url=payload.avatar_url,
+    )
+    return await _build_user_response(updated, db)
+
+
+@router.post("/password", response_model=dict)
+async def change_password(
+    payload: ChangePasswordRequest,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    await change_user_password(
+        db,
+        current_user,
+        current_password=payload.current_password,
+        new_password=payload.new_password,
+    )
+    return {"message": "Password updated successfully"}
