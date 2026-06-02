@@ -77,7 +77,6 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
     if (currentIdx + 1 >= questions.length) { setDone(true); return; }
     setCurrentIdx((i) => i + 1);
     setFeedback(null);
-    setShowHint(false);
     reset();
   }
 
