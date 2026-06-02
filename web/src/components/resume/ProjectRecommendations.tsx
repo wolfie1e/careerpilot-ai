@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FolderGit2, Loader2, Copy, Check, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { FolderGit2, Loader2, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 const LEVELS = ["beginner", "intermediate", "advanced"] as const;
 const DIFFICULTY_COLORS = {
@@ -36,7 +37,6 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [copied, setCopied] = useState<string | null>(null);
 
   async function handleGenerate() {
     if (!targetRole.trim()) { toast.error("Enter a target role"); return; }
@@ -54,12 +54,6 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
     } finally {
       setLoading(false);
     }
-  }
-
-  async function copyBullet(bullet: string, title: string) {
-    await navigator.clipboard.writeText(bullet);
-    setCopied(title);
-    setTimeout(() => setCopied(null), 1500);
   }
 
   return (
@@ -153,10 +147,7 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
                           <div className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">Ready-to-use resume bullet</div>
                           <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
                             <p className="text-sm text-white flex-1">{p.resume_bullet}</p>
-                            <button onClick={() => copyBullet(p.resume_bullet, p.title)}
-                              className="shrink-0 p-1.5 text-gray-500 hover:text-emerald-400 transition-colors">
-                              {copied === p.title ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
+                            <CopyButton value={p.resume_bullet} label="Bullet" className="shrink-0" />
                           </div>
                         </div>
                       </div>
