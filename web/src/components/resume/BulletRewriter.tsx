@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Sparkles, Loader2, Copy, Check, ArrowRight } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, ArrowRight } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface RewriteResult {
   original?: string;
@@ -24,7 +25,6 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
   const [bullets, setBullets] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<RewriteResult[]>([]);
-  const [copied, setCopied] = useState<number | null>(null);
 
   const addBullet = () => setBullets((b) => [...b, ""]);
   const removeBullet = (i: number) => setBullets((b) => b.filter((_, j) => j !== i));
@@ -56,12 +56,6 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function copyToClipboard(text: string, idx: number) {
-    await navigator.clipboard.writeText(text);
-    setCopied(idx);
-    setTimeout(() => setCopied(null), 1500);
   }
 
   const impactColor = (score: number) =>
@@ -139,10 +133,7 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
                       <ArrowRight className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
                       <span className="text-sm text-white">{r.rewritten}</span>
                     </div>
-                    <button onClick={() => copyToClipboard(r.rewritten, i)}
-                      className="shrink-0 p-1.5 text-gray-500 hover:text-emerald-400 transition-colors">
-                      {copied === i ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
+                    <CopyButton value={r.rewritten} className="shrink-0" />
                   </div>
                 </div>
 
