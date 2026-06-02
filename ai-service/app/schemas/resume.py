@@ -18,6 +18,7 @@ class ResumeListItem(BaseModel):
     id: str
     filename: str
     file_type: str
+    file_size: int | None
     word_count: int | None
     created_at: datetime
 
