@@ -61,6 +61,18 @@ export function formatDelta(current?: number | null, previous?: number | null): 
   return `${delta > 0 ? "+" : ""}${delta} pts`;
 }
 
+export function formatBytes(bytes?: number | null): string {
+  if (!bytes || bytes < 0) return "Unknown size";
+  const units = ["B", "KB", "MB", "GB"];
+  let value = bytes;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+  return `${value >= 10 || unit === 0 ? Math.round(value) : value.toFixed(1)} ${units[unit]}`;
+}
+
 export function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen) + "...";
