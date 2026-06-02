@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wand2, Loader2, Copy, Check } from "lucide-react";
+import { Wand2, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 const SECTIONS = ["summary", "experience", "projects", "skills", "achievements", "certifications"];
 
@@ -28,7 +29,6 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
   const [targetRole, setTargetRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ImproveResult | null>(null);
-  const [copied, setCopied] = useState(false);
 
   function handleSectionChange(s: string) {
     setSection(s);
@@ -53,13 +53,6 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
     } finally {
       setLoading(false);
     }
-  }
-
-  async function copyResult() {
-    if (!result) return;
-    await navigator.clipboard.writeText(result.improved_text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
   }
 
   return (
@@ -129,9 +122,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
             <div className="bg-gray-900 border border-emerald-500/20 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium text-emerald-400">Improved {section}</span>
-                <button onClick={copyResult} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-                  {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
-                </button>
+                <CopyButton value={result.improved_text} />
               </div>
               <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{result.improved_text}</p>
             </div>
