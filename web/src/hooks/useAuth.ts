@@ -35,7 +35,7 @@ export function useAuth() {
     return data;
   }
 
-  async function updateProfile(payload: Pick<User, "username" | "full_name" | "avatar_url">) {
+  async function updateProfile(payload: { username?: string; full_name?: string | null; avatar_url?: string | null }) {
     const data = await api.patch<User>("/auth/me", payload);
     updateUser(data);
     return data;
