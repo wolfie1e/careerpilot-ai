@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, MessageSquare, BarChart2, Download,
-  Zap, ChevronLeft, ChevronRight, LogOut
+  Zap, ChevronLeft, ChevronRight, LogOut, Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +17,7 @@ const navItems = [
   { href: "/interview", icon: MessageSquare, label: "Interview" },
   { href: "/analytics", icon: BarChart2, label: "Analytics" },
   { href: "/reports", icon: Download, label: "Reports" },
+  { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
 export default function Sidebar() {

@@ -9,6 +9,7 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
   "/interview": { title: "Interview", subtitle: "Practice and track your sessions" },
   "/analytics": { title: "Analytics", subtitle: "Score trends and skill progress" },
   "/reports": { title: "Reports", subtitle: "Download your analysis reports" },
+  "/settings": { title: "Settings", subtitle: "Profile, security, and privacy controls" },
 };
 
 export default function TopBar() {

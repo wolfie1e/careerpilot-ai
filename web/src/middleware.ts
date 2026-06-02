@@ -25,5 +25,6 @@ export const config = {
     "/interview/:path*",
     "/analytics/:path*",
     "/reports/:path*",
+    "/settings/:path*",
   ],
 };
