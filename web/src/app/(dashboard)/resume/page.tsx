@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus } from "lucide-react";
+import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2 } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -58,6 +58,7 @@ export default function ResumePage() {
   const [showDropzone, setShowDropzone] = useState(false);
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
 
   useEffect(() => {
     api.get<ResumeListItem[]>("/resume")
@@ -106,6 +107,26 @@ export default function ResumePage() {
     }
   }
 
+  async function deleteResume(resumeId: string) {
+    if (!window.confirm("Delete this resume from your workspace?")) return;
+    setDeletingResumeId(resumeId);
+    try {
+      await api.delete(`/resume/${resumeId}`);
+      setPastResumes((prev) => prev.filter((r) => r.id !== resumeId));
+      if (resume?.id === resumeId) {
+        setResume(null);
+        setAnalysis(null);
+        setAnalysisHistory([]);
+        setShowDropzone(true);
+      }
+      toast.success("Resume deleted");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not delete resume");
+    } finally {
+      setDeletingResumeId(null);
+    }
+  }
+
   const showTabs = resume !== null;
 
   function handleUploaded(r: ResumeData) {
@@ -136,14 +157,23 @@ export default function ResumePage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {pastResumes.map((r) => (
-              <button key={r.id} onClick={() => selectPastResume(r)}
-                className={cn("flex items-center gap-2 px-3 py-2 rounded-xl text-sm border transition-all",
-                  resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"
-                )}>
-                <FileText className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate max-w-[140px]">{r.filename}</span>
-                <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)}</span>
-              </button>
+              <div key={r.id} className={cn("flex items-center rounded-xl border transition-all",
+                resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"
+              )}>
+                <button onClick={() => selectPastResume(r)} className="flex items-center gap-2 px-3 py-2 text-sm">
+                  <FileText className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate max-w-[140px]">{r.filename}</span>
+                  <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)}</span>
+                </button>
+                <button
+                  onClick={() => deleteResume(r.id)}
+                  disabled={deletingResumeId === r.id}
+                  className="border-l border-gray-700 px-2 py-2 text-gray-500 transition hover:text-rose-400 disabled:opacity-60"
+                  title="Delete resume"
+                >
+                  {deletingResumeId === r.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                </button>
+              </div>
             ))}
           </div>
         </div>
