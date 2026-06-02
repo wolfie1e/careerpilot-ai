@@ -11,7 +11,7 @@ import SectionImprover from "@/components/resume/SectionImprover";
 import ProjectRecommendations from "@/components/resume/ProjectRecommendations";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
-import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
+import { cn, scoreColor, formatRelativeTime, formatBytes } from "@/lib/utils";
 
 interface ResumeData {
   id: string;
@@ -39,6 +39,7 @@ interface ResumeListItem {
   id: string;
   filename: string;
   file_type: string;
+  file_size: number | null;
   created_at: string;
 }
 
@@ -133,7 +134,7 @@ export default function ResumePage() {
     setResume(r);
     setAnalysis(null);
     setShowDropzone(false);
-    setPastResumes((prev) => [{ id: r.id, filename: r.filename, file_type: "pdf", created_at: new Date().toISOString() }, ...prev.filter((p) => p.id !== r.id)]);
+    setPastResumes((prev) => [{ id: r.id, filename: r.filename, file_type: "pdf", file_size: null, created_at: new Date().toISOString() }, ...prev.filter((p) => p.id !== r.id)]);
   }
 
   return (
@@ -163,7 +164,7 @@ export default function ResumePage() {
                 <button onClick={() => selectPastResume(r)} className="flex items-center gap-2 px-3 py-2 text-sm">
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate max-w-[140px]">{r.filename}</span>
-                  <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)}</span>
+                  <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)} · {formatBytes(r.file_size)}</span>
                 </button>
                 <button
                   onClick={() => deleteResume(r.id)}

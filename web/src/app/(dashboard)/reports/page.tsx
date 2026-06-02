@@ -5,10 +5,12 @@ import { Download, FileText, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { formatBytes } from "@/lib/utils";
 
 interface Resume {
   id: string;
   filename: string;
+  file_size: number | null;
   created_at: string;
 }
 
@@ -72,7 +74,7 @@ export default function ReportsPage() {
               <FileText className="w-8 h-8 text-blue-400 shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-white text-sm truncate">{r.filename}</div>
-                <div className="text-xs text-gray-500">{new Date(r.created_at).toLocaleDateString()}</div>
+                <div className="text-xs text-gray-500">{new Date(r.created_at).toLocaleDateString()} · {formatBytes(r.file_size)}</div>
               </div>
               <div className="flex gap-2">
                 <button
