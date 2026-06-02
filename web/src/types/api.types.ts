@@ -6,6 +6,8 @@ export interface User {
   avatar_url: string | null;
   plan: "free" | "pro" | "enterprise";
   is_active: boolean;
+  total_resumes?: number;
+  total_interviews?: number;
 }
 
 export interface AuthResponse {
