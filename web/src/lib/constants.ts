@@ -33,6 +33,11 @@ export const INTERVIEW_STATUSES = [
   { value: "abandoned", label: "Abandoned" },
 ] as const;
 
+export const INTERVIEW_MODES = [
+  { value: "text", label: "Text" },
+  { value: "voice", label: "Voice" },
+] as const;
+
 export const ROLE_PRESETS = [
   "Frontend Engineer",
   "Backend Engineer",
