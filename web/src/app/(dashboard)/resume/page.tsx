@@ -131,6 +131,11 @@ export default function ResumePage() {
   }
 
   const showTabs = resume !== null;
+  const orderedResumes = [...pastResumes].sort((a, b) => {
+    if (a.id === pinnedResumeId) return -1;
+    if (b.id === pinnedResumeId) return 1;
+    return 0;
+  });
 
   function handleUploaded(r: ResumeData) {
     setResume(r);
@@ -159,7 +164,7 @@ export default function ResumePage() {
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {pastResumes.map((r) => (
+            {orderedResumes.map((r) => (
               <div key={r.id} className={cn("flex items-center rounded-xl border transition-all",
                 resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600",
                 pinnedResumeId === r.id && "border-amber-500/50"
