@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.interview import CreateSessionRequest
+from app.schemas.interview import AnswerRequest, CreateSessionRequest
 
 
 def test_create_session_accepts_valid_payload():
@@ -30,3 +30,15 @@ def test_create_session_rejects_too_many_questions():
 def test_create_session_rejects_zero_questions():
     with pytest.raises(ValidationError):
         CreateSessionRequest(role_title="Backend Engineer", question_count=0)
+
+
+def test_answer_request_requires_answer_text():
+    with pytest.raises(ValidationError):
+        AnswerRequest(question_id="question-1", answer_text="")
+
+
+def test_answer_request_accepts_non_empty_answer():
+    payload = AnswerRequest(question_id="question-1", answer_text="I would clarify requirements first.")
+
+    assert payload.question_id == "question-1"
+    assert payload.answer_text.startswith("I would")
