@@ -29,6 +29,15 @@ export default function InterviewHistoryPage() {
   const [sessionMode, setSessionMode] = useState("");
   const [status, setStatus] = useState("");
   const deferredSearch = useDeferredValue(search);
+  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status);
+
+  function clearFilters() {
+    setSearch("");
+    setDifficulty("");
+    setInterviewType("");
+    setSessionMode("");
+    setStatus("");
+  }
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -56,6 +65,11 @@ export default function InterviewHistoryPage() {
         <div className="mb-3 flex items-center gap-2 text-sm font-medium text-white">
           <SlidersHorizontal className="h-4 w-4 text-blue-400" />
           Filter sessions
+          {hasFilters && (
+            <button onClick={clearFilters} className="ml-auto text-xs font-medium text-gray-500 transition hover:text-white">
+              Clear filters
+            </button>
+          )}
         </div>
         <div className="grid gap-3 md:grid-cols-5">
           <label className="relative md:col-span-2">
