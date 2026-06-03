@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
-import { cn, scoreColor } from "@/lib/utils";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
 
 const PROGRESS_STEPS = [
   "Parsing job description…",
@@ -13,6 +15,7 @@ const PROGRESS_STEPS = [
   "Generating learning roadmap…",
 ];
 const MIN_JD_WORDS = 40;
+const MAX_SAVED_JDS = 5;
 
 function countWords(text: string) {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -77,15 +80,51 @@ interface JDMatcherProps {
   onMatchResult?: (result: MatchResult) => void;
 }
 
+interface SavedJobDescription {
+  id: string;
+  title: string;
+  text: string;
+  updated_at: string;
+}
+
 export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [jdText, setJdText] = useState("");
   const [jdTitle, setJdTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MatchResult | null>(null);
   const [expandedRoadmap, setExpandedRoadmap] = useState<string | null>(null);
+  const [savedJds, setSavedJds] = useLocalStorage<SavedJobDescription[]>(LOCAL_STORAGE_KEYS.savedJobDescriptions, []);
   const jdWordCount = countWords(jdText);
   const jdReady = jdWordCount >= MIN_JD_WORDS;
   const readingMinutes = Math.max(1, Math.ceil(jdWordCount / 180));
+
+  function saveDraft() {
+    if (!jdText.trim()) {
+      toast.error("Paste a job description before saving");
+      return;
+    }
+
+    const title = jdTitle.trim() || "Untitled job description";
+    const draft: SavedJobDescription = {
+      id: `${Date.now()}`,
+      title,
+      text: jdText,
+      updated_at: new Date().toISOString(),
+    };
+    setSavedJds((prev) => [draft, ...prev.filter((item) => item.text !== jdText)].slice(0, MAX_SAVED_JDS));
+    toast.success("Job description saved");
+  }
+
+  function loadDraft(draft: SavedJobDescription) {
+    setJdTitle(draft.title === "Untitled job description" ? "" : draft.title);
+    setJdText(draft.text);
+    toast.success("Job description loaded");
+  }
+
+  function deleteDraft(draftId: string) {
+    setSavedJds((prev) => prev.filter((draft) => draft.id !== draftId));
+    toast.success("Saved job description removed");
+  }
 
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
@@ -146,15 +185,51 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         <div className="flex justify-end text-xs">
           {!jdReady && <span className="text-gray-500">Minimum {MIN_JD_WORDS} words recommended</span>}
         </div>
-        <button
-          onClick={handleMatch}
-          disabled={loading || !jdReady}
-          className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl transition-all text-sm"
-        >
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing…</> : <><Target className="w-4 h-4" />Match Resume to JD</>}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={handleMatch}
+            disabled={loading || !jdReady}
+            className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl transition-all text-sm"
+          >
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing…</> : <><Target className="w-4 h-4" />Match Resume to JD</>}
+          </button>
+          <button
+            onClick={saveDraft}
+            disabled={!jdText.trim()}
+            className="flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white disabled:opacity-50"
+          >
+            <Save className="h-4 w-4" />
+            Save JD
+          </button>
+        </div>
         {loading && <MatchingProgress />}
       </div>
+
+      {savedJds.length > 0 && (
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <h4 className="mb-3 text-sm font-semibold text-white">Saved Job Descriptions</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {savedJds.map((draft) => (
+              <div
+                key={draft.id}
+                className="flex items-stretch overflow-hidden rounded-xl border border-gray-800 bg-gray-950/50 transition hover:border-violet-700/60 hover:bg-gray-800/50"
+              >
+                <button onClick={() => loadDraft(draft)} className="min-w-0 flex-1 px-4 py-3 text-left">
+                  <span className="block truncate text-sm font-semibold text-white">{draft.title}</span>
+                  <span className="mt-1 block text-xs text-gray-500">{countWords(draft.text)} words · {formatRelativeTime(draft.updated_at)}</span>
+                </button>
+                <button
+                  onClick={() => deleteDraft(draft.id)}
+                  className="border-l border-gray-800 px-3 text-gray-600 transition hover:bg-rose-500/10 hover:text-rose-400"
+                  title="Delete saved job description"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Results */}
       <AnimatePresence>
