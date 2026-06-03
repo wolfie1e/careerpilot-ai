@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, KeyRound, Loader2, Shield, UserRound } from "lucide-react";
+import { CheckCircle, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { passwordSchema, profileSchema } from "@/lib/validations";
@@ -71,6 +71,12 @@ export default function SettingsPage() {
     } finally {
       setSavingPassword(false);
     }
+  }
+
+  function resetLocalPreferences() {
+    window.localStorage.removeItem("careerpilot_onboarding_dismissed");
+    window.localStorage.removeItem("careerpilot_pinned_resume");
+    toast.success("Local workspace preferences reset");
   }
 
   return (
@@ -151,6 +157,15 @@ export default function SettingsPage() {
         <p className="mt-1 text-sm leading-6 text-gray-300">
           Your resume data is used only to generate your analysis, match jobs, and track progress. You can delete uploaded resumes from the Resume page whenever you need to reset your workspace.
         </p>
+      </div>
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+        <h3 className="font-semibold text-white">Workspace preferences</h3>
+        <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences such as pinned resume and dismissed onboarding.</p>
+        <button onClick={resetLocalPreferences} className="mt-4 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+          <RotateCcw className="h-4 w-4" />
+          Reset local preferences
+        </button>
       </div>
     </div>
   );
