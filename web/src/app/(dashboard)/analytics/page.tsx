@@ -6,10 +6,11 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, Legend
 } from "recharts";
-import { TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
+import { Download, TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { downloadCsv } from "@/lib/export-utils";
 import { scoreLabel, scoreTone } from "@/lib/utils";
 
 interface AnalyticsData {
@@ -84,11 +85,26 @@ export default function AnalyticsPage() {
     match: data.match_trend.find((d) => d.date === date)?.score ?? null,
   }));
 
+  function exportTrends() {
+    downloadCsv("careerpilot-score-trends.csv", combinedTrend.map((row) => ({
+      date: row.date,
+      ats_score: row.ats ?? "",
+      interview_score: row.interview ?? "",
+      job_match_score: row.match ?? "",
+    })));
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-white">Analytics</h2>
-        <p className="text-sm text-gray-400 mt-1">Your career readiness over time</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-white">Analytics</h2>
+          <p className="text-sm text-gray-400 mt-1">Your career readiness over time</p>
+        </div>
+        <button onClick={exportTrends} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+          <Download className="h-4 w-4" />
+          Export CSV
+        </button>
       </div>
 
       {/* Readiness score hero */}
