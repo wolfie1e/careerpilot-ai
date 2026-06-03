@@ -7,6 +7,7 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS, INTERVIEW_PREP_TIPS, ROLE_PRESETS } from "@/lib/constants";
+import { interviewSetupSchema } from "@/lib/validations";
 
 interface SessionResponse {
   session_id: string;
@@ -23,19 +24,24 @@ export default function InterviewSetupPage() {
     question_count: 5,
   });
   const [loading, setLoading] = useState(false);
+  const [roleError, setRoleError] = useState("");
 
   const update = (field: string, value: unknown) => setForm((f) => ({ ...f, [field]: value }));
   const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];
   const estimatedMinutes = form.question_count * (form.session_mode === "voice" ? 4 : 3);
 
   async function handleStart() {
-    if (!form.role_title.trim()) {
-      toast.error("Please enter a target role");
+    const parsed = interviewSetupSchema.safeParse(form);
+    if (!parsed.success) {
+      const first = parsed.error.issues[0];
+      setRoleError(first.path[0] === "role_title" ? first.message : "");
+      toast.error(first.message);
       return;
     }
+    setRoleError("");
     setLoading(true);
     try {
-      const session = await api.post<SessionResponse>("/interview/sessions", form);
+      const session = await api.post<SessionResponse>("/interview/sessions", parsed.data);
       const path = `/interview/${form.session_mode}/${session.session_id}`;
       router.push(path);
     } catch (err: unknown) {
@@ -59,16 +65,17 @@ export default function InterviewSetupPage() {
           <input
             type="text"
             value={form.role_title}
-            onChange={(e) => update("role_title", e.target.value)}
+            onChange={(e) => { update("role_title", e.target.value); setRoleError(""); }}
             placeholder="e.g. Senior Software Engineer, Product Manager, Data Scientist"
             className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
           />
+          {roleError && <p className="mt-1.5 text-xs text-rose-400">{roleError}</p>}
           <div className="flex flex-wrap gap-2 mt-3">
             {ROLE_PRESETS.map((role) => (
               <button
                 key={role}
                 type="button"
-                onClick={() => update("role_title", role)}
+                onClick={() => { update("role_title", role); setRoleError(""); }}
                 className="px-2.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-xs text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
               >
                 {role}
