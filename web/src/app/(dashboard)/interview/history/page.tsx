@@ -7,7 +7,7 @@ import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv } from "@/lib/export-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
-import { DIFFICULTY_LEVELS, INTERVIEW_TYPES } from "@/lib/constants";
+import { DIFFICULTY_LEVELS, INTERVIEW_STATUSES, INTERVIEW_TYPES } from "@/lib/constants";
 
 interface Session {
   id: string;
@@ -116,9 +116,7 @@ export default function InterviewHistoryPage() {
           </select>
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-5">
             <option value="">Any status</option>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-            <option value="abandoned">Abandoned</option>
+            {INTERVIEW_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
       </div>

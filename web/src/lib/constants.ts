@@ -27,6 +27,12 @@ export const DIFFICULTY_LEVELS = [
 
 export const QUESTION_COUNTS = [3, 5, 7, 10] as const;
 
+export const INTERVIEW_STATUSES = [
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+  { value: "abandoned", label: "Abandoned" },
+] as const;
+
 export const ROLE_PRESETS = [
   "Frontend Engineer",
   "Backend Engineer",
