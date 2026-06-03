@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star } from "lucide-react";
+import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -55,6 +55,12 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "rewrite", label: "Rewrite Bullets" },
   { id: "improve", label: "Improve Section" },
   { id: "projects", label: "Projects" },
+];
+const ANALYSIS_ACTIONS: Array<{ tab: Tab; label: string; desc: string; icon: typeof Target }> = [
+  { tab: "ats", label: "Review ATS breakdown", desc: "Inspect category scores and formatting risks.", icon: CheckCircle },
+  { tab: "jd", label: "Match a target job", desc: "Compare this resume against a real posting.", icon: Target },
+  { tab: "rewrite", label: "Rewrite weak bullets", desc: "Turn duties into measurable achievements.", icon: PenLine },
+  { tab: "improve", label: "Improve a section", desc: "Refresh summary, experience, or projects.", icon: Wrench },
 ];
 const TAB_IDS = TABS.map((tab) => tab.id);
 
@@ -297,8 +303,9 @@ export default function ResumePage() {
 
           {/* Analysis tab */}
           {activeTab === "analysis" && analysis && (
-            <div className="grid lg:grid-cols-3 gap-4">
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center">
+            <>
+              <div className="grid lg:grid-cols-3 gap-4">
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center">
                 <div className="text-4xl font-extrabold mb-1" style={{ color: analysis.overall_score >= 80 ? "#10b981" : analysis.overall_score >= 60 ? "#f59e0b" : "#ef4444" }}>
                   {analysis.overall_score}
                 </div>
@@ -324,7 +331,7 @@ export default function ResumePage() {
                   })}
                 </div>
               </div>
-              <div className="lg:col-span-2 space-y-4">
+                <div className="lg:col-span-2 space-y-4">
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                   <h4 className="text-sm font-semibold text-emerald-400 flex items-center gap-2 mb-3"><CheckCircle className="w-4 h-4" />Strengths</h4>
                   <ul className="space-y-1.5">{analysis.strengths?.map((s, i) => <li key={i} className="text-sm text-gray-300 flex gap-2"><span className="text-emerald-400 mt-0.5">•</span>{s}</li>)}</ul>
@@ -363,7 +370,25 @@ export default function ResumePage() {
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-gray-800 bg-gray-900 p-5">
+                <h4 className="mb-3 text-sm font-semibold text-white">Next Resume Actions</h4>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {ANALYSIS_ACTIONS.map((action) => (
+                    <button
+                      key={action.tab}
+                      onClick={() => setResumeTab(action.tab)}
+                      className="rounded-xl border border-gray-800 bg-gray-950/50 p-4 text-left transition hover:border-blue-700/60 hover:bg-gray-800/50"
+                    >
+                      <action.icon className="mb-3 h-4 w-4 text-blue-400" />
+                      <div className="text-sm font-semibold text-white">{action.label}</div>
+                      <div className="mt-1 text-xs leading-5 text-gray-500">{action.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
 
           {/* Analysis history */}
