@@ -80,7 +80,10 @@ export default function ReportsPage() {
             <div key={r.id} className="flex items-center gap-4 px-5 py-4">
               <FileText className="w-8 h-8 text-blue-400 shrink-0" />
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-white text-sm truncate">{r.filename}</div>
+                <div className="flex items-center gap-2">
+                  <div className="font-medium text-white text-sm truncate">{r.filename}</div>
+                  {pinnedResumeId === r.id && <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">Primary</span>}
+                </div>
                 <div className="text-xs text-gray-500">{new Date(r.created_at).toLocaleDateString()} · {formatBytes(r.file_size)}</div>
               </div>
               <div className="flex gap-2">
