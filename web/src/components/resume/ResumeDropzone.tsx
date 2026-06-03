@@ -6,6 +6,7 @@ import { Upload, FileText, X, Loader2, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { api } from "@/lib/api-client";
+import { ALLOWED_EXTENSIONS, MAX_FILE_SIZE_MB } from "@/lib/constants";
 
 interface ResumeDropzoneProps {
   onUploaded: (resume: { id: string; filename: string; parsed_sections: Record<string, unknown> }) => void;
@@ -21,12 +22,12 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
       const f = accepted[0];
       if (!f) return;
       const ext = f.name.split(".").pop()?.toLowerCase();
-      if (!["pdf", "docx", "txt"].includes(ext || "")) {
+      if (!ALLOWED_EXTENSIONS.includes(ext as (typeof ALLOWED_EXTENSIONS)[number])) {
         toast.error("Unsupported file type. Use PDF, DOCX, or TXT.");
         return;
       }
-      if (f.size > 10 * 1024 * 1024) {
-        toast.error("File too large. Max 10MB.");
+      if (f.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        toast.error(`File too large. Max ${MAX_FILE_SIZE_MB}MB.`);
         return;
       }
       setFile(f);
@@ -104,7 +105,7 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
             <div className="text-sm font-medium text-white mb-1">
               {isDragActive ? "Drop it here!" : "Drag & drop your resume"}
             </div>
-            <div className="text-xs text-gray-500">PDF, DOCX, or TXT · Max 10MB</div>
+            <div className="text-xs text-gray-500">PDF, DOCX, or TXT · Max {MAX_FILE_SIZE_MB}MB</div>
           </div>
           {!isDragActive && (
             <div className="text-xs text-blue-400 hover:text-blue-300 font-medium">or click to browse</div>
