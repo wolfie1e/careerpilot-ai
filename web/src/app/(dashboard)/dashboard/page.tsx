@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
@@ -78,6 +78,37 @@ function getPracticeStreak(sessions: Session[]) {
   return streak;
 }
 
+function getFocusItems(analytics: AnalyticsData | null, resumes: Resume[], sessions: Session[]) {
+  const latestAts = analytics?.latest_ats_score ?? null;
+  const latestMatch = analytics?.match_trend?.at(-1)?.score ?? null;
+  const avgInterview = analytics?.avg_interview_score ?? null;
+
+  if (resumes.length === 0) {
+    return [{ href: "/resume", label: "Upload a resume", desc: "Create your first baseline before matching jobs." }];
+  }
+
+  const items = [];
+  if (latestAts === null) {
+    items.push({ href: "/resume", label: "Run a resume analysis", desc: "Unlock ATS scoring and priority edits." });
+  } else if (latestAts < 75) {
+    items.push({ href: "/resume?tab=ats", label: "Improve ATS coverage", desc: `Latest ATS score is ${latestAts}/100.` });
+  }
+
+  if (latestMatch === null) {
+    items.push({ href: "/resume?tab=jd", label: "Match a target JD", desc: "Find missing skills for your next application." });
+  } else if (latestMatch < 75) {
+    items.push({ href: "/resume?tab=jd", label: "Close JD skill gaps", desc: `Latest job match is ${latestMatch}/100.` });
+  }
+
+  if (sessions.length === 0) {
+    items.push({ href: "/interview/setup", label: "Complete a mock interview", desc: "Start tracking answer readiness." });
+  } else if (avgInterview !== null && avgInterview < 75) {
+    items.push({ href: "/interview/history", label: "Review interview feedback", desc: `Average interview score is ${avgInterview}/100.` });
+  }
+
+  return items.slice(0, 3);
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -122,6 +153,7 @@ export default function DashboardPage() {
       : sessions.length === 0
         ? { href: "/interview/setup", label: "Practice an interview", desc: "Turn your resume work into answer confidence." }
         : { href: "/analytics", label: "Review progress", desc: "Compare score trends and choose your next focus area." };
+  const focusItems = getFocusItems(analytics, resumes, sessions);
 
   function dismissOnboarding() {
     setOnboardingDismissed(true);
@@ -251,6 +283,23 @@ export default function DashboardPage() {
           </div>
           <ArrowRight className="w-4 h-4 text-gray-500 shrink-0" />
         </Link>
+      )}
+
+      {!loading && focusItems.length > 0 && (
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div className="mb-4 flex items-center gap-2">
+            <ListChecks className="h-4 w-4 text-blue-400" />
+            <h3 className="text-sm font-semibold text-white">Priority Focus</h3>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {focusItems.map((item) => (
+              <Link key={item.label} href={item.href} className="rounded-xl border border-gray-800 bg-gray-950/40 p-4 transition hover:border-blue-700/60 hover:bg-gray-800/50">
+                <div className="text-sm font-semibold text-white">{item.label}</div>
+                <div className="mt-1 text-xs leading-5 text-gray-500">{item.desc}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Quick actions */}
