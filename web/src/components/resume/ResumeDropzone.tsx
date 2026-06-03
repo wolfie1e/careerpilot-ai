@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { Upload, FileText, X, Loader2, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -53,9 +53,20 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
     [onUploaded]
   );
 
+  const onDropRejected = useCallback((rejections: FileRejection[]) => {
+    const firstError = rejections[0]?.errors[0];
+    if (firstError?.code === "file-too-large") {
+      toast.error(`File too large. Max ${MAX_FILE_SIZE_MB}MB.`);
+      return;
+    }
+    toast.error(firstError?.message || "Unsupported file. Use PDF, DOCX, or TXT.");
+  }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: { "application/pdf": [".pdf"], "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"], "text/plain": [".txt"] },
+    maxSize: MAX_FILE_SIZE_MB * 1024 * 1024,
     maxFiles: 1,
     disabled: uploading,
   });
