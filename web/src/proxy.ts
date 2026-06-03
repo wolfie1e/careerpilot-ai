@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED = ["/dashboard", "/resume", "/interview", "/analytics", "/reports"];
+const PROTECTED = ["/dashboard", "/resume", "/interview", "/analytics", "/reports", "/settings"];
 const COOKIE_NAME = "careerpilot_token";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
   if (!isProtected) return NextResponse.next();
@@ -15,6 +15,7 @@ export function middleware(req: NextRequest) {
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
+
   return NextResponse.next();
 }
 
