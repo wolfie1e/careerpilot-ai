@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { passwordSchema, profileSchema } from "@/lib/validations";
 
 type FieldErrors = Record<string, string>;
@@ -74,8 +75,8 @@ export default function SettingsPage() {
   }
 
   function resetLocalPreferences() {
-    window.localStorage.removeItem("careerpilot_onboarding_dismissed");
-    window.localStorage.removeItem("careerpilot_pinned_resume");
+    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.onboardingDismissed);
+    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.pinnedResume);
     toast.success("Local workspace preferences reset");
   }
 

@@ -9,6 +9,7 @@ import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { api } from "@/lib/api-client";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 
 interface AnalyticsData {
@@ -42,8 +43,6 @@ const ONBOARDING_STEPS = [
   { key: "interview", label: "Complete a mock interview", href: "/interview/setup", done: false },
 ];
 
-const ONBOARDING_KEY = "careerpilot_onboarding_dismissed";
-
 const quickActions = [
   { href: "/resume", icon: Upload, label: "Upload Resume", desc: "Add or update your resume", color: "text-blue-400" },
   { href: "/resume", icon: Target, label: "Match a Job Description", desc: "Compare with a JD", color: "text-violet-400" },
@@ -64,7 +63,7 @@ export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(ONBOARDING_KEY, false);
+  const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(LOCAL_STORAGE_KEYS.onboardingDismissed, false);
 
   useEffect(() => {
     Promise.all([

@@ -11,6 +11,7 @@ import SectionImprover from "@/components/resume/SectionImprover";
 import ProjectRecommendations from "@/components/resume/ProjectRecommendations";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { cn, scoreColor, formatRelativeTime, formatBytes } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
@@ -61,7 +62,7 @@ export default function ResumePage() {
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
-  const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>("careerpilot_pinned_resume", null);
+  const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
 
   useEffect(() => {
     api.get<ResumeListItem[]>("/resume")

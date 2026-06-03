@@ -7,6 +7,16 @@ export const AI_PROXY_TIMEOUT_MS = Number(process.env.AI_PROXY_TIMEOUT_MS || 60_
 
 export const COOKIE_NAME = "careerpilot_token";
 
+export const LOCAL_STORAGE_KEYS = {
+  onboardingDismissed: "careerpilot_onboarding_dismissed",
+  pinnedResume: "careerpilot_pinned_resume",
+  savedJobDescriptions: "careerpilot_saved_job_descriptions",
+  recentMatches: "careerpilot_recent_matches",
+  interviewSetup: "careerpilot_interview_setup",
+  recentInterviewRoles: "careerpilot_recent_interview_roles",
+  pinnedInterviewSessions: "careerpilot_pinned_interview_sessions",
+} as const;
+
 export const MAX_FILE_SIZE_MB = 10;
 export const ALLOWED_EXTENSIONS = ["pdf", "docx", "txt"];
 
