@@ -6,7 +6,7 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { formatBytes } from "@/lib/utils";
+import { formatBytes, safeFilename } from "@/lib/utils";
 
 interface Resume {
   id: string;
@@ -33,7 +33,7 @@ export default function ReportsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function downloadReport(resumeId: string, format: "pdf" | "md") {
+  async function downloadReport(resumeId: string, format: "pdf" | "md", filename = "resume-report") {
     setDownloading(`${resumeId}-${format}`);
     try {
       const res = await fetch(`/api/reports/resume/${resumeId}?format=${format}`, {
@@ -44,7 +44,7 @@ export default function ReportsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `resume-report.${format === "pdf" ? "pdf" : "md"}`;
+      a.download = `${safeFilename(filename)}-careerpilot-report.${format === "pdf" ? "pdf" : "md"}`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Report downloaded!");
@@ -55,9 +55,9 @@ export default function ReportsPage() {
     }
   }
 
-  async function downloadBoth(resumeId: string) {
-    await downloadReport(resumeId, "pdf");
-    await downloadReport(resumeId, "md");
+  async function downloadBoth(resumeId: string, filename: string) {
+    await downloadReport(resumeId, "pdf", filename);
+    await downloadReport(resumeId, "md", filename);
   }
 
   return (
@@ -93,7 +93,7 @@ export default function ReportsPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => downloadReport(r.id, "pdf")}
+                  onClick={() => downloadReport(r.id, "pdf", r.filename)}
                   disabled={!!downloading}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg transition-all"
                 >
@@ -101,7 +101,7 @@ export default function ReportsPage() {
                   PDF
                 </button>
                 <button
-                  onClick={() => downloadReport(r.id, "md")}
+                  onClick={() => downloadReport(r.id, "md", r.filename)}
                   disabled={!!downloading}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-700 hover:border-gray-600 text-gray-400 hover:text-white rounded-lg transition-all"
                 >
@@ -109,7 +109,7 @@ export default function ReportsPage() {
                   MD
                 </button>
                 <button
-                  onClick={() => downloadBoth(r.id)}
+                  onClick={() => downloadBoth(r.id, r.filename)}
                   disabled={!!downloading}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-emerald-700/50 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50 rounded-lg transition-all"
                 >
