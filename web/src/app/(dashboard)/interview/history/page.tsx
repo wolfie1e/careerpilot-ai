@@ -2,9 +2,10 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
+import { downloadCsv } from "@/lib/export-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 import { DIFFICULTY_LEVELS, INTERVIEW_TYPES } from "@/lib/constants";
 
@@ -39,6 +40,19 @@ export default function InterviewHistoryPage() {
     setStatus("");
   }
 
+  function exportSessions() {
+    downloadCsv("careerpilot-interview-history.csv", sessions.map((session) => ({
+      role: session.role_title,
+      difficulty: session.difficulty,
+      type: session.interview_type,
+      mode: session.session_mode,
+      status: session.status,
+      score: session.overall_score ?? "",
+      questions: session.question_count,
+      created_at: session.created_at,
+    })));
+  }
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
@@ -59,6 +73,12 @@ export default function InterviewHistoryPage() {
       <div>
         <h2 className="text-xl font-semibold text-white">Interview History</h2>
         <p className="text-sm text-gray-400 mt-1">{sessions.length} session{sessions.length !== 1 ? "s" : ""} total</p>
+        {sessions.length > 0 && (
+          <button onClick={exportSessions} className="mt-3 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </button>
+        )}
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
