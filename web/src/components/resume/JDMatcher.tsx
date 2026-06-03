@@ -12,6 +12,11 @@ const PROGRESS_STEPS = [
   "Matching skills and computing semantic similarity…",
   "Generating learning roadmap…",
 ];
+const MIN_JD_WORDS = 40;
+
+function countWords(text: string) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
 
 function MatchingProgress() {
   const [step, setStep] = useState(0);
@@ -78,9 +83,12 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MatchResult | null>(null);
   const [expandedRoadmap, setExpandedRoadmap] = useState<string | null>(null);
+  const jdWordCount = countWords(jdText);
+  const jdReady = jdWordCount >= MIN_JD_WORDS;
 
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
+    if (!jdReady) { toast.error(`Add at least ${MIN_JD_WORDS} words for a reliable match`); return; }
     setLoading(true);
     try {
       const data = await api.post<MatchResult>("/resume/matcher", {
@@ -116,9 +124,15 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           rows={8}
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
         />
+        <div className="flex items-center justify-between text-xs">
+          <span className={jdReady ? "text-emerald-400" : "text-amber-400"}>
+            {jdWordCount} word{jdWordCount === 1 ? "" : "s"}
+          </span>
+          {!jdReady && <span className="text-gray-500">Minimum {MIN_JD_WORDS} words recommended</span>}
+        </div>
         <button
           onClick={handleMatch}
-          disabled={loading || !jdText.trim()}
+          disabled={loading || !jdReady}
           className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl transition-all text-sm"
         >
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Analyzing…</> : <><Target className="w-4 h-4" />Match Resume to JD</>}
