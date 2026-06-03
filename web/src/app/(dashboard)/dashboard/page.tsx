@@ -7,6 +7,7 @@ import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, Check
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { api } from "@/lib/api-client";
 import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 
@@ -63,9 +64,7 @@ export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [onboardingDismissed, setOnboardingDismissed] = useState(
-    () => typeof window !== "undefined" && localStorage.getItem(ONBOARDING_KEY) === "true"
-  );
+  const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(ONBOARDING_KEY, false);
 
   useEffect(() => {
     Promise.all([
@@ -77,10 +76,6 @@ export default function DashboardPage() {
         setAnalytics(analyticsData);
         setResumes(resumeData);
         setSessions(sessionData);
-        // Show onboarding if no data and not dismissed
-        if (resumeData.length === 0 && sessionData.length === 0) {
-          setOnboardingDismissed(localStorage.getItem(ONBOARDING_KEY) === "true");
-        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -106,7 +101,6 @@ export default function DashboardPage() {
         : { href: "/analytics", label: "Review progress", desc: "Compare score trends and choose your next focus area." };
 
   function dismissOnboarding() {
-    localStorage.setItem(ONBOARDING_KEY, "true");
     setOnboardingDismissed(true);
   }
 
