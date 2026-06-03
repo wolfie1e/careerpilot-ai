@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Mic, Clock, ChevronRight, Loader2 } from "lucide-react";
+import { Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
+import { DIFFICULTY_LEVELS, INTERVIEW_TYPES } from "@/lib/constants";
 
 interface Session {
   id: string;
@@ -22,19 +23,69 @@ interface Session {
 export default function InterviewHistoryPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [interviewType, setInterviewType] = useState("");
+  const [sessionMode, setSessionMode] = useState("");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
-    api.get<{ sessions: Session[] }>("/interview/history")
+    const params = new URLSearchParams();
+    if (search.trim()) params.set("search", search.trim());
+    if (difficulty) params.set("difficulty", difficulty);
+    if (interviewType) params.set("interview_type", interviewType);
+    if (sessionMode) params.set("session_mode", sessionMode);
+    if (status) params.set("status", status);
+
+    setLoading(true);
+    api.get<{ sessions: Session[] }>(`/interview/history${params.size ? `?${params}` : ""}`)
       .then((d) => setSessions(d.sessions || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [difficulty, interviewType, search, sessionMode, status]);
 
   return (
     <div className="max-w-3xl space-y-5">
       <div>
         <h2 className="text-xl font-semibold text-white">Interview History</h2>
         <p className="text-sm text-gray-400 mt-1">{sessions.length} session{sessions.length !== 1 ? "s" : ""} total</p>
+      </div>
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+        <div className="mb-3 flex items-center gap-2 text-sm font-medium text-white">
+          <SlidersHorizontal className="h-4 w-4 text-blue-400" />
+          Filter sessions
+        </div>
+        <div className="grid gap-3 md:grid-cols-5">
+          <label className="relative md:col-span-2">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search roles..."
+              className="w-full rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+            />
+          </label>
+          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+            <option value="">All difficulties</option>
+            {DIFFICULTY_LEVELS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
+          </select>
+          <select value={interviewType} onChange={(e) => setInterviewType(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+            <option value="">All types</option>
+            {INTERVIEW_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+          <select value={sessionMode} onChange={(e) => setSessionMode(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+            <option value="">Any mode</option>
+            <option value="text">Text</option>
+            <option value="voice">Voice</option>
+          </select>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-5">
+            <option value="">Any status</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="abandoned">Abandoned</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
