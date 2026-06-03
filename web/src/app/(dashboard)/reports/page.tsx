@@ -55,6 +55,11 @@ export default function ReportsPage() {
     }
   }
 
+  async function downloadBoth(resumeId: string) {
+    await downloadReport(resumeId, "pdf");
+    await downloadReport(resumeId, "md");
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
       <div>
@@ -102,6 +107,13 @@ export default function ReportsPage() {
                 >
                   {downloading === `${r.id}-md` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
                   MD
+                </button>
+                <button
+                  onClick={() => downloadBoth(r.id)}
+                  disabled={!!downloading}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-emerald-700/50 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50 rounded-lg transition-all"
+                >
+                  Both
                 </button>
               </div>
             </div>
