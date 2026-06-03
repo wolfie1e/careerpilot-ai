@@ -5,6 +5,7 @@ import { Download, FileText, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { formatBytes } from "@/lib/utils";
 
 interface Resume {
@@ -18,6 +19,12 @@ export default function ReportsPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [pinnedResumeId] = useLocalStorage<string | null>("careerpilot_pinned_resume", null);
+  const orderedResumes = [...resumes].sort((a, b) => {
+    if (a.id === pinnedResumeId) return -1;
+    if (b.id === pinnedResumeId) return 1;
+    return 0;
+  });
 
   useEffect(() => {
     api.get<Resume[]>("/resume")
@@ -69,7 +76,7 @@ export default function ReportsPage() {
         />
       ) : (
         <div className="divide-y divide-gray-800 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-          {resumes.map((r) => (
+          {orderedResumes.map((r) => (
             <div key={r.id} className="flex items-center gap-4 px-5 py-4">
               <FileText className="w-8 h-8 text-blue-400 shrink-0" />
               <div className="flex-1 min-w-0">
