@@ -77,3 +77,13 @@ export function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen) + "...";
 }
+
+export function safeFilename(name: string): string {
+  return name
+    .replace(/\.[^/.]+$/, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "careerpilot-report";
+}
