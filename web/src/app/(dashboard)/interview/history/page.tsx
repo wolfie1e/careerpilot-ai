@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
@@ -28,10 +28,11 @@ export default function InterviewHistoryPage() {
   const [interviewType, setInterviewType] = useState("");
   const [sessionMode, setSessionMode] = useState("");
   const [status, setStatus] = useState("");
+  const deferredSearch = useDeferredValue(search);
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (search.trim()) params.set("search", search.trim());
+    if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
     if (difficulty) params.set("difficulty", difficulty);
     if (interviewType) params.set("interview_type", interviewType);
     if (sessionMode) params.set("session_mode", sessionMode);
@@ -42,7 +43,7 @@ export default function InterviewHistoryPage() {
       .then((d) => setSessions(d.sessions || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [difficulty, interviewType, search, sessionMode, status]);
+  }, [deferredSearch, difficulty, interviewType, sessionMode, status]);
 
   return (
     <div className="max-w-3xl space-y-5">
