@@ -46,3 +46,13 @@ export const passwordSchema = z
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+
+export const interviewSetupSchema = z.object({
+  role_title: z.string().trim().min(2, "Enter a target role").max(120, "Role is too long"),
+  difficulty: z.enum(["beginner", "intermediate", "advanced", "expert"]),
+  interview_type: z.enum(["behavioral", "technical", "hr", "mixed", "system_design"]),
+  session_mode: z.enum(["text", "voice"]),
+  question_count: z.number().int().min(1).max(10),
+});
+
+export type InterviewSetupFormData = z.infer<typeof interviewSetupSchema>;
