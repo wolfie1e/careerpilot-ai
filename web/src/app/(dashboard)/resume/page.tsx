@@ -46,6 +46,7 @@ interface ResumeListItem {
 }
 
 type Tab = "analysis" | "ats" | "jd" | "rewrite" | "improve" | "projects";
+type SuggestionPriority = "all" | "high" | "medium" | "low";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "analysis", label: "Analysis" },
@@ -65,6 +66,12 @@ function deltaTone(delta: string) {
   if (delta.startsWith("+")) return "text-emerald-400";
   if (delta.startsWith("-")) return "text-rose-400";
   return "text-gray-500";
+}
+
+function suggestionBadgeClass(priority: string) {
+  if (priority === "high") return "bg-rose-500/20 text-rose-400";
+  if (priority === "medium") return "bg-amber-500/20 text-amber-400";
+  return "bg-blue-500/20 text-blue-400";
 }
 
 export default function ResumePage() {
@@ -87,6 +94,7 @@ export default function ResumePage() {
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisData[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("analysis");
   const [lastMatch, setLastMatch] = useState<MatchResult | null>(null);
+  const [suggestionPriority, setSuggestionPriority] = useState<SuggestionPriority>("all");
 
   useEffect(() => {
     const tab = new URLSearchParams(window.location.search).get("tab");
@@ -166,6 +174,9 @@ export default function ResumePage() {
       ?? (analysisHistory.length > 1 ? analysisHistory[1] : null)
     : null;
   const overallDelta = analysis && previousAnalysis ? formatDelta(analysis.overall_score, previousAnalysis.overall_score) : null;
+  const visibleSuggestions = analysis?.suggestions?.filter((suggestion) => (
+    suggestionPriority === "all" || suggestion.priority === suggestionPriority
+  )) ?? [];
 
   function handleUploaded(r: ResumeData) {
     setResume(r);
@@ -323,18 +334,32 @@ export default function ResumePage() {
                   <ul className="space-y-1.5">{analysis.weaknesses?.map((w, i) => <li key={i} className="text-sm text-gray-300 flex gap-2"><span className="text-amber-400 mt-0.5">•</span>{w}</li>)}</ul>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                  <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-3"><Lightbulb className="w-4 h-4" />Priority Improvements</h4>
+                  <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2"><Lightbulb className="w-4 h-4" />Priority Improvements</h4>
+                    <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
+                      {(["all", "high", "medium", "low"] as SuggestionPriority[]).map((priority) => (
+                        <button
+                          key={priority}
+                          onClick={() => setSuggestionPriority(priority)}
+                          className={cn(
+                            "rounded-md px-2 py-1 text-xs font-medium capitalize transition",
+                            suggestionPriority === priority ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"
+                          )}
+                        >
+                          {priority}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    {analysis.suggestions?.filter((s) => s.priority === "high").map((s, i) => (
+                    {visibleSuggestions.map((s, i) => (
                       <div key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                        <span className="shrink-0 px-1.5 py-0.5 text-xs bg-rose-500/20 text-rose-400 rounded font-medium">HIGH</span>{s.message}
+                        <span className={cn("shrink-0 px-1.5 py-0.5 text-xs rounded font-medium uppercase", suggestionBadgeClass(s.priority))}>{s.priority}</span>{s.message}
                       </div>
                     ))}
-                    {analysis.suggestions?.filter((s) => s.priority !== "high").slice(0, 3).map((s, i) => (
-                      <div key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                        <span className="shrink-0 px-1.5 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded font-medium capitalize">{s.priority}</span>{s.message}
-                      </div>
-                    ))}
+                    {visibleSuggestions.length === 0 && (
+                      <div className="text-sm text-gray-500">No suggestions in this priority.</div>
+                    )}
                   </div>
                 </div>
               </div>
