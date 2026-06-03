@@ -12,7 +12,7 @@ import ProjectRecommendations from "@/components/resume/ProjectRecommendations";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { cn, scoreColor, formatRelativeTime, formatBytes } from "@/lib/utils";
+import { cn, scoreColor, formatRelativeTime, formatBytes, formatDelta } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface ResumeData {
@@ -59,6 +59,12 @@ const TAB_IDS = TABS.map((tab) => tab.id);
 
 function isResumeTab(value: string | null): value is Tab {
   return TAB_IDS.includes(value as Tab);
+}
+
+function deltaTone(delta: string) {
+  if (delta.startsWith("+")) return "text-emerald-400";
+  if (delta.startsWith("-")) return "text-rose-400";
+  return "text-gray-500";
 }
 
 export default function ResumePage() {
@@ -155,6 +161,11 @@ export default function ResumePage() {
     if (b.id === pinnedResumeId) return 1;
     return 0;
   });
+  const previousAnalysis = analysis
+    ? analysisHistory.find((item) => analysis.created_at && item.created_at && item.created_at < analysis.created_at)
+      ?? (analysisHistory.length > 1 ? analysisHistory[1] : null)
+    : null;
+  const overallDelta = analysis && previousAnalysis ? formatDelta(analysis.overall_score, previousAnalysis.overall_score) : null;
 
   function handleUploaded(r: ResumeData) {
     setResume(r);
@@ -281,13 +292,25 @@ export default function ResumePage() {
                   {analysis.overall_score}
                 </div>
                 <div className="text-sm text-gray-400">Resume Score</div>
+                {overallDelta && (
+                  <div className={cn("mt-1 text-xs font-medium", deltaTone(overallDelta))}>
+                    {overallDelta} since last scan
+                  </div>
+                )}
                 <div className="mt-4 space-y-2">
-                  {Object.entries(analysis.section_scores || {}).map(([sec, score]) => (
-                    <div key={sec} className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500 capitalize">{sec}</span>
-                      <span className={cn("font-medium", scoreColor(score))}>{score}</span>
-                    </div>
-                  ))}
+                  {Object.entries(analysis.section_scores || {}).map(([sec, score]) => {
+                    const previousScore = previousAnalysis?.section_scores?.[sec] ?? null;
+                    const sectionDelta = previousScore !== null ? formatDelta(score, previousScore) : null;
+                    return (
+                      <div key={sec} className="flex items-center justify-between gap-3 text-xs">
+                        <span className="text-gray-500 capitalize">{sec}</span>
+                        <span className="flex items-center gap-2">
+                          {sectionDelta && <span className={cn("font-medium", deltaTone(sectionDelta))}>{sectionDelta}</span>}
+                          <span className={cn("font-medium", scoreColor(score))}>{score}</span>
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className="lg:col-span-2 space-y-4">
