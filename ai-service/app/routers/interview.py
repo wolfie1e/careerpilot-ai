@@ -207,20 +207,37 @@ async def submit_answer(
 @router.get("/history")
 async def get_history(
     page: int = 1,
+    difficulty: str | None = None,
+    interview_type: str | None = None,
+    session_mode: str | None = None,
+    status: str | None = None,
+    search: str | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     offset = (page - 1) * 20
+    filters = [InterviewSession.user_id == current_user.id]
+    if difficulty:
+        filters.append(InterviewSession.difficulty == difficulty)
+    if interview_type:
+        filters.append(InterviewSession.interview_type == interview_type)
+    if session_mode:
+        filters.append(InterviewSession.session_mode == session_mode)
+    if status:
+        filters.append(InterviewSession.status == status)
+    if search:
+        filters.append(InterviewSession.role_title.ilike(f"%{search}%"))
+
     res = await db.execute(
         select(InterviewSession)
-        .where(InterviewSession.user_id == current_user.id)
+        .where(*filters)
         .order_by(InterviewSession.created_at.desc())
         .limit(20).offset(offset)
     )
     sessions = res.scalars().all()
 
     count_res = await db.execute(
-        select(func.count()).where(InterviewSession.user_id == current_user.id)
+        select(func.count()).where(*filters)
     )
     total = count_res.scalar() or 0
 
