@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2 } from "lucide-react";
+import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -12,6 +12,7 @@ import ProjectRecommendations from "@/components/resume/ProjectRecommendations";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor, formatRelativeTime, formatBytes } from "@/lib/utils";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface ResumeData {
   id: string;
@@ -60,6 +61,7 @@ export default function ResumePage() {
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
+  const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>("careerpilot_pinned_resume", null);
 
   useEffect(() => {
     api.get<ResumeListItem[]>("/resume")
@@ -159,8 +161,16 @@ export default function ResumePage() {
           <div className="flex flex-wrap gap-2">
             {pastResumes.map((r) => (
               <div key={r.id} className={cn("flex items-center rounded-xl border transition-all",
-                resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"
+                resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600",
+                pinnedResumeId === r.id && "border-amber-500/50"
               )}>
+                <button
+                  onClick={() => setPinnedResumeId(pinnedResumeId === r.id ? null : r.id)}
+                  className="pl-2 text-gray-600 transition hover:text-amber-400"
+                  title={pinnedResumeId === r.id ? "Unpin primary resume" : "Pin primary resume"}
+                >
+                  <Star className={cn("h-3.5 w-3.5", pinnedResumeId === r.id && "fill-amber-400 text-amber-400")} />
+                </button>
                 <button onClick={() => selectPastResume(r)} className="flex items-center gap-2 px-3 py-2 text-sm">
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate max-w-[140px]">{r.filename}</span>
