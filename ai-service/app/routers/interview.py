@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -19,11 +19,11 @@ router = APIRouter()
 
 
 class CreateSessionRequest(BaseModel):
-    role_title: str
+    role_title: str = Field(min_length=2, max_length=120)
     difficulty: str = "intermediate"
     interview_type: str = "behavioral"
     session_mode: str = "text"
-    question_count: int = 5
+    question_count: int = Field(default=5, ge=1, le=10)
     resume_id: str | None = None
     jd_id: str | None = None
 
