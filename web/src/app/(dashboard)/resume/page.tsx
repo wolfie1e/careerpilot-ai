@@ -179,6 +179,7 @@ export default function ResumePage() {
                 <button onClick={() => selectPastResume(r)} className="flex items-center gap-2 px-3 py-2 text-sm">
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   <span className="truncate max-w-[140px]">{r.filename}</span>
+                  {pinnedResumeId === r.id && <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">Primary</span>}
                   <span className="text-xs text-gray-600">{formatRelativeTime(r.created_at)} · {formatBytes(r.file_size)}</span>
                 </button>
                 <button
