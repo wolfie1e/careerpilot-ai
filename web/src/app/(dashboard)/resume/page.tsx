@@ -55,6 +55,11 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "improve", label: "Improve Section" },
   { id: "projects", label: "Projects" },
 ];
+const TAB_IDS = TABS.map((tab) => tab.id);
+
+function isResumeTab(value: string | null): value is Tab {
+  return TAB_IDS.includes(value as Tab);
+}
 
 export default function ResumePage() {
   const [pastResumes, setPastResumes] = useState<ResumeListItem[]>([]);
@@ -77,6 +82,18 @@ export default function ResumePage() {
   const [activeTab, setActiveTab] = useState<Tab>("analysis");
   const [lastMatch, setLastMatch] = useState<MatchResult | null>(null);
 
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (isResumeTab(tab)) setActiveTab(tab);
+  }, []);
+
+  function setResumeTab(tab: Tab) {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+
   async function loadAnalysisHistory(resumeId: string) {
     try {
       const data = await api.get<AnalysisData[]>(`/resume/${resumeId}/analyses`);
@@ -89,10 +106,11 @@ export default function ResumePage() {
   async function selectPastResume(r: ResumeListItem) {
     setResume({ id: r.id, filename: r.filename, parsed_sections: {} });
     setAnalysis(null);
-    setActiveTab("analysis");
     const history = await loadAnalysisHistory(r.id);
     if (history.length > 0) {
       setAnalysis(history[0]);
+    } else if (activeTab === "ats") {
+      setResumeTab("analysis");
     }
   }
 
@@ -159,7 +177,7 @@ export default function ResumePage() {
             <h3 className="text-sm font-medium text-white flex items-center gap-2">
               <FileText className="w-4 h-4 text-blue-400" />My Resumes
             </h3>
-            <button onClick={() => { setShowDropzone(true); setResume(null); setAnalysis(null); }}
+            <button onClick={() => { setShowDropzone(true); setResume(null); setAnalysis(null); setResumeTab("analysis"); }}
               className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors">
               <Plus className="w-3 h-3" />Upload New
             </button>
@@ -228,7 +246,7 @@ export default function ResumePage() {
             {TABS.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => setResumeTab(tab.id)}
                 disabled={["analysis", "ats"].includes(tab.id) && !analysis}
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-lg transition-all",
@@ -240,7 +258,7 @@ export default function ResumePage() {
             ))}
           </div>
 
-          {activeTab === "analysis" && !analysis && (
+          {["analysis", "ats"].includes(activeTab) && !analysis && (
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
               <Zap className="w-8 h-8 text-blue-400 mx-auto mb-3" />
               <h3 className="text-sm font-semibold text-white mb-1">No analysis yet</h3>

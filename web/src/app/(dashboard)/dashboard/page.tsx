@@ -46,7 +46,7 @@ const ONBOARDING_STEPS = [
 
 const quickActions = [
   { href: "/resume", icon: Upload, label: "Upload Resume", desc: "Add or update your resume", color: "text-blue-400" },
-  { href: "/resume", icon: Target, label: "Match a Job Description", desc: "Compare with a JD", color: "text-violet-400" },
+  { href: "/resume?tab=jd", icon: Target, label: "Match a Job Description", desc: "Compare with a JD", color: "text-violet-400" },
   { href: "/interview/setup", icon: Mic, label: "Start Mock Interview", desc: "Practice your answers", color: "text-emerald-400" },
   { href: "/analytics", icon: BarChart2, label: "View Analytics", desc: "Track your progress", color: "text-amber-400" },
 ];
