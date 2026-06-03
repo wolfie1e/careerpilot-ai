@@ -85,6 +85,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [expandedRoadmap, setExpandedRoadmap] = useState<string | null>(null);
   const jdWordCount = countWords(jdText);
   const jdReady = jdWordCount >= MIN_JD_WORDS;
+  const readingMinutes = Math.max(1, Math.ceil(jdWordCount / 180));
 
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
@@ -124,10 +125,25 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           rows={8}
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
         />
-        <div className="flex items-center justify-between text-xs">
-          <span className={jdReady ? "text-emerald-400" : "text-amber-400"}>
-            {jdWordCount} word{jdWordCount === 1 ? "" : "s"}
-          </span>
+        <div className="grid gap-2 text-xs sm:grid-cols-3">
+          <div className="rounded-lg border border-gray-800 bg-gray-950/60 px-3 py-2">
+            <span className="block text-gray-500">Length</span>
+            <span className={jdReady ? "font-semibold text-emerald-400" : "font-semibold text-amber-400"}>
+              {jdWordCount} word{jdWordCount === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-gray-950/60 px-3 py-2">
+            <span className="block text-gray-500">Review size</span>
+            <span className="font-semibold text-gray-300">{readingMinutes} min read</span>
+          </div>
+          <div className="rounded-lg border border-gray-800 bg-gray-950/60 px-3 py-2">
+            <span className="block text-gray-500">Title</span>
+            <span className={jdTitle.trim() ? "font-semibold text-gray-300" : "font-semibold text-gray-600"}>
+              {jdTitle.trim() ? "Included" : "Optional"}
+            </span>
+          </div>
+        </div>
+        <div className="flex justify-end text-xs">
           {!jdReady && <span className="text-gray-500">Minimum {MIN_JD_WORDS} words recommended</span>}
         </div>
         <button
