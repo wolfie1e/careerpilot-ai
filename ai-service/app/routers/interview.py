@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -12,20 +11,11 @@ from app.models.resume import Resume
 from app.models.interview_session import InterviewSession
 from app.models.interview_question import InterviewQuestion
 from app.models.interview_answer import InterviewAnswer
+from app.schemas.interview import AnswerRequest, CreateSessionRequest
 from app.services.interview_generator import generate_questions
 from app.services.answer_evaluator import evaluate_answer, generate_session_summary
 
 router = APIRouter()
-
-
-class CreateSessionRequest(BaseModel):
-    role_title: str = Field(min_length=2, max_length=120)
-    difficulty: str = "intermediate"
-    interview_type: str = "behavioral"
-    session_mode: str = "text"
-    question_count: int = Field(default=5, ge=1, le=10)
-    resume_id: str | None = None
-    jd_id: str | None = None
 
 
 @router.post("/sessions", status_code=201)
@@ -145,11 +135,6 @@ async def get_session(
             for q in questions
         ],
     }
-
-
-class AnswerRequest(BaseModel):
-    question_id: str
-    answer_text: str
 
 
 @router.post("/sessions/{session_id}/answer")
