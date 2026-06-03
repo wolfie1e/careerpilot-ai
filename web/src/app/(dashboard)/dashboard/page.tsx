@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
@@ -58,6 +58,26 @@ function getGreeting() {
   return "evening";
 }
 
+function previousDateKey(dateKey: string) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function getPracticeStreak(sessions: Session[]) {
+  const sessionDays = [...new Set(sessions.map((session) => session.created_at.slice(0, 10)))].sort().reverse();
+  if (sessionDays.length === 0) return 0;
+
+  let expectedDay = sessionDays[0];
+  let streak = 0;
+  for (const day of sessionDays) {
+    if (day !== expectedDay) break;
+    streak += 1;
+    expectedDay = previousDateKey(expectedDay);
+  }
+  return streak;
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -93,6 +113,7 @@ export default function DashboardPage() {
   const previousAts = analytics?.ats_trend?.at(-2)?.score ?? null;
   const latestMatch = analytics?.match_trend?.at(-1)?.score ?? null;
   const bestMatch = analytics?.match_trend?.length ? Math.max(...analytics.match_trend.map((item) => item.score)) : null;
+  const practiceStreak = getPracticeStreak(sessions);
   const atsDelta = formatDelta(latestAts, previousAts);
   const atsTrend = atsDelta.startsWith("+") ? "up" : atsDelta.startsWith("-") ? "down" : "neutral";
   const nextStep =
@@ -177,9 +198,9 @@ export default function DashboardPage() {
       </AnimatePresence>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {loading ? (
-          Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)
+          Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
           <>
             <StatCard
@@ -208,6 +229,11 @@ export default function DashboardPage() {
               title="Avg Score" icon={TrendingUp} color="rose"
               value={analytics?.avg_interview_score ? `${analytics.avg_interview_score}/100` : "—"}
               subtitle="Interview avg"
+            />
+            <StatCard
+              title="Streak" icon={Flame} color="amber"
+              value={practiceStreak}
+              subtitle={practiceStreak === 1 ? "practice day" : "practice days"}
             />
           </>
         )}
