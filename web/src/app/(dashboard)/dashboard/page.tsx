@@ -20,6 +20,7 @@ interface AnalyticsData {
   readiness_score: number;
   ats_trend: Array<{ date: string; score: number }>;
   interview_trend: Array<{ date: string; score: number }>;
+  match_trend: Array<{ date: string; score: number }>;
 }
 
 interface Resume {
@@ -90,6 +91,8 @@ export default function DashboardPage() {
   const showOnboarding = !onboardingDismissed && stepsCompleted < 4;
   const latestAts = analytics?.ats_trend?.at(-1)?.score ?? null;
   const previousAts = analytics?.ats_trend?.at(-2)?.score ?? null;
+  const latestMatch = analytics?.match_trend?.at(-1)?.score ?? null;
+  const bestMatch = analytics?.match_trend?.length ? Math.max(...analytics.match_trend.map((item) => item.score)) : null;
   const atsDelta = formatDelta(latestAts, previousAts);
   const atsTrend = atsDelta.startsWith("+") ? "up" : atsDelta.startsWith("-") ? "down" : "neutral";
   const nextStep =
@@ -188,8 +191,8 @@ export default function DashboardPage() {
             />
             <StatCard
               title="Job Match" icon={Target} color="violet"
-              value={analytics?.ats_trend?.length ? "View →" : "—"}
-              subtitle="Best match score"
+              value={bestMatch !== null ? `${bestMatch}/100` : "—"}
+              subtitle={latestMatch !== null ? `Latest ${latestMatch}/100` : "No JD match yet"}
             />
             <StatCard
               title="Resumes" icon={FileText} color="emerald"
