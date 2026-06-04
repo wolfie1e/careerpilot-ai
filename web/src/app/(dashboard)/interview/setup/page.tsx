@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
+import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,11 @@ export default function InterviewSetupPage() {
   });
   const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];
   const estimatedMinutes = form.question_count * (form.session_mode === "voice" ? 4 : 3);
+  const sessionPlan = [
+    form.role_title.trim() ? form.role_title.trim() : "Choose a target role",
+    `${form.question_count} ${form.interview_type.replace("_", " ")} questions`,
+    `${form.session_mode} answers · ${estimatedMinutes}-${estimatedMinutes + 5} min`,
+  ];
 
   async function handleStart() {
     const parsed = interviewSetupSchema.safeParse(form);
@@ -214,6 +219,18 @@ export default function InterviewSetupPage() {
                 <div className="text-xs opacity-60">Record your answers</div>
               </div>
             </button>
+          </div>
+        </div>
+
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <h3 className="mb-3 text-sm font-semibold text-white">Session Plan</h3>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {sessionPlan.map((item) => (
+              <div key={item} className="flex items-center gap-2 rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-xs text-gray-300">
+                <CheckCircle className={cn("h-3.5 w-3.5 shrink-0", form.role_title.trim() ? "text-emerald-400" : "text-gray-600")} />
+                <span className="truncate">{item}</span>
+              </div>
+            ))}
           </div>
         </div>
 
