@@ -29,15 +29,22 @@ export default function InterviewHistoryPage() {
   const [interviewType, setInterviewType] = useState("");
   const [sessionMode, setSessionMode] = useState("");
   const [status, setStatus] = useState("");
+  const [scoreFilter, setScoreFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const deferredSearch = useDeferredValue(search);
-  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status);
+  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status || scoreFilter);
   const sortedSessions = [...sessions].sort((a, b) => {
     if (sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
     if (sortBy === "score_desc") return (b.overall_score ?? -1) - (a.overall_score ?? -1);
     if (sortBy === "score_asc") return (a.overall_score ?? 101) - (b.overall_score ?? 101);
     if (sortBy === "role") return a.role_title.localeCompare(b.role_title);
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+  const visibleSessions = sortedSessions.filter((session) => {
+    if (scoreFilter === "strong") return (session.overall_score ?? 0) >= 75;
+    if (scoreFilter === "needs_focus") return session.overall_score !== null && session.overall_score < 75;
+    if (scoreFilter === "unscored") return session.overall_score === null;
+    return true;
   });
 
   function clearFilters() {
@@ -46,10 +53,11 @@ export default function InterviewHistoryPage() {
     setInterviewType("");
     setSessionMode("");
     setStatus("");
+    setScoreFilter("");
   }
 
   function exportSessions() {
-    downloadCsv("careerpilot-interview-history.csv", sortedSessions.map((session) => ({
+    downloadCsv("careerpilot-interview-history.csv", visibleSessions.map((session) => ({
       role: session.role_title,
       difficulty: session.difficulty,
       type: session.interview_type,
@@ -80,7 +88,9 @@ export default function InterviewHistoryPage() {
     <div className="max-w-3xl space-y-5">
       <div>
         <h2 className="text-xl font-semibold text-white">Interview History</h2>
-        <p className="text-sm text-gray-400 mt-1">{sessions.length} session{sessions.length !== 1 ? "s" : ""} total</p>
+        <p className="text-sm text-gray-400 mt-1">
+          {visibleSessions.length} of {sessions.length} session{sessions.length !== 1 ? "s" : ""}
+        </p>
         {sessions.length > 0 && (
           <button onClick={exportSessions} className="mt-3 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
             <Download className="h-4 w-4" />
@@ -99,7 +109,7 @@ export default function InterviewHistoryPage() {
             </button>
           )}
         </div>
-        <div className="grid gap-3 md:grid-cols-5">
+        <div className="grid gap-3 md:grid-cols-6">
           <label className="relative md:col-span-2">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
             <input
@@ -121,9 +131,15 @@ export default function InterviewHistoryPage() {
             <option value="">Any mode</option>
             {INTERVIEW_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-2">
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">Any status</option>
             {INTERVIEW_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+          <select value={scoreFilter} onChange={(e) => setScoreFilter(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-3">
+            <option value="">Any score</option>
+            <option value="strong">75+ strong</option>
+            <option value="needs_focus">Below 75</option>
+            <option value="unscored">Unscored</option>
           </select>
           <label className="relative md:col-span-3">
             <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
@@ -142,17 +158,23 @@ export default function InterviewHistoryPage() {
         <div className="flex items-center justify-center h-32">
           <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
         </div>
-      ) : sessions.length === 0 ? (
+      ) : visibleSessions.length === 0 ? (
         <div className="bg-gray-900 border border-gray-800 border-dashed rounded-2xl p-12 text-center">
           <Clock className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-gray-400 mb-4">No interview sessions yet</p>
-          <Link href="/interview/setup" className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg">
-            Start your first interview
-          </Link>
+          <p className="text-sm text-gray-400 mb-4">{hasFilters ? "No sessions match these filters" : "No interview sessions yet"}</p>
+          {hasFilters ? (
+            <button onClick={clearFilters} className="px-4 py-2 bg-gray-800 text-white text-sm font-semibold rounded-lg">
+              Clear filters
+            </button>
+          ) : (
+            <Link href="/interview/setup" className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg">
+              Start your first interview
+            </Link>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
-          {sortedSessions.map((s, i) => (
+          {visibleSessions.map((s, i) => (
             <motion.div
               key={s.id}
               initial={{ opacity: 0, y: 8 }}
