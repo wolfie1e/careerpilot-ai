@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2 } from "lucide-react";
+import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2, History } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -16,6 +16,7 @@ const PROGRESS_STEPS = [
 ];
 const MIN_JD_WORDS = 40;
 const MAX_SAVED_JDS = 5;
+const MAX_RECENT_MATCHES = 5;
 
 function countWords(text: string) {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -87,6 +88,16 @@ interface SavedJobDescription {
   updated_at: string;
 }
 
+interface RecentMatchSummary {
+  id: string;
+  resume_id: string;
+  title: string;
+  overall_score: number;
+  matched_count: number;
+  missing_count: number;
+  created_at: string;
+}
+
 export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [jdText, setJdText] = useState("");
   const [jdTitle, setJdTitle] = useState("");
@@ -94,9 +105,11 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [result, setResult] = useState<MatchResult | null>(null);
   const [expandedRoadmap, setExpandedRoadmap] = useState<string | null>(null);
   const [savedJds, setSavedJds] = useLocalStorage<SavedJobDescription[]>(LOCAL_STORAGE_KEYS.savedJobDescriptions, []);
+  const [recentMatches, setRecentMatches] = useLocalStorage<RecentMatchSummary[]>(LOCAL_STORAGE_KEYS.recentMatches, []);
   const jdWordCount = countWords(jdText);
   const jdReady = jdWordCount >= MIN_JD_WORDS;
   const readingMinutes = Math.max(1, Math.ceil(jdWordCount / 180));
+  const recentMatchesForResume = recentMatches.filter((match) => match.resume_id === resumeId);
 
   function saveDraft() {
     if (!jdText.trim()) {
@@ -138,6 +151,18 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
       });
       setResult(data);
       onMatchResult?.(data);
+      setRecentMatches((prev) => [
+        {
+          id: data.match_id || `${Date.now()}`,
+          resume_id: resumeId,
+          title: jdTitle.trim() || "Untitled job description",
+          overall_score: data.overall_score,
+          matched_count: data.skills_matched.length,
+          missing_count: data.skills_missing.length,
+          created_at: new Date().toISOString(),
+        },
+        ...prev.filter((match) => match.id !== data.match_id),
+      ].slice(0, MAX_RECENT_MATCHES));
       toast.success("Match analysis complete!");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Matching failed");
@@ -225,6 +250,30 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {recentMatchesForResume.length > 0 && (
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
+            <History className="h-4 w-4 text-violet-400" />
+            Recent Match Results
+          </h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {recentMatchesForResume.map((match) => (
+              <div key={match.id} className="rounded-xl border border-gray-800 bg-gray-950/50 px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white">{match.title}</div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      {match.matched_count} matched · {match.missing_count} missing · {formatRelativeTime(match.created_at)}
+                    </div>
+                  </div>
+                  <div className={cn("shrink-0 text-sm font-bold", scoreColor(match.overall_score))}>{match.overall_score}%</div>
+                </div>
               </div>
             ))}
           </div>
