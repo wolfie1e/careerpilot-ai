@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv } from "@/lib/export-utils";
@@ -29,8 +29,16 @@ export default function InterviewHistoryPage() {
   const [interviewType, setInterviewType] = useState("");
   const [sessionMode, setSessionMode] = useState("");
   const [status, setStatus] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const deferredSearch = useDeferredValue(search);
   const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status);
+  const sortedSessions = [...sessions].sort((a, b) => {
+    if (sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    if (sortBy === "score_desc") return (b.overall_score ?? -1) - (a.overall_score ?? -1);
+    if (sortBy === "score_asc") return (a.overall_score ?? 101) - (b.overall_score ?? 101);
+    if (sortBy === "role") return a.role_title.localeCompare(b.role_title);
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   function clearFilters() {
     setSearch("");
@@ -41,7 +49,7 @@ export default function InterviewHistoryPage() {
   }
 
   function exportSessions() {
-    downloadCsv("careerpilot-interview-history.csv", sessions.map((session) => ({
+    downloadCsv("careerpilot-interview-history.csv", sortedSessions.map((session) => ({
       role: session.role_title,
       difficulty: session.difficulty,
       type: session.interview_type,
@@ -113,10 +121,20 @@ export default function InterviewHistoryPage() {
             <option value="">Any mode</option>
             {INTERVIEW_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-5">
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-2">
             <option value="">Any status</option>
             {INTERVIEW_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
+          <label className="relative md:col-span-3">
+            <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-full appearance-none rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="score_desc">Highest score</option>
+              <option value="score_asc">Lowest score</option>
+              <option value="role">Role A-Z</option>
+            </select>
+          </label>
         </div>
       </div>
 
@@ -134,7 +152,7 @@ export default function InterviewHistoryPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {sessions.map((s, i) => (
+          {sortedSessions.map((s, i) => (
             <motion.div
               key={s.id}
               initial={{ opacity: 0, y: 8 }}
