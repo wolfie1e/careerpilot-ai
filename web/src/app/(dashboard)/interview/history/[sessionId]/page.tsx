@@ -46,7 +46,7 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
   const { sessionId } = use(params);
   const [session, setSession] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   useEffect(() => {
     api.get<SessionData>(`/interview/sessions/${sessionId}`)
@@ -73,6 +73,14 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
   const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
   const bestScore = scores.length ? Math.max(...scores) : null;
   const worstScore = scores.length ? Math.min(...scores) : null;
+
+  function toggleExpanded(questionId: string) {
+    setExpandedIds((prev) => (
+      prev.includes(questionId)
+        ? prev.filter((id) => id !== questionId)
+        : [...prev, questionId]
+    ));
+  }
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -137,12 +145,25 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
 
       {/* Questions */}
       <div className="space-y-3">
-        {session.questions.map((q, i) => (
+        <div className="flex justify-end gap-2">
+          <button onClick={() => setExpandedIds(session.questions.map((q) => q.id))} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <ChevronDown className="h-3.5 w-3.5" />
+            Expand all
+          </button>
+          <button onClick={() => setExpandedIds([])} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <ChevronUp className="h-3.5 w-3.5" />
+            Collapse all
+          </button>
+        </div>
+
+        {session.questions.map((q, i) => {
+          const isExpanded = expandedIds.includes(q.id);
+          return (
           <motion.div key={q.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
             className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
             {/* Question header */}
             <button
-              onClick={() => setExpanded(expanded === q.id ? null : q.id)}
+              onClick={() => toggleExpanded(q.id)}
               className="w-full flex items-start gap-4 p-5 text-left hover:bg-gray-800/30 transition-colors"
             >
               <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -161,13 +182,13 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
                 ) : (
                   <span className="text-xs text-gray-600">Unanswered</span>
                 )}
-                {expanded === q.id ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
               </div>
             </button>
 
             {/* Answer detail */}
             <AnimatePresence>
-              {expanded === q.id && q.answer && (
+              {isExpanded && q.answer && (
                 <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden border-t border-gray-800">
                   <div className="p-5 space-y-4">
                     {/* Answer text */}
@@ -225,7 +246,8 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
               )}
             </AnimatePresence>
           </motion.div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
