@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronDown, ChevronUp, CheckCircle, AlertCircle, Lightbulb, Loader2, Trophy, Mic, MessageSquare } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { formatDate, scoreColor, cn } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface Answer {
   id: string;
@@ -42,6 +43,21 @@ interface SessionData {
   questions: Question[];
 }
 
+function formatRubricLabel(key: string) {
+  return key.replace(/_/g, " ");
+}
+
+function formatReviewSummary(session: SessionData, focusArea: string | null) {
+  return [
+    `Interview review: ${session.session.role_title}`,
+    `Overall score: ${session.session.overall_score ?? "Unscored"}`,
+    `Difficulty: ${session.session.difficulty}`,
+    `Type: ${session.session.interview_type.replace("_", " ")}`,
+    focusArea ? `Focus area: ${formatRubricLabel(focusArea)}` : null,
+    session.session.summary ? `Summary: ${session.session.summary}` : null,
+  ].filter(Boolean).join("\n");
+}
+
 export default function SessionDetailPage({ params }: { params: Promise<{ sessionId: string }> }) {
   const { sessionId } = use(params);
   const [session, setSession] = useState<SessionData | null>(null);
@@ -73,6 +89,21 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
   const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
   const bestScore = scores.length ? Math.max(...scores) : null;
   const worstScore = scores.length ? Math.min(...scores) : null;
+  const rubricAverages = Object.entries(
+    session.questions.reduce<Record<string, { total: number; count: number }>>((acc, question) => {
+      Object.entries(question.answer?.rubric_scores || {}).forEach(([key, value]) => {
+        acc[key] = acc[key] || { total: 0, count: 0 };
+        acc[key].total += value;
+        acc[key].count += 1;
+      });
+      return acc;
+    }, {})
+  ).map(([key, value]) => ({
+    key,
+    average: Math.round(value.total / value.count),
+  })).sort((a, b) => a.average - b.average);
+  const weakestRubric = rubricAverages[0] ?? null;
+  const strongestRubric = rubricAverages.at(-1) ?? null;
 
   function toggleExpanded(questionId: string) {
     setExpandedIds((prev) => (
@@ -108,14 +139,17 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
               <span>{formatDate(session.session.created_at)}</span>
             </div>
           </div>
-          {session.session.overall_score !== null && (
-            <div className="text-right shrink-0">
-              <div className={cn("text-3xl font-extrabold", scoreColor(session.session.overall_score))}>
-                {session.session.overall_score}
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            {session.session.overall_score !== null && (
+              <div className="text-right">
+                <div className={cn("text-3xl font-extrabold", scoreColor(session.session.overall_score))}>
+                  {session.session.overall_score}
+                </div>
+                <div className="text-xs text-gray-500">Overall</div>
               </div>
-              <div className="text-xs text-gray-500">Overall</div>
-            </div>
-          )}
+            )}
+            <CopyButton value={formatReviewSummary(session, weakestRubric?.key ?? null)} label="Copy review" />
+          </div>
         </div>
 
         {session.session.summary && (
@@ -139,6 +173,23 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
                 <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
               </div>
             ))}
+          </div>
+        )}
+
+        {weakestRubric && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-amber-400">Focus area</div>
+              <div className="mt-1 text-sm font-semibold capitalize text-white">{formatRubricLabel(weakestRubric.key)}</div>
+              <div className="mt-1 text-xs text-gray-500">Average {weakestRubric.average}/20 across answered questions</div>
+            </div>
+            {strongestRubric && (
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
+                <div className="text-xs font-semibold uppercase tracking-wide text-emerald-400">Strongest area</div>
+                <div className="mt-1 text-sm font-semibold capitalize text-white">{formatRubricLabel(strongestRubric.key)}</div>
+                <div className="mt-1 text-xs text-gray-500">Average {strongestRubric.average}/20 across answered questions</div>
+              </div>
+            )}
           </div>
         )}
       </motion.div>
