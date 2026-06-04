@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle } from "lucide-react";
 import { api } from "@/lib/api-client";
@@ -26,19 +26,13 @@ const MAX_RECENT_ROLES = 6;
 
 export default function InterviewSetupPage() {
   const router = useRouter();
-  const [savedSetup, setSavedSetup] = useLocalStorage(LOCAL_STORAGE_KEYS.interviewSetup, DEFAULT_INTERVIEW_SETUP);
   const [recentRoles, setRecentRoles] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.recentInterviewRoles, []);
-  const [form, setForm] = useState(DEFAULT_INTERVIEW_SETUP);
+  const [form, setForm] = useLocalStorage(LOCAL_STORAGE_KEYS.interviewSetup, DEFAULT_INTERVIEW_SETUP);
   const [loading, setLoading] = useState(false);
   const [roleError, setRoleError] = useState("");
 
-  useEffect(() => {
-    setForm(savedSetup);
-  }, [savedSetup]);
-
   const update = (field: string, value: unknown) => setForm((f) => {
     const next = { ...f, [field]: value };
-    setSavedSetup(next);
     return next;
   });
   const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];

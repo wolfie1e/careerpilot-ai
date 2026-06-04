@@ -98,14 +98,13 @@ export default function ResumePage() {
   }, []);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisData[]>([]);
-  const [activeTab, setActiveTab] = useState<Tab>("analysis");
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    if (typeof window === "undefined") return "analysis";
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    return isResumeTab(tab) ? tab : "analysis";
+  });
   const [lastMatch, setLastMatch] = useState<MatchResult | null>(null);
   const [suggestionPriority, setSuggestionPriority] = useState<SuggestionPriority>("all");
-
-  useEffect(() => {
-    const tab = new URLSearchParams(window.location.search).get("tab");
-    if (isResumeTab(tab)) setActiveTab(tab);
-  }, []);
 
   function setResumeTab(tab: Tab) {
     setActiveTab(tab);

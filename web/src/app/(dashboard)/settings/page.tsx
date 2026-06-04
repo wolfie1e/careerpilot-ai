@@ -75,8 +75,9 @@ export default function SettingsPage() {
   }
 
   function resetLocalPreferences() {
-    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.onboardingDismissed);
-    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.pinnedResume);
+    Object.values(LOCAL_STORAGE_KEYS).forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
     toast.success("Local workspace preferences reset");
   }
 
@@ -162,7 +163,7 @@ export default function SettingsPage() {
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <h3 className="font-semibold text-white">Workspace preferences</h3>
-        <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences such as pinned resume and dismissed onboarding.</p>
+        <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences, saved job descriptions, recent matches, and pinned items.</p>
         <button onClick={resetLocalPreferences} className="mt-4 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
           <RotateCcw className="h-4 w-4" />
           Reset local preferences

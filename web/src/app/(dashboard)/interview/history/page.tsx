@@ -95,7 +95,6 @@ export default function InterviewHistoryPage() {
     if (sessionMode) params.set("session_mode", sessionMode);
     if (status) params.set("status", status);
 
-    setLoading(true);
     api.get<{ sessions: Session[] }>(`/interview/history${params.size ? `?${params}` : ""}`)
       .then((d) => setSessions(d.sessions || []))
       .catch(() => {})
