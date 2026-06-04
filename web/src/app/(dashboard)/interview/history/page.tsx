@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
-import { downloadCsv } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 import { DIFFICULTY_LEVELS, INTERVIEW_MODES, INTERVIEW_STATUSES, INTERVIEW_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -83,6 +83,10 @@ export default function InterviewHistoryPage() {
     })));
   }
 
+  function exportSessionsJson() {
+    downloadJson("careerpilot-interview-history.json", visibleSessions);
+  }
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
@@ -106,10 +110,16 @@ export default function InterviewHistoryPage() {
           {visibleSessions.length} of {sessions.length} session{sessions.length !== 1 ? "s" : ""}
         </p>
         {sessions.length > 0 && (
-          <button onClick={exportSessions} className="mt-3 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
-            <Download className="h-4 w-4" />
-            Export CSV
-          </button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={exportSessions} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
+            <button onClick={exportSessionsJson} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+              <Download className="h-4 w-4" />
+              Export JSON
+            </button>
+          </div>
         )}
       </div>
 
