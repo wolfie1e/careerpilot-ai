@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 const PROGRESS_STEPS = [
   "Parsing job description…",
@@ -20,6 +21,18 @@ const MAX_RECENT_MATCHES = 5;
 
 function countWords(text: string) {
   return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function formatMatchSummary(result: MatchResult, title: string) {
+  return [
+    `Job match${title ? `: ${title}` : ""}`,
+    `Overall: ${result.overall_score}%`,
+    `Semantic similarity: ${Math.round(result.semantic_score * 100)}%`,
+    `Keyword match: ${result.keyword_score}%`,
+    `Matched skills: ${result.skills_matched.join(", ") || "None detected"}`,
+    `Missing skills: ${result.skills_missing.join(", ") || "None detected"}`,
+    `Critical gaps: ${result.skills_critical.join(", ") || "None detected"}`,
+  ].join("\n");
 }
 
 function MatchingProgress() {
@@ -284,6 +297,11 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
       <AnimatePresence>
         {result && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h4 className="text-sm font-semibold text-white">Match Summary</h4>
+              <CopyButton value={formatMatchSummary(result, jdTitle.trim())} label="Copy summary" />
+            </div>
+
             {/* Score summary */}
             <div className="grid grid-cols-3 gap-3">
               {[
