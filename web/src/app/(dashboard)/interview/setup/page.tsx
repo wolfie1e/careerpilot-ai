@@ -1,32 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, Mic, MessageSquare, Loader2, ChevronRight } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS, INTERVIEW_PREP_TIPS, ROLE_PRESETS } from "@/lib/constants";
+import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS, INTERVIEW_PREP_TIPS, ROLE_PRESETS, LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { interviewSetupSchema } from "@/lib/validations";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface SessionResponse {
   session_id: string;
   session_mode: string;
 }
 
+const DEFAULT_INTERVIEW_SETUP = {
+  role_title: "",
+  difficulty: "intermediate",
+  interview_type: "behavioral",
+  session_mode: "text",
+  question_count: 5,
+};
+
 export default function InterviewSetupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
-    role_title: "",
-    difficulty: "intermediate",
-    interview_type: "behavioral",
-    session_mode: "text",
-    question_count: 5,
-  });
+  const [savedSetup, setSavedSetup] = useLocalStorage(LOCAL_STORAGE_KEYS.interviewSetup, DEFAULT_INTERVIEW_SETUP);
+  const [form, setForm] = useState(DEFAULT_INTERVIEW_SETUP);
   const [loading, setLoading] = useState(false);
   const [roleError, setRoleError] = useState("");
 
-  const update = (field: string, value: unknown) => setForm((f) => ({ ...f, [field]: value }));
+  useEffect(() => {
+    setForm(savedSetup);
+  }, [savedSetup]);
+
+  const update = (field: string, value: unknown) => setForm((f) => {
+    const next = { ...f, [field]: value };
+    setSavedSetup(next);
+    return next;
+  });
   const prepTip = INTERVIEW_PREP_TIPS[form.interview_type as keyof typeof INTERVIEW_PREP_TIPS];
   const estimatedMinutes = form.question_count * (form.session_mode === "voice" ? 4 : 3);
 
