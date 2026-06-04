@@ -117,12 +117,19 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MatchResult | null>(null);
   const [expandedRoadmap, setExpandedRoadmap] = useState<string | null>(null);
+  const [roadmapPriority, setRoadmapPriority] = useState("all");
   const [savedJds, setSavedJds] = useLocalStorage<SavedJobDescription[]>(LOCAL_STORAGE_KEYS.savedJobDescriptions, []);
   const [recentMatches, setRecentMatches] = useLocalStorage<RecentMatchSummary[]>(LOCAL_STORAGE_KEYS.recentMatches, []);
   const jdWordCount = countWords(jdText);
   const jdReady = jdWordCount >= MIN_JD_WORDS;
   const readingMinutes = Math.max(1, Math.ceil(jdWordCount / 180));
   const recentMatchesForResume = recentMatches.filter((match) => match.resume_id === resumeId);
+  const roadmapPriorities = result
+    ? ["all", ...Array.from(new Set(result.learning_roadmap.map((item) => item.priority)))]
+    : ["all"];
+  const visibleRoadmap = result?.learning_roadmap.filter((item) => (
+    roadmapPriority === "all" || item.priority === roadmapPriority
+  )) ?? [];
 
   function saveDraft() {
     if (!jdText.trim()) {
@@ -163,6 +170,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         jd_title: jdTitle || undefined,
       });
       setResult(data);
+      setRoadmapPriority("all");
       onMatchResult?.(data);
       setRecentMatches((prev) => [
         {
@@ -354,9 +362,25 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             {/* Learning roadmap */}
             {result.learning_roadmap.length > 0 && (
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                <h4 className="text-sm font-semibold text-blue-400 mb-4">Learning Roadmap</h4>
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h4 className="text-sm font-semibold text-blue-400">Learning Roadmap</h4>
+                  <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
+                    {roadmapPriorities.map((priority) => (
+                      <button
+                        key={priority}
+                        onClick={() => setRoadmapPriority(priority)}
+                        className={cn(
+                          "rounded-md px-2 py-1 text-xs font-medium capitalize transition",
+                          roadmapPriority === priority ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"
+                        )}
+                      >
+                        {priority.replace("_", " ")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  {result.learning_roadmap.map((item) => (
+                  {visibleRoadmap.map((item) => (
                     <div key={item.skill} className="border border-gray-800 rounded-xl overflow-hidden">
                       <button
                         onClick={() => setExpandedRoadmap(expandedRoadmap === item.skill ? null : item.skill)}
