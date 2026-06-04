@@ -2,12 +2,13 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv } from "@/lib/export-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
-import { DIFFICULTY_LEVELS, INTERVIEW_MODES, INTERVIEW_STATUSES, INTERVIEW_TYPES } from "@/lib/constants";
+import { DIFFICULTY_LEVELS, INTERVIEW_MODES, INTERVIEW_STATUSES, INTERVIEW_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface Session {
   id: string;
@@ -31,9 +32,14 @@ export default function InterviewHistoryPage() {
   const [status, setStatus] = useState("");
   const [scoreFilter, setScoreFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
   const deferredSearch = useDeferredValue(search);
   const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status || scoreFilter);
+  const pinnedSessionSet = new Set(pinnedSessionIds);
   const sortedSessions = [...sessions].sort((a, b) => {
+    if (pinnedSessionSet.has(a.id) !== pinnedSessionSet.has(b.id)) {
+      return pinnedSessionSet.has(a.id) ? -1 : 1;
+    }
     if (sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
     if (sortBy === "score_desc") return (b.overall_score ?? -1) - (a.overall_score ?? -1);
     if (sortBy === "score_asc") return (a.overall_score ?? 101) - (b.overall_score ?? 101);
@@ -54,6 +60,14 @@ export default function InterviewHistoryPage() {
     setSessionMode("");
     setStatus("");
     setScoreFilter("");
+  }
+
+  function togglePinnedSession(sessionId: string) {
+    setPinnedSessionIds((prev) => (
+      prev.includes(sessionId)
+        ? prev.filter((id) => id !== sessionId)
+        : [sessionId, ...prev]
+    ));
   }
 
   function exportSessions() {
@@ -180,8 +194,19 @@ export default function InterviewHistoryPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl transition-colors"
-            ><Link href={`/interview/history/${s.id}`} className="flex items-center gap-4 p-4 w-full">
+              className={cn(
+                "flex bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl transition-colors",
+                pinnedSessionSet.has(s.id) && "border-amber-500/50"
+              )}
+            >
+              <button
+                onClick={() => togglePinnedSession(s.id)}
+                className="px-3 text-gray-600 transition hover:text-amber-400"
+                title={pinnedSessionSet.has(s.id) ? "Unpin session" : "Pin session"}
+              >
+                <Star className={cn("h-4 w-4", pinnedSessionSet.has(s.id) && "fill-amber-400 text-amber-400")} />
+              </button>
+              <Link href={`/interview/history/${s.id}`} className="flex flex-1 items-center gap-4 p-4 pl-0 w-full">
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
                 s.session_mode === "voice" ? "bg-violet-500/10" : "bg-blue-500/10")}>
                 <Mic className={cn("w-5 h-5", s.session_mode === "voice" ? "text-violet-400" : "text-blue-400")} />
