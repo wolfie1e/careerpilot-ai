@@ -22,10 +22,12 @@ const DEFAULT_INTERVIEW_SETUP = {
   session_mode: "text",
   question_count: 5,
 };
+const MAX_RECENT_ROLES = 6;
 
 export default function InterviewSetupPage() {
   const router = useRouter();
   const [savedSetup, setSavedSetup] = useLocalStorage(LOCAL_STORAGE_KEYS.interviewSetup, DEFAULT_INTERVIEW_SETUP);
+  const [recentRoles, setRecentRoles] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.recentInterviewRoles, []);
   const [form, setForm] = useState(DEFAULT_INTERVIEW_SETUP);
   const [loading, setLoading] = useState(false);
   const [roleError, setRoleError] = useState("");
@@ -54,6 +56,7 @@ export default function InterviewSetupPage() {
     setLoading(true);
     try {
       const session = await api.post<SessionResponse>("/interview/sessions", parsed.data);
+      setRecentRoles((prev) => [parsed.data.role_title, ...prev.filter((role) => role !== parsed.data.role_title)].slice(0, MAX_RECENT_ROLES));
       const path = `/interview/${form.session_mode}/${session.session_id}`;
       router.push(path);
     } catch (err: unknown) {
@@ -82,6 +85,23 @@ export default function InterviewSetupPage() {
             className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
           />
           {roleError && <p className="mt-1.5 text-xs text-rose-400">{roleError}</p>}
+          {recentRoles.length > 0 && (
+            <>
+              <div className="mt-3 text-xs font-medium text-gray-500">Recent roles</div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {recentRoles.map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => { update("role_title", role); setRoleError(""); }}
+                    className="px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300 hover:border-blue-400/50 transition-colors"
+                  >
+                    {role}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
           <div className="flex flex-wrap gap-2 mt-3">
             {ROLE_PRESETS.map((role) => (
               <button
