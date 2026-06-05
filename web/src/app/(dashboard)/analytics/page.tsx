@@ -6,7 +6,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, Legend
 } from "recharts";
-import { Download, TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
+import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -27,10 +27,24 @@ interface AnalyticsData {
 }
 
 const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b"];
+const TIME_RANGES = [
+  { value: "all", label: "All" },
+  { value: "180", label: "180D" },
+  { value: "90", label: "90D" },
+  { value: "30", label: "30D" },
+] as const;
+
+type TimeRange = (typeof TIME_RANGES)[number]["value"];
+
+function filterTrend<T extends { date: string }>(trend: T[], cutoff: string | null) {
+  if (!cutoff) return trend;
+  return trend.filter((item) => item.date >= cutoff);
+}
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
   useEffect(() => {
     api.get<AnalyticsData>("/analytics")
@@ -72,17 +86,34 @@ export default function AnalyticsPage() {
   }
 
   // Merge trends into combined data
-  const allDates = [...new Set([
+  const sourceDates = [...new Set([
     ...data.ats_trend.map((d) => d.date),
     ...data.interview_trend.map((d) => d.date),
     ...data.match_trend.map((d) => d.date),
   ])].sort();
+  const latestDate = sourceDates.at(-1) ?? null;
+  const cutoffDate = latestDate && timeRange !== "all"
+    ? (() => {
+        const date = new Date(`${latestDate}T00:00:00`);
+        date.setDate(date.getDate() - Number(timeRange));
+        return date.toISOString().slice(0, 10);
+      })()
+    : null;
+  const atsTrend = filterTrend(data.ats_trend, cutoffDate);
+  const interviewTrend = filterTrend(data.interview_trend, cutoffDate);
+  const matchTrend = filterTrend(data.match_trend, cutoffDate);
+
+  const allDates = [...new Set([
+    ...atsTrend.map((d) => d.date),
+    ...interviewTrend.map((d) => d.date),
+    ...matchTrend.map((d) => d.date),
+  ])].sort();
 
   const combinedTrend = allDates.map((date) => ({
     date: date.slice(5),
-    ats: data.ats_trend.find((d) => d.date === date)?.score ?? null,
-    interview: data.interview_trend.find((d) => d.date === date)?.score ?? null,
-    match: data.match_trend.find((d) => d.date === date)?.score ?? null,
+    ats: atsTrend.find((d) => d.date === date)?.score ?? null,
+    interview: interviewTrend.find((d) => d.date === date)?.score ?? null,
+    match: matchTrend.find((d) => d.date === date)?.score ?? null,
   }));
 
   function exportTrends() {
@@ -101,10 +132,24 @@ export default function AnalyticsPage() {
           <h2 className="text-xl font-semibold text-white">Analytics</h2>
           <p className="text-sm text-gray-400 mt-1">Your career readiness over time</p>
         </div>
-        <button onClick={exportTrends} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
-          <Download className="h-4 w-4" />
-          Export CSV
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <div className="inline-flex items-center gap-1 rounded-xl border border-gray-800 bg-gray-900 p-1">
+            <CalendarDays className="ml-2 h-4 w-4 text-gray-500" />
+            {TIME_RANGES.map((range) => (
+              <button
+                key={range.value}
+                onClick={() => setTimeRange(range.value)}
+                className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${timeRange === range.value ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"}`}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+          <button onClick={exportTrends} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </button>
+        </div>
       </div>
 
       {/* Readiness score hero */}
@@ -168,12 +213,12 @@ export default function AnalyticsPage() {
       )}
 
       {/* ATS breakdown bar chart */}
-      {data.ats_trend.length > 1 && (
+      {atsTrend.length > 1 && (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
           <h3 className="font-medium text-white mb-4">ATS Score History</h3>
           <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={data.ats_trend.map((d) => ({ ...d, date: d.date.slice(5) }))}>
+            <BarChart data={atsTrend.map((d) => ({ ...d, date: d.date.slice(5) }))}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
               <XAxis dataKey="date" tick={{ fill: "#6b7280", fontSize: 11 }} />
               <YAxis domain={[0, 100]} tick={{ fill: "#6b7280", fontSize: 11 }} />
