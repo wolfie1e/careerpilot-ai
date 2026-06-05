@@ -10,7 +10,7 @@ import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2 } fr
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { downloadCsv } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { scoreLabel, scoreTone } from "@/lib/utils";
 
 interface AnalyticsData {
@@ -125,6 +125,21 @@ export default function AnalyticsPage() {
     })));
   }
 
+  function exportAnalyticsJson() {
+    downloadJson("careerpilot-analytics.json", {
+      exported_at: new Date().toISOString(),
+      time_range: timeRange,
+      readiness_score: data.readiness_score,
+      latest_ats_score: data.latest_ats_score,
+      avg_interview_score: data.avg_interview_score,
+      total_resumes_analyzed: data.total_resumes_analyzed,
+      total_interviews: data.total_interviews,
+      trends: combinedTrend,
+      skill_coverage: data.skill_coverage,
+      interview_by_type: data.interview_by_type,
+    });
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -148,6 +163,10 @@ export default function AnalyticsPage() {
           <button onClick={exportTrends} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
             <Download className="h-4 w-4" />
             Export CSV
+          </button>
+          <button onClick={exportAnalyticsJson} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export JSON
           </button>
         </div>
       </div>
