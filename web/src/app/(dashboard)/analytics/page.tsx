@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -47,6 +48,24 @@ function deltaTone(delta: string) {
   if (delta.startsWith("+")) return "text-emerald-400";
   if (delta.startsWith("-")) return "text-rose-400";
   return "text-gray-500";
+}
+
+function getAnalyticsFocusItems(data: AnalyticsData) {
+  const items = [];
+  if ((data.latest_ats_score ?? 0) < 75) {
+    items.push({ href: "/resume?tab=ats", label: "Raise ATS score", desc: `Latest ATS score is ${data.latest_ats_score ?? "not started"}.` });
+  }
+  const latestMatch = data.match_trend.at(-1)?.score ?? null;
+  if ((latestMatch ?? 0) < 75) {
+    items.push({ href: "/resume?tab=jd", label: "Improve job match", desc: latestMatch === null ? "Run a JD match to expose skill gaps." : `Latest match is ${latestMatch}/100.` });
+  }
+  if ((data.avg_interview_score ?? 0) < 75) {
+    items.push({ href: "/interview/setup", label: "Practice interview answers", desc: data.avg_interview_score === null ? "Complete a mock interview to start tracking readiness." : `Average interview score is ${data.avg_interview_score}/100.` });
+  }
+  if (items.length === 0) {
+    items.push({ href: "/reports", label: "Export your progress", desc: "Download reports while your readiness indicators are strong." });
+  }
+  return items.slice(0, 3);
 }
 
 export default function AnalyticsPage() {
@@ -130,6 +149,7 @@ export default function AnalyticsPage() {
     { label: "Match momentum", current: matchTrend.at(-1)?.score ?? null, previous: matchTrend.at(-2)?.score ?? null },
   ];
   const readinessGap = Math.max(0, readinessGoal - data.readiness_score);
+  const focusItems = getAnalyticsFocusItems(data);
 
   function exportTrends() {
     downloadCsv("careerpilot-score-trends.csv", combinedTrend.map((row) => ({
@@ -252,6 +272,18 @@ export default function AnalyticsPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+        <h3 className="mb-4 text-sm font-semibold text-white">Analytics Focus</h3>
+        <div className="grid gap-3 md:grid-cols-3">
+          {focusItems.map((item) => (
+            <Link key={item.label} href={item.href} className="rounded-xl border border-gray-800 bg-gray-950/50 p-4 transition hover:border-blue-700/60 hover:bg-gray-800/50">
+              <div className="text-sm font-semibold text-white">{item.label}</div>
+              <div className="mt-1 text-xs leading-5 text-gray-500">{item.desc}</div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Score trends */}
