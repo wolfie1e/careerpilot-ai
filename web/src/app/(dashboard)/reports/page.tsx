@@ -6,6 +6,7 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { formatBytes, safeFilename } from "@/lib/utils";
 
 interface Resume {
@@ -19,7 +20,7 @@ export default function ReportsPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
-  const [pinnedResumeId] = useLocalStorage<string | null>("careerpilot_pinned_resume", null);
+  const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
