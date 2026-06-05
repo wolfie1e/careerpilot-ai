@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench } from "lucide-react";
+import { ArrowUpDown, FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench, Search } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -86,6 +86,8 @@ export default function ResumePage() {
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
+  const [resumeSearch, setResumeSearch] = useState("");
+  const [resumeSort, setResumeSort] = useState("newest");
   const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
 
   useEffect(() => {
@@ -172,8 +174,14 @@ export default function ResumePage() {
   const orderedResumes = [...pastResumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
-    return 0;
+    if (resumeSort === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    if (resumeSort === "name") return a.filename.localeCompare(b.filename);
+    if (resumeSort === "size_desc") return (b.file_size ?? 0) - (a.file_size ?? 0);
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
+  const visibleResumes = orderedResumes.filter((item) => (
+    item.filename.toLowerCase().includes(resumeSearch.trim().toLowerCase())
+  ));
   const previousAnalysis = analysis
     ? analysisHistory.find((item) => analysis.created_at && item.created_at && item.created_at < analysis.created_at)
       ?? (analysisHistory.length > 1 ? analysisHistory[1] : null)
@@ -209,8 +217,32 @@ export default function ResumePage() {
               <Plus className="w-3 h-3" />Upload New
             </button>
           </div>
+          <div className="mb-3 grid gap-2 sm:grid-cols-[1fr_180px]">
+            <label className="relative block">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+              <input
+                value={resumeSearch}
+                onChange={(e) => setResumeSearch(e.target.value)}
+                placeholder="Search resumes..."
+                className="w-full rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+              />
+            </label>
+            <label className="relative block">
+              <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+              <select
+                value={resumeSort}
+                onChange={(e) => setResumeSort(e.target.value)}
+                className="w-full appearance-none rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+              >
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="name">Name A-Z</option>
+                <option value="size_desc">Largest</option>
+              </select>
+            </label>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {orderedResumes.map((r) => (
+            {visibleResumes.map((r) => (
               <div key={r.id} className={cn("flex items-center rounded-xl border transition-all",
                 resume?.id === r.id ? "bg-blue-600/20 border-blue-500 text-white" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white hover:border-gray-600",
                 pinnedResumeId === r.id && "border-amber-500/50"
@@ -238,6 +270,11 @@ export default function ResumePage() {
                 </button>
               </div>
             ))}
+            {visibleResumes.length === 0 && (
+              <div className="w-full rounded-xl border border-dashed border-gray-800 px-4 py-6 text-center text-sm text-gray-500">
+                No resumes match your search.
+              </div>
+            )}
           </div>
         </div>
       )}
