@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
+import { CheckCircle, Download, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { downloadJson } from "@/lib/export-utils";
 import { passwordSchema, profileSchema } from "@/lib/validations";
 
 type FieldErrors = Record<string, string>;
@@ -79,6 +80,23 @@ export default function SettingsPage() {
       window.localStorage.removeItem(key);
     });
     toast.success("Local workspace preferences reset");
+  }
+
+  function exportLocalPreferences() {
+    const preferences = Object.fromEntries(
+      Object.entries(LOCAL_STORAGE_KEYS).map(([name, key]) => {
+        const raw = window.localStorage.getItem(key);
+        try {
+          return [name, raw ? JSON.parse(raw) : null];
+        } catch {
+          return [name, raw];
+        }
+      })
+    );
+    downloadJson("careerpilot-local-preferences.json", {
+      exported_at: new Date().toISOString(),
+      preferences,
+    });
   }
 
   return (
@@ -164,10 +182,16 @@ export default function SettingsPage() {
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <h3 className="font-semibold text-white">Workspace preferences</h3>
         <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences, saved job descriptions, recent matches, and pinned items.</p>
-        <button onClick={resetLocalPreferences} className="mt-4 inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
-          <RotateCcw className="h-4 w-4" />
-          Reset local preferences
-        </button>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button onClick={exportLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export local preferences
+          </button>
+          <button onClick={resetLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <RotateCcw className="h-4 w-4" />
+            Reset local preferences
+          </button>
+        </div>
       </div>
     </div>
   );
