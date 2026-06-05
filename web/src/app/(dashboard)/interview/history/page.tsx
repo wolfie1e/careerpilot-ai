@@ -53,6 +53,10 @@ export default function InterviewHistoryPage() {
     if (scoreFilter === "unscored") return session.overall_score === null;
     return true;
   });
+  const visibleScoredSessions = visibleSessions.filter((session) => session.overall_score !== null);
+  const visibleAverageScore = visibleScoredSessions.length
+    ? Math.round(visibleScoredSessions.reduce((sum, session) => sum + (session.overall_score || 0), 0) / visibleScoredSessions.length)
+    : null;
 
   function clearFilters() {
     setSearch("");
@@ -177,6 +181,22 @@ export default function InterviewHistoryPage() {
           </label>
         </div>
       </div>
+
+      {sessions.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            { label: "Visible", value: visibleSessions.length },
+            { label: "Avg score", value: visibleAverageScore !== null ? `${visibleAverageScore}/100` : "—" },
+            { label: "Active", value: visibleSessions.filter((session) => session.status === "active").length },
+            { label: "Pinned", value: visibleSessions.filter((session) => pinnedSessionSet.has(session.id)).length },
+          ].map((item) => (
+            <div key={item.label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+              <div className="text-xs text-gray-500">{item.label}</div>
+              <div className="mt-1 text-xl font-bold text-white">{item.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center h-32">
