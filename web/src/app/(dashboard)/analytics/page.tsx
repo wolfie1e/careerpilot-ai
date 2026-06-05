@@ -10,6 +10,8 @@ import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2 } fr
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { cn, formatDelta, scoreLabel, scoreTone } from "@/lib/utils";
 
@@ -51,6 +53,7 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
+  const [readinessGoal, setReadinessGoal] = useLocalStorage(LOCAL_STORAGE_KEYS.readinessGoal, 80);
 
   useEffect(() => {
     api.get<AnalyticsData>("/analytics")
@@ -126,6 +129,7 @@ export default function AnalyticsPage() {
     { label: "Interview momentum", current: interviewTrend.at(-1)?.score ?? null, previous: interviewTrend.at(-2)?.score ?? null },
     { label: "Match momentum", current: matchTrend.at(-1)?.score ?? null, previous: matchTrend.at(-2)?.score ?? null },
   ];
+  const readinessGap = Math.max(0, readinessGoal - data.readiness_score);
 
   function exportTrends() {
     downloadCsv("careerpilot-score-trends.csv", combinedTrend.map((row) => ({
@@ -185,18 +189,34 @@ export default function AnalyticsPage() {
       {/* Readiness score hero */}
       {data.readiness_score > 0 && (
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-          className="bg-gradient-to-br from-blue-950/60 to-violet-950/60 border border-blue-800/30 rounded-2xl p-6 flex items-center gap-6">
+          className="bg-gradient-to-br from-blue-950/60 to-violet-950/60 border border-blue-800/30 rounded-2xl p-6">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center">
           <div className="w-20 h-20 rounded-full border-4 border-blue-500/40 flex items-center justify-center shrink-0">
             <span className={`text-2xl font-extrabold ${data.readiness_score >= 75 ? "text-emerald-400" : data.readiness_score >= 50 ? "text-amber-400" : "text-rose-400"}`}>
               {data.readiness_score}
             </span>
           </div>
-          <div>
+          <div className="flex-1">
             <div className="text-sm text-gray-400 mb-1">Career Readiness Score</div>
             <div className="text-lg font-bold text-white">
               {data.readiness_score >= 75 ? "Interview Ready 🚀" : data.readiness_score >= 50 ? "Almost Ready — Keep Practicing" : "Developing — More Practice Needed"}
             </div>
-            <div className="text-xs text-gray-500 mt-1">Weighted blend of ATS score, interview score, and job match</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {readinessGap === 0 ? "Goal reached" : `${readinessGap} pts to your ${readinessGoal}/100 goal`}
+            </div>
+          </div>
+          <label className="w-full md:w-56">
+            <span className="mb-2 block text-xs font-medium text-gray-400">Readiness goal: {readinessGoal}</span>
+            <input
+              type="range"
+              min={50}
+              max={100}
+              step={5}
+              value={readinessGoal}
+              onChange={(e) => setReadinessGoal(Number(e.target.value))}
+              className="w-full accent-blue-500"
+            />
+          </label>
           </div>
         </motion.div>
       )}
