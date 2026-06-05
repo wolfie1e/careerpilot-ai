@@ -11,7 +11,7 @@ import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
-import { scoreLabel, scoreTone } from "@/lib/utils";
+import { cn, formatDelta, scoreLabel, scoreTone } from "@/lib/utils";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -39,6 +39,12 @@ type TimeRange = (typeof TIME_RANGES)[number]["value"];
 function filterTrend<T extends { date: string }>(trend: T[], cutoff: string | null) {
   if (!cutoff) return trend;
   return trend.filter((item) => item.date >= cutoff);
+}
+
+function deltaTone(delta: string) {
+  if (delta.startsWith("+")) return "text-emerald-400";
+  if (delta.startsWith("-")) return "text-rose-400";
+  return "text-gray-500";
 }
 
 export default function AnalyticsPage() {
@@ -115,6 +121,11 @@ export default function AnalyticsPage() {
     interview: interviewTrend.find((d) => d.date === date)?.score ?? null,
     match: matchTrend.find((d) => d.date === date)?.score ?? null,
   }));
+  const momentumCards = [
+    { label: "ATS momentum", current: atsTrend.at(-1)?.score ?? null, previous: atsTrend.at(-2)?.score ?? null },
+    { label: "Interview momentum", current: interviewTrend.at(-1)?.score ?? null, previous: interviewTrend.at(-2)?.score ?? null },
+    { label: "Match momentum", current: matchTrend.at(-1)?.score ?? null, previous: matchTrend.at(-2)?.score ?? null },
+  ];
 
   function exportTrends() {
     downloadCsv("careerpilot-score-trends.csv", combinedTrend.map((row) => ({
@@ -209,6 +220,18 @@ export default function AnalyticsPage() {
             <div className={`text-sm font-semibold ${scoreTone(score as number | null)}`}>{scoreLabel(score as number | null)}</div>
           </div>
         ))}
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        {momentumCards.map((card) => {
+          const delta = formatDelta(card.current, card.previous);
+          return (
+            <div key={card.label} className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+              <div className="text-xs text-gray-500 mb-1">{card.label}</div>
+              <div className={cn("text-sm font-semibold", deltaTone(delta))}>{delta}</div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Score trends */}
