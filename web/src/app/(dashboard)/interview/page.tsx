@@ -31,6 +31,11 @@ export default function InterviewPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  function sessionHref(session: Session) {
+    if (session.status === "active") return `/interview/${session.session_mode}/${session.id}`;
+    return `/interview/history/${session.id}`;
+  }
+
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
@@ -143,7 +148,7 @@ export default function InterviewPage() {
                   ) : (
                     <span className="text-xs text-gray-600 capitalize">{s.status}</span>
                   )}
-                  <Link href={`/interview/history`} className="text-gray-600 hover:text-gray-400 transition-colors">
+                  <Link href={sessionHref(s)} className="text-gray-600 hover:text-gray-400 transition-colors">
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
