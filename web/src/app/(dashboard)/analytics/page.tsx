@@ -161,6 +161,7 @@ export default function AnalyticsPage() {
   }
 
   function exportAnalyticsJson() {
+    if (!data) return;
     downloadJson("careerpilot-analytics.json", {
       exported_at: new Date().toISOString(),
       time_range: timeRange,
