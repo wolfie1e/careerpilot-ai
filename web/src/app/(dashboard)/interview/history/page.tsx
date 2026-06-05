@@ -32,10 +32,11 @@ export default function InterviewHistoryPage() {
   const [sessionMode, setSessionMode] = useState("");
   const [status, setStatus] = useState("");
   const [scoreFilter, setScoreFilter] = useState("");
+  const [showPinnedOnly, setShowPinnedOnly] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
   const deferredSearch = useDeferredValue(search);
-  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status || scoreFilter);
+  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status || scoreFilter || showPinnedOnly);
   const pinnedSessionSet = new Set(pinnedSessionIds);
   const sortedSessions = [...sessions].sort((a, b) => {
     if (pinnedSessionSet.has(a.id) !== pinnedSessionSet.has(b.id)) {
@@ -48,6 +49,7 @@ export default function InterviewHistoryPage() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
   const visibleSessions = sortedSessions.filter((session) => {
+    if (showPinnedOnly && !pinnedSessionSet.has(session.id)) return false;
     if (scoreFilter === "strong") return (session.overall_score ?? 0) >= 75;
     if (scoreFilter === "needs_focus") return session.overall_score !== null && session.overall_score < 75;
     if (scoreFilter === "unscored") return session.overall_score === null;
@@ -65,6 +67,7 @@ export default function InterviewHistoryPage() {
     setSessionMode("");
     setStatus("");
     setScoreFilter("");
+    setShowPinnedOnly(false);
   }
 
   function togglePinnedSession(sessionId: string) {
@@ -180,6 +183,18 @@ export default function InterviewHistoryPage() {
             </select>
           </label>
         </div>
+        {pinnedSessionIds.length > 0 && (
+          <button
+            onClick={() => setShowPinnedOnly((value) => !value)}
+            className={cn(
+              "mt-3 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition",
+              showPinnedOnly ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white"
+            )}
+          >
+            <Star className={cn("h-3.5 w-3.5", showPinnedOnly && "fill-amber-400 text-amber-400")} />
+            Pinned only
+          </button>
+        )}
       </div>
 
       {sessions.length > 0 && (
