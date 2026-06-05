@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, FileText, Loader2, Search } from "lucide-react";
+import { ArrowUpDown, Download, FileText, Loader2, Search } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -21,11 +21,16 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
-    return 0;
+    if (sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    if (sortBy === "name") return a.filename.localeCompare(b.filename);
+    if (sortBy === "size_desc") return (b.file_size ?? 0) - (a.file_size ?? 0);
+    if (sortBy === "size_asc") return (a.file_size ?? Number.MAX_SAFE_INTEGER) - (b.file_size ?? Number.MAX_SAFE_INTEGER);
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
   const visibleResumes = orderedResumes.filter((resume) => (
     resume.filename.toLowerCase().includes(search.trim().toLowerCase())
@@ -88,15 +93,31 @@ export default function ReportsPage() {
         />
       ) : (
         <div className="space-y-3">
-          <label className="relative block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search resume reports..."
-              className="w-full rounded-xl border border-gray-800 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
-            />
-          </label>
+          <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+            <label className="relative block">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search resume reports..."
+                className="w-full rounded-xl border border-gray-800 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+              />
+            </label>
+            <label className="relative block">
+              <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full appearance-none rounded-xl border border-gray-800 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="name">Filename A-Z</option>
+                <option value="size_desc">Largest file</option>
+                <option value="size_asc">Smallest file</option>
+              </select>
+            </label>
+          </div>
           {visibleResumes.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900 p-10 text-center">
               <FileText className="mx-auto mb-3 h-8 w-8 text-gray-700" />
