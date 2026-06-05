@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { downloadJson } from "@/lib/export-utils";
 import { formatBytes, safeFilename } from "@/lib/utils";
 
 interface Resume {
@@ -70,13 +71,31 @@ export default function ReportsPage() {
     await downloadReport(resumeId, "md", filename);
   }
 
+  function exportManifest() {
+    downloadJson("careerpilot-report-manifest.json", visibleResumes.map((resume) => ({
+      id: resume.id,
+      filename: resume.filename,
+      file_size: resume.file_size,
+      uploaded_at: resume.created_at,
+      is_primary: resume.id === pinnedResumeId,
+    })));
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-white">Reports</h2>
-        <p className="text-sm text-gray-400 mt-1">
-          {resumes.length > 0 ? `${visibleResumes.length} of ${resumes.length} resume reports` : "Download analysis reports for your resumes"}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-white">Reports</h2>
+          <p className="text-sm text-gray-400 mt-1">
+            {resumes.length > 0 ? `${visibleResumes.length} of ${resumes.length} resume reports` : "Download analysis reports for your resumes"}
+          </p>
+        </div>
+        {resumes.length > 0 && (
+          <button onClick={exportManifest} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export JSON
+          </button>
+        )}
       </div>
 
       {loading ? (
