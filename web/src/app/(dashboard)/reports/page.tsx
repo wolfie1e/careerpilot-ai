@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUpDown, Download, FileText, Loader2, Search } from "lucide-react";
+import { ArrowUpDown, Download, FileText, HardDrive, Loader2, Search, Star } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -36,6 +36,7 @@ export default function ReportsPage() {
   const visibleResumes = orderedResumes.filter((resume) => (
     resume.filename.toLowerCase().includes(search.trim().toLowerCase())
   ));
+  const totalStorage = resumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
 
   useEffect(() => {
     api.get<Resume[]>("/resume")
@@ -112,6 +113,24 @@ export default function ReportsPage() {
         />
       ) : (
         <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+              <FileText className="mb-2 h-4 w-4 text-blue-400" />
+              <div className="text-lg font-bold text-white">{resumes.length}</div>
+              <div className="text-xs text-gray-500">Report sources</div>
+            </div>
+            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+              <HardDrive className="mb-2 h-4 w-4 text-emerald-400" />
+              <div className="text-lg font-bold text-white">{formatBytes(totalStorage)}</div>
+              <div className="text-xs text-gray-500">Uploaded resume storage</div>
+            </div>
+            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+              <Star className="mb-2 h-4 w-4 text-amber-400" />
+              <div className="text-lg font-bold text-white">{pinnedResumeId ? "Set" : "Not set"}</div>
+              <div className="text-xs text-gray-500">Primary resume</div>
+            </div>
+          </div>
+
           <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
