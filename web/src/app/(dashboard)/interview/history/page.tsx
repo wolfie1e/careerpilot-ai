@@ -95,6 +95,10 @@ export default function InterviewHistoryPage() {
     downloadJson("careerpilot-interview-history.json", visibleSessions);
   }
 
+  function exportPinnedSessionsJson() {
+    downloadJson("careerpilot-pinned-interviews.json", sessions.filter((session) => pinnedSessionSet.has(session.id)));
+  }
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
@@ -126,6 +130,12 @@ export default function InterviewHistoryPage() {
               <Download className="h-4 w-4" />
               Export JSON
             </button>
+            {pinnedSessionIds.length > 0 && (
+              <button onClick={exportPinnedSessionsJson} className="inline-flex items-center gap-2 rounded-xl border border-amber-700/50 bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-500/20">
+                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                Export pinned
+              </button>
+            )}
           </div>
         )}
       </div>
