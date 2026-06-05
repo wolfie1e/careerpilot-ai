@@ -37,6 +37,7 @@ export default function ReportsPage() {
     resume.filename.toLowerCase().includes(search.trim().toLowerCase())
   ));
   const totalStorage = resumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
+  const pinnedResume = pinnedResumeId ? resumes.find((resume) => resume.id === pinnedResumeId) ?? null : null;
 
   useEffect(() => {
     api.get<Resume[]>("/resume")
@@ -92,10 +93,18 @@ export default function ReportsPage() {
           </p>
         </div>
         {resumes.length > 0 && (
-          <button onClick={exportManifest} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
-            <Download className="h-4 w-4" />
-            Export JSON
-          </button>
+          <div className="flex flex-wrap gap-2">
+            {pinnedResume && (
+              <button onClick={() => downloadReport(pinnedResume.id, "pdf", pinnedResume.filename)} disabled={!!downloading} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50">
+                {downloading === `${pinnedResume.id}-pdf` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4 fill-white" />}
+                Primary PDF
+              </button>
+            )}
+            <button onClick={exportManifest} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+              <Download className="h-4 w-4" />
+              Export JSON
+            </button>
+          </div>
         )}
       </div>
 
