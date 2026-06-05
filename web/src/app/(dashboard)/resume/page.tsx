@@ -224,8 +224,16 @@ export default function ResumePage() {
                 value={resumeManagerView.search}
                 onChange={(e) => setResumeManagerView((view) => ({ ...view, search: e.target.value }))}
                 placeholder="Search resumes..."
-                className="w-full rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+                className="w-full rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-20 text-sm text-white outline-none transition focus:border-blue-500"
               />
+              {resumeManagerView.search && (
+                <button
+                  onClick={() => setResumeManagerView((view) => ({ ...view, search: "" }))}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500 transition hover:text-white"
+                >
+                  Clear
+                </button>
+              )}
             </label>
             <label className="relative block">
               <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
