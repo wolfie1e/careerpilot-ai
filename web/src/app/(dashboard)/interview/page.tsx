@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Plus, Mic, Clock, TrendingUp, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
+import { interviewSessionHref } from "@/lib/interview-utils";
 import { formatRelativeTime, scoreColor } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -30,11 +31,6 @@ export default function InterviewPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  function sessionHref(session: Session) {
-    if (session.status === "active") return `/interview/${session.session_mode}/${session.id}`;
-    return `/interview/history/${session.id}`;
-  }
 
   const scoredSessions = sessions.filter((session) => session.overall_score !== null);
   const avgScore = scoredSessions.length
@@ -152,7 +148,7 @@ export default function InterviewPage() {
                   ) : (
                     <span className="text-xs text-gray-600 capitalize">{s.status}</span>
                   )}
-                  <Link href={sessionHref(s)} className="text-gray-600 hover:text-gray-400 transition-colors">
+                  <Link href={interviewSessionHref(s)} className="text-gray-600 hover:text-gray-400 transition-colors">
                     <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>

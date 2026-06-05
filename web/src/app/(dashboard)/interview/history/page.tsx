@@ -6,6 +6,7 @@ import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal,
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
+import { interviewSessionHref } from "@/lib/interview-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 import { DIFFICULTY_LEVELS, INTERVIEW_MODES, INTERVIEW_STATUSES, INTERVIEW_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -215,7 +216,7 @@ export default function InterviewHistoryPage() {
               >
                 <Star className={cn("h-4 w-4", pinnedSessionSet.has(s.id) && "fill-amber-400 text-amber-400")} />
               </button>
-              <Link href={`/interview/history/${s.id}`} className="flex flex-1 items-center gap-4 p-4 pl-0 w-full">
+              <Link href={interviewSessionHref(s)} className="flex flex-1 items-center gap-4 p-4 pl-0 w-full">
               <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
                 s.session_mode === "voice" ? "bg-violet-500/10" : "bg-blue-500/10")}>
                 <Mic className={cn("w-5 h-5", s.session_mode === "voice" ? "text-violet-400" : "text-blue-400")} />
