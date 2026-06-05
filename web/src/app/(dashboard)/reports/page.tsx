@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, FileText, Loader2 } from "lucide-react";
+import { Download, FileText, Loader2, Search } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -20,12 +20,16 @@ export default function ReportsPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
     return 0;
   });
+  const visibleResumes = orderedResumes.filter((resume) => (
+    resume.filename.toLowerCase().includes(search.trim().toLowerCase())
+  ));
 
   useEffect(() => {
     api.get<Resume[]>("/resume")
@@ -65,7 +69,9 @@ export default function ReportsPage() {
     <div className="max-w-3xl space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-white">Reports</h2>
-        <p className="text-sm text-gray-400 mt-1">Download analysis reports for your resumes</p>
+        <p className="text-sm text-gray-400 mt-1">
+          {resumes.length > 0 ? `${visibleResumes.length} of ${resumes.length} resume reports` : "Download analysis reports for your resumes"}
+        </p>
       </div>
 
       {loading ? (
@@ -81,8 +87,27 @@ export default function ReportsPage() {
           actionLabel="Go to Resume Manager"
         />
       ) : (
-        <div className="divide-y divide-gray-800 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-          {orderedResumes.map((r) => (
+        <div className="space-y-3">
+          <label className="relative block">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search resume reports..."
+              className="w-full rounded-xl border border-gray-800 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+            />
+          </label>
+          {visibleResumes.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900 p-10 text-center">
+              <FileText className="mx-auto mb-3 h-8 w-8 text-gray-700" />
+              <p className="text-sm text-gray-400">No reports match your search</p>
+              <button onClick={() => setSearch("")} className="mt-3 text-xs font-medium text-blue-400 transition hover:text-blue-300">
+                Clear search
+              </button>
+            </div>
+          ) : (
+          <div className="divide-y divide-gray-800 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+          {visibleResumes.map((r) => (
             <div key={r.id} className="flex items-center gap-4 px-5 py-4">
               <FileText className="w-8 h-8 text-blue-400 shrink-0" />
               <div className="flex-1 min-w-0">
@@ -119,6 +144,8 @@ export default function ReportsPage() {
               </div>
             </div>
           ))}
+          </div>
+          )}
         </div>
       )}
     </div>
