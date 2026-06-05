@@ -16,6 +16,7 @@ export const LOCAL_STORAGE_KEYS = {
   recentInterviewRoles: "careerpilot_recent_interview_roles",
   pinnedInterviewSessions: "careerpilot_pinned_interview_sessions",
   readinessGoal: "careerpilot_readiness_goal",
+  resumeManagerView: "careerpilot_resume_manager_view",
 } as const;
 
 export const MAX_FILE_SIZE_MB = 10;

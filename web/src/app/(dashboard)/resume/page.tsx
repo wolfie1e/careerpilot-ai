@@ -47,6 +47,7 @@ interface ResumeListItem {
 
 type Tab = "analysis" | "ats" | "jd" | "rewrite" | "improve" | "projects";
 type SuggestionPriority = "all" | "high" | "medium" | "low";
+type ResumeManagerView = { search: string; sort: string };
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "analysis", label: "Analysis" },
@@ -86,8 +87,7 @@ export default function ResumePage() {
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
-  const [resumeSearch, setResumeSearch] = useState("");
-  const [resumeSort, setResumeSort] = useState("newest");
+  const [resumeManagerView, setResumeManagerView] = useLocalStorage<ResumeManagerView>(LOCAL_STORAGE_KEYS.resumeManagerView, { search: "", sort: "newest" });
   const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
 
   useEffect(() => {
@@ -174,13 +174,13 @@ export default function ResumePage() {
   const orderedResumes = [...pastResumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
-    if (resumeSort === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (resumeSort === "name") return a.filename.localeCompare(b.filename);
-    if (resumeSort === "size_desc") return (b.file_size ?? 0) - (a.file_size ?? 0);
+    if (resumeManagerView.sort === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    if (resumeManagerView.sort === "name") return a.filename.localeCompare(b.filename);
+    if (resumeManagerView.sort === "size_desc") return (b.file_size ?? 0) - (a.file_size ?? 0);
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
   const visibleResumes = orderedResumes.filter((item) => (
-    item.filename.toLowerCase().includes(resumeSearch.trim().toLowerCase())
+    item.filename.toLowerCase().includes(resumeManagerView.search.trim().toLowerCase())
   ));
   const previousAnalysis = analysis
     ? analysisHistory.find((item) => analysis.created_at && item.created_at && item.created_at < analysis.created_at)
@@ -221,8 +221,8 @@ export default function ResumePage() {
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
               <input
-                value={resumeSearch}
-                onChange={(e) => setResumeSearch(e.target.value)}
+                value={resumeManagerView.search}
+                onChange={(e) => setResumeManagerView((view) => ({ ...view, search: e.target.value }))}
                 placeholder="Search resumes..."
                 className="w-full rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
               />
@@ -230,8 +230,8 @@ export default function ResumePage() {
             <label className="relative block">
               <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
               <select
-                value={resumeSort}
-                onChange={(e) => setResumeSort(e.target.value)}
+                value={resumeManagerView.sort}
+                onChange={(e) => setResumeManagerView((view) => ({ ...view, sort: e.target.value }))}
                 className="w-full appearance-none rounded-xl border border-gray-800 bg-gray-950/60 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
               >
                 <option value="newest">Newest</option>
