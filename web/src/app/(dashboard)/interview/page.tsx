@@ -36,6 +36,12 @@ export default function InterviewPage() {
     return `/interview/history/${session.id}`;
   }
 
+  const scoredSessions = sessions.filter((session) => session.overall_score !== null);
+  const avgScore = scoredSessions.length
+    ? `${Math.round(scoredSessions.reduce((sum, session) => sum + (session.overall_score || 0), 0) / scoredSessions.length)}/100`
+    : "—";
+  const bestScore = scoredSessions.length ? `${Math.max(...scoredSessions.map((session) => session.overall_score || 0))}/100` : "—";
+
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
@@ -53,18 +59,13 @@ export default function InterviewPage() {
       </div>
 
       {/* Quick stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
           { label: "Total Sessions", value: sessions.length, icon: Mic, color: "blue" },
           { label: "Completed", value: sessions.filter((s) => s.status === "completed").length, icon: TrendingUp, color: "emerald" },
-          {
-            label: "Avg Score",
-            value: sessions.filter((s) => s.overall_score).length
-              ? Math.round(sessions.filter((s) => s.overall_score).reduce((a, s) => a + (s.overall_score || 0), 0) / sessions.filter((s) => s.overall_score).length) + "/100"
-              : "—",
-            icon: Clock,
-            color: "violet",
-          },
+          { label: "Active", value: sessions.filter((s) => s.status === "active").length, icon: Clock, color: "amber" },
+          { label: "Best Score", value: bestScore, icon: TrendingUp, color: "violet" },
+          { label: "Avg Score", value: avgScore, icon: Clock, color: "violet" },
         ].map((stat) => (
           <div key={stat.label} className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
             <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
