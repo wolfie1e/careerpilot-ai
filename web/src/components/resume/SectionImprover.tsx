@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wand2, Loader2 } from "lucide-react";
+import { Wand2, Loader2, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 const SECTIONS = ["summary", "experience", "projects", "skills", "achievements", "certifications"];
 
@@ -128,7 +129,13 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
             <div className="bg-gray-900 border border-emerald-500/20 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium text-emerald-400">Improved {section}</span>
-                <CopyButton value={result.improved_text} />
+                <div className="flex gap-2">
+                  <CopyButton value={result.improved_text} />
+                  <button onClick={() => downloadJson(`careerpilot-${section}-improvement.json`, { section, target_role: targetRole || null, ...result })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+                    <Download className="h-3.5 w-3.5" />
+                    Export
+                  </button>
+                </div>
               </div>
               <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{result.improved_text}</p>
             </div>
