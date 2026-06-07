@@ -40,6 +40,12 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
     setResults([]);
   }
 
+  function useRewrittenBullets() {
+    setBullets(results.map((result) => result.rewritten).slice(0, MAX_BULLETS));
+    setResults([]);
+    toast.success("Rewritten bullets moved to inputs");
+  }
+
   async function handleRewrite() {
     const filled = bullets.filter((b) => b.trim());
     if (!filled.length) { toast.error("Add at least one bullet to rewrite"); return; }
@@ -130,6 +136,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
           <div className="space-y-4">
             <div className="flex justify-end gap-2">
               <CopyButton value={results.map((result) => `• ${result.rewritten}`).join("\n")} label="Copy all" />
+              <button onClick={useRewrittenBullets} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+                <RefreshCw className="h-3.5 w-3.5" />
+                Use rewritten
+              </button>
               <button onClick={() => downloadJson("careerpilot-rewritten-bullets.json", { target_role: targetRole || null, results })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export JSON
