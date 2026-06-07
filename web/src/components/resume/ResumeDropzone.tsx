@@ -16,6 +16,7 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [done, setDone] = useState(false);
+  const fileExtension = file?.name.split(".").pop()?.toUpperCase();
 
   const onDrop = useCallback(
     async (accepted: File[]) => {
@@ -77,7 +78,9 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
         <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
         <div>
           <div className="text-sm font-medium text-white">{file.name}</div>
-          <div className="text-xs text-emerald-400">Uploaded and parsed successfully · {formatBytes(file.size)}</div>
+          <div className="text-xs text-emerald-400">
+            Uploaded and parsed successfully · {fileExtension} · {formatBytes(file.size)}
+          </div>
         </div>
         <button
           onClick={() => { setFile(null); setDone(false); }}
@@ -105,7 +108,10 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
           <div className="text-sm text-gray-300">Uploading and parsing…</div>
-          <div className="text-xs text-gray-500">{file?.name}</div>
+          <div className="text-xs text-gray-500">
+            {file?.name}
+            {file && ` · ${fileExtension} · ${formatBytes(file.size)}`}
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3">
