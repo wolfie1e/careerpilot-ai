@@ -1,6 +1,7 @@
 "use client";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import Link from "next/link";
 import { LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -41,9 +42,11 @@ export default function UserMenu() {
             </div>
           </div>
 
-          <DropdownMenu.Item className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg cursor-default transition-colors outline-none">
-            <Settings className="w-3.5 h-3.5" />
-            Settings
+          <DropdownMenu.Item asChild>
+            <Link href="/settings" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
+              <Settings className="w-3.5 h-3.5" />
+              Settings
+            </Link>
           </DropdownMenu.Item>
 
           <DropdownMenu.Separator className="my-1 h-px bg-gray-800" />
