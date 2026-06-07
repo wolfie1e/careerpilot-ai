@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Download, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
+import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -35,6 +35,7 @@ export default function SettingsPage() {
   const [passwordErrors, setPasswordErrors] = useState<FieldErrors>({});
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   async function submitProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -151,7 +152,13 @@ export default function SettingsPage() {
         </form>
 
         <form onSubmit={submitPassword} className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
-          <h3 className="mb-1 flex items-center gap-2 font-semibold text-white"><KeyRound className="h-4 w-4 text-violet-400" /> Security</h3>
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="mb-1 flex items-center gap-2 font-semibold text-white"><KeyRound className="h-4 w-4 text-violet-400" /> Security</h3>
+            <button type="button" onClick={() => setShowPasswords((value) => !value)} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+              {showPasswords ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              {showPasswords ? "Hide" : "Show"}
+            </button>
+          </div>
           <p className="mb-5 text-sm text-gray-500">Change your password without disrupting current work.</p>
           <div className="space-y-4">
             {[
@@ -161,7 +168,7 @@ export default function SettingsPage() {
             ].map(([key, label]) => (
               <label key={key} className="block">
                 <span className="mb-1.5 block text-sm font-medium text-gray-300">{label}</span>
-                <input type="password" value={password[key as keyof typeof password]} onChange={(e) => setPassword((p) => ({ ...p, [key]: e.target.value }))} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-violet-500" />
+                <input type={showPasswords ? "text" : "password"} value={password[key as keyof typeof password]} onChange={(e) => setPassword((p) => ({ ...p, [key]: e.target.value }))} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-violet-500" />
                 {passwordErrors[key] && <span className="mt-1 block text-xs text-rose-400">{passwordErrors[key]}</span>}
               </label>
             ))}
