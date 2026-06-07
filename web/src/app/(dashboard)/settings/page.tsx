@@ -21,11 +21,12 @@ function collectErrors(issues: Array<{ path: PropertyKey[]; message: string }>) 
 
 export default function SettingsPage() {
   const { user, updateProfile, changePassword } = useAuth();
-  const [profile, setProfile] = useState({
+  const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
     avatar_url: user?.avatar_url || "",
-  });
+  };
+  const [profile, setProfile] = useState(initialProfile);
   const [password, setPassword] = useState({
     current_password: "",
     new_password: "",
@@ -36,6 +37,7 @@ export default function SettingsPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
+  const profileDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
 
   async function submitProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -145,9 +147,15 @@ export default function SettingsPage() {
               <input value={profile.avatar_url} onChange={(e) => setProfile((p) => ({ ...p, avatar_url: e.target.value }))} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="https://..." />
               {profileErrors.avatar_url && <span className="mt-1 block text-xs text-rose-400">{profileErrors.avatar_url}</span>}
             </label>
-            <button disabled={savingProfile} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-60">
-              {savingProfile && <Loader2 className="h-4 w-4 animate-spin" />} Save profile
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button disabled={savingProfile || !profileDirty} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-60">
+                {savingProfile && <Loader2 className="h-4 w-4 animate-spin" />} Save profile
+              </button>
+              <button type="button" onClick={() => setProfile(initialProfile)} disabled={!profileDirty || savingProfile} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-400 transition hover:text-white disabled:opacity-40">
+                <RotateCcw className="h-4 w-4" />
+                Reset changes
+              </button>
+            </div>
           </div>
         </form>
 
