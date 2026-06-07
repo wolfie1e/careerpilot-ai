@@ -37,6 +37,9 @@ export default function SettingsPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
+  const [localPreferenceCount, setLocalPreferenceCount] = useState(() => (
+    typeof window === "undefined" ? 0 : Object.values(LOCAL_STORAGE_KEYS).filter((key) => window.localStorage.getItem(key) !== null).length
+  ));
   const profileDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
 
   async function submitProfile(e: React.FormEvent) {
@@ -82,6 +85,7 @@ export default function SettingsPage() {
     Object.values(LOCAL_STORAGE_KEYS).forEach((key) => {
       window.localStorage.removeItem(key);
     });
+    setLocalPreferenceCount(0);
     toast.success("Local workspace preferences reset");
   }
 
@@ -195,7 +199,10 @@ export default function SettingsPage() {
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <h3 className="font-semibold text-white">Workspace preferences</h3>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-semibold text-white">Workspace preferences</h3>
+          <span className="rounded-full bg-gray-800 px-2 py-1 text-xs font-medium text-gray-400">{localPreferenceCount} saved</span>
+        </div>
         <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences, saved job descriptions, recent matches, and pinned items.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button onClick={exportLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
