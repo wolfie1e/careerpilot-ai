@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw } from "lucide-react";
@@ -109,6 +109,14 @@ function getFocusItems(analytics: AnalyticsData | null, resumes: Resume[], sessi
   return items.slice(0, 3);
 }
 
+function fetchDashboardData() {
+  return Promise.all([
+    api.get<AnalyticsData>("/analytics"),
+    api.get<Resume[]>("/resume"),
+    api.get<{ sessions: Session[] }>("/interview/history").then((data) => data.sessions || []),
+  ]);
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -118,25 +126,24 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(LOCAL_STORAGE_KEYS.onboardingDismissed, false);
 
-  const loadDashboard = useCallback(async () => {
-    const [analyticsData, resumeData, sessionData] = await Promise.all([
-      api.get<AnalyticsData>("/analytics"),
-      api.get<Resume[]>("/resume"),
-      api.get<{ sessions: Session[] }>("/interview/history").then((d) => d.sessions || []),
-    ]);
-    setAnalytics(analyticsData);
-    setResumes(resumeData);
-    setSessions(sessionData);
-  }, []);
-
   useEffect(() => {
-    loadDashboard().catch(() => {}).finally(() => setLoading(false));
-  }, [loadDashboard]);
+    fetchDashboardData()
+      .then(([analyticsData, resumeData, sessionData]) => {
+        setAnalytics(analyticsData);
+        setResumes(resumeData);
+        setSessions(sessionData);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   async function refreshDashboard() {
     setRefreshing(true);
     try {
-      await loadDashboard();
+      const [analyticsData, resumeData, sessionData] = await fetchDashboardData();
+      setAnalytics(analyticsData);
+      setResumes(resumeData);
+      setSessions(sessionData);
     } finally {
       setRefreshing(false);
     }
