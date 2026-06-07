@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wand2, Loader2, Download, RefreshCw } from "lucide-react";
+import { Wand2, Loader2, Download, RefreshCw, X } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
@@ -57,6 +57,11 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
     }
   }
 
+  function clearSectionText() {
+    setSectionText("");
+    setResult(null);
+  }
+
   return (
     <div className="space-y-5">
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
@@ -83,13 +88,21 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
         />
 
-        <textarea
-          value={sectionText}
-          onChange={(e) => setSectionText(e.target.value)}
-          placeholder={`Paste your ${section} section here…`}
-          rows={6}
-          className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
-        />
+        <label className="relative block">
+          <textarea
+            value={sectionText}
+            onChange={(e) => setSectionText(e.target.value)}
+            placeholder={`Paste your ${section} section here…`}
+            rows={6}
+            className="w-full resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 pr-16 text-sm text-white transition-all placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
+          />
+          {sectionText && (
+            <button type="button" onClick={clearSectionText} className="absolute right-3 top-3 inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition hover:text-white">
+              <X className="h-3.5 w-3.5" />
+              Clear
+            </button>
+          )}
+        </label>
 
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span>{wordCount} word{wordCount === 1 ? "" : "s"}</span>
