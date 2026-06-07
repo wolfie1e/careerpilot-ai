@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Sparkles, Loader2, ArrowRight, RotateCcw, X } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, ArrowRight, RotateCcw, X, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 interface RewriteResult {
   original?: string;
@@ -129,6 +130,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
           <div className="space-y-4">
             <div className="flex justify-end gap-2">
               <CopyButton value={results.map((result) => `• ${result.rewritten}`).join("\n")} label="Copy all" />
+              <button onClick={() => downloadJson("careerpilot-rewritten-bullets.json", { target_role: targetRole || null, results })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export JSON
+              </button>
               <button onClick={() => setResults([])} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
                 <X className="h-3.5 w-3.5" />
                 Clear results
