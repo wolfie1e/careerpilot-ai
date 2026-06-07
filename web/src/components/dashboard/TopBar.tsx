@@ -19,6 +19,7 @@ export default function TopBar() {
   const base = "/" + pathname.split("/")[1];
   const page = pageTitles[base] || { title: "CareerPilot AI", subtitle: "", actionHref: "/settings", actionLabel: "Settings", actionIcon: Settings };
   const ActionIcon = page.actionIcon;
+  const todayLabel = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date());
 
   return (
     <header className="h-16 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
@@ -27,6 +28,9 @@ export default function TopBar() {
         <p className="text-xs text-gray-500">{page.subtitle}</p>
       </div>
       <div className="flex items-center gap-2">
+        <span className="hidden rounded-xl border border-gray-800 px-3 py-2 text-xs font-medium text-gray-500 md:inline-flex">
+          {todayLabel}
+        </span>
         <Link href={page.actionHref} className="hidden items-center gap-2 rounded-xl border border-gray-800 px-3 py-2 text-xs font-semibold text-gray-300 transition hover:bg-gray-800 hover:text-white sm:inline-flex">
           <ActionIcon className="h-3.5 w-3.5" />
           {page.actionLabel}
