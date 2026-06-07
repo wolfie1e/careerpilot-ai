@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FolderGit2, Loader2, Clock, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { FolderGit2, Loader2, Clock, ChevronDown, ChevronUp, Download, RotateCcw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -59,6 +59,13 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
     }
   }
 
+  function resetProjects() {
+    setTargetRole("");
+    setLevel("intermediate");
+    setProjects([]);
+    setExpanded([]);
+  }
+
   return (
     <div className="space-y-5">
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
@@ -95,10 +102,16 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
           </div>
         )}
 
-        <button onClick={handleGenerate} disabled={loading || !targetRole.trim()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/40 text-white font-semibold rounded-xl text-sm transition-all">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating…</> : <><FolderGit2 className="w-4 h-4" />Get Project Ideas</>}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleGenerate} disabled={loading || !targetRole.trim()}
+            className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-600/40 text-white font-semibold rounded-xl text-sm transition-all">
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating…</> : <><FolderGit2 className="w-4 h-4" />Get Project Ideas</>}
+          </button>
+          <button onClick={resetProjects} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-400 transition hover:text-white disabled:opacity-40">
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
