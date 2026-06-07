@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RotateCcw, Shield, UserRound } from "lucide-react";
+import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RotateCcw, Shield, Upload, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -109,6 +109,29 @@ export default function SettingsPage() {
       exported_at: new Date().toISOString(),
       preferences,
     });
+  }
+
+  async function importLocalPreferences(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    try {
+      const parsed = JSON.parse(await file.text()) as { preferences?: Record<string, unknown> };
+      Object.entries(parsed.preferences || {}).forEach(([name, value]) => {
+        const storageKey = LOCAL_STORAGE_KEYS[name as keyof typeof LOCAL_STORAGE_KEYS];
+        if (!storageKey) return;
+        if (value === null || value === undefined) {
+          window.localStorage.removeItem(storageKey);
+        } else {
+          window.localStorage.setItem(storageKey, JSON.stringify(value));
+        }
+      });
+      setLocalPreferenceCount(Object.values(LOCAL_STORAGE_KEYS).filter((key) => window.localStorage.getItem(key) !== null).length);
+      toast.success("Local preferences imported");
+    } catch {
+      toast.error("Could not import preferences");
+    }
   }
 
   return (
@@ -223,6 +246,11 @@ export default function SettingsPage() {
             <Download className="h-4 w-4" />
             Export local preferences
           </button>
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <Upload className="h-4 w-4" />
+            Import preferences
+            <input type="file" accept="application/json,.json" onChange={importLocalPreferences} className="sr-only" />
+          </label>
           <button onClick={resetLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <RotateCcw className="h-4 w-4" />
             Reset local preferences
