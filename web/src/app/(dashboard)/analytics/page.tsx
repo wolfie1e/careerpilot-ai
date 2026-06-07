@@ -192,6 +192,14 @@ export default function AnalyticsPage() {
     });
   }
 
+  function exportRangeBests() {
+    downloadCsv("careerpilot-range-best-scores.csv", rangeBestCards.map((card) => ({
+      time_range: timeRange,
+      metric: card.label,
+      best_score: card.value ?? "",
+    })));
+  }
+
   function resetAnalyticsPreferences() {
     setTimeRange("all");
     setReadinessGoal(80);
@@ -224,6 +232,10 @@ export default function AnalyticsPage() {
           <button onClick={exportAnalyticsJson} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
             <Download className="h-4 w-4" />
             Export JSON
+          </button>
+          <button onClick={exportRangeBests} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export bests
           </button>
           <CopyButton value={analyticsSummaryText} label="Copy summary" />
           <button onClick={resetAnalyticsPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
