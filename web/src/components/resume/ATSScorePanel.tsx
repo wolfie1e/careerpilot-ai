@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpDown } from "lucide-react";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { cn, scoreColor } from "@/lib/utils";
 
 interface ATSBreakdown {
@@ -46,14 +47,21 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
   const categories = sortWeakestFirst
     ? Object.entries(breakdown).sort(([, a], [, b]) => a - b)
     : Object.entries(breakdown);
+  const summary = [
+    `ATS score: ${atsScore}/100`,
+    ...Object.entries(breakdown).map(([key, score]) => `${categoryLabels[key] || key}: ${score}/100`),
+  ].join("\n");
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-semibold text-white">ATS Score</h3>
-        <span className={cn("text-3xl font-extrabold", scoreColor(atsScore))}>
-          {atsScore}<span className="text-sm font-normal text-gray-500">/100</span>
-        </span>
+        <div className="flex items-center gap-3">
+          <CopyButton value={summary} label="Copy summary" />
+          <span className={cn("text-3xl font-extrabold", scoreColor(atsScore))}>
+            {atsScore}<span className="text-sm font-normal text-gray-500">/100</span>
+          </span>
+        </div>
       </div>
 
       {/* Overall progress bar */}
