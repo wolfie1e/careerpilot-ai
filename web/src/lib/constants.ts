@@ -18,6 +18,7 @@ export const LOCAL_STORAGE_KEYS = {
   readinessGoal: "careerpilot_readiness_goal",
   resumeManagerView: "careerpilot_resume_manager_view",
   sidebarCollapsed: "careerpilot_sidebar_collapsed",
+  reportsView: "careerpilot_reports_view",
 } as const;
 
 export const MAX_FILE_SIZE_MB = 10;
