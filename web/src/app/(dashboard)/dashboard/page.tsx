@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import CopyButton from "@/components/shared/CopyButton";
@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { api } from "@/lib/api-client";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { downloadJson } from "@/lib/export-utils";
 import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 
 interface AnalyticsData {
@@ -178,6 +179,23 @@ export default function DashboardPage() {
     setOnboardingDismissed(true);
   }
 
+  function exportDashboardSnapshot() {
+    downloadJson("careerpilot-dashboard-snapshot.json", {
+      exported_at: new Date().toISOString(),
+      user: user?.username || user?.full_name || null,
+      readiness_score: analytics?.readiness_score ?? null,
+      latest_ats_score: analytics?.latest_ats_score ?? null,
+      best_match_score: bestMatch,
+      latest_match_score: latestMatch,
+      average_interview_score: analytics?.avg_interview_score ?? null,
+      resumes_uploaded: resumes.length,
+      interviews_completed: analytics?.total_interviews ?? sessions.length,
+      practice_streak_days: practiceStreak,
+      recommended_next_step: nextStep,
+      priority_focus: focusItems,
+    });
+  }
+
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Greeting */}
@@ -189,10 +207,18 @@ export default function DashboardPage() {
         </h2>
         <p className="text-gray-400 text-sm mt-1">Here&apos;s your career readiness snapshot</p>
         </div>
-        <button onClick={refreshDashboard} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-800 px-3 py-2 text-xs font-semibold text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
-          <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
-          Refresh
-        </button>
+        <div className="flex flex-wrap justify-end gap-2">
+          {!loading && (
+            <button onClick={exportDashboardSnapshot} className="inline-flex items-center gap-2 rounded-xl border border-gray-800 px-3 py-2 text-xs font-semibold text-gray-400 transition hover:bg-gray-900 hover:text-white">
+              <Download className="h-3.5 w-3.5" />
+              Export
+            </button>
+          )}
+          <button onClick={refreshDashboard} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-800 px-3 py-2 text-xs font-semibold text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
+            <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+            Refresh
+          </button>
+        </div>
       </motion.div>
 
       {/* Onboarding checklist */}
