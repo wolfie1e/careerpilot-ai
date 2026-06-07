@@ -5,6 +5,7 @@ import { ArrowUpDown, Download, FileText, HardDrive, Loader2, RotateCcw, Search,
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadJson } from "@/lib/export-utils";
@@ -86,6 +87,7 @@ export default function ReportsPage() {
       is_primary: resume.id === pinnedResumeId,
     })));
   }
+  const manifestText = visibleResumes.map((resume) => `${resume.filename} · ${formatBytes(resume.file_size)} · ${new Date(resume.created_at).toLocaleDateString()}`).join("\n");
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -108,6 +110,7 @@ export default function ReportsPage() {
               <Download className="h-4 w-4" />
               Export JSON
             </button>
+            <CopyButton value={manifestText || "No reports"} label="Copy list" className="rounded-xl px-3 py-2 text-sm" />
           </div>
         )}
       </div>
