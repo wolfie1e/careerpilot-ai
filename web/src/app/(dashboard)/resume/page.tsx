@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpDown, FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench, Search, RotateCcw } from "lucide-react";
+import { ArrowUpDown, FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench, Search, RotateCcw, Download } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { cn, scoreColor, formatRelativeTime, formatBytes, formatDelta } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { downloadJson } from "@/lib/export-utils";
 
 interface ResumeData {
   id: string;
@@ -199,6 +200,16 @@ export default function ResumePage() {
     setPastResumes((prev) => [{ id: r.id, filename: r.filename, file_type: "pdf", file_size: null, created_at: new Date().toISOString() }, ...prev.filter((p) => p.id !== r.id)]);
   }
 
+  function exportVisibleResumes() {
+    downloadJson("careerpilot-visible-resumes.json", {
+      exported_at: new Date().toISOString(),
+      search: resumeManagerView.search,
+      sort: resumeManagerView.sort,
+      pinned_resume_id: pinnedResumeId,
+      resumes: visibleResumes,
+    });
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -209,14 +220,20 @@ export default function ResumePage() {
       {/* Resume history switcher */}
       {pastResumes.length > 0 && !showDropzone && (
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-medium text-white flex items-center gap-2">
               <FileText className="w-4 h-4 text-blue-400" />My Resumes
             </h3>
-            <button onClick={() => { setShowDropzone(true); setResume(null); setAnalysis(null); setResumeTab("analysis"); }}
-              className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors">
-              <Plus className="w-3 h-3" />Upload New
-            </button>
+            <div className="flex items-center gap-3">
+              <button onClick={() => { setShowDropzone(true); setResume(null); setAnalysis(null); setResumeTab("analysis"); }}
+                className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                <Plus className="w-3 h-3" />Upload New
+              </button>
+              <button onClick={exportVisibleResumes}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white transition-colors">
+                <Download className="w-3 h-3" />Export list
+              </button>
+            </div>
           </div>
           <div className="mb-3 grid gap-2 sm:grid-cols-[1fr_180px]">
             <label className="relative block">
