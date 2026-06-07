@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +9,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -23,7 +24,7 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useLocalStorage(LOCAL_STORAGE_KEYS.sidebarCollapsed, false);
 
   return (
     <motion.aside
