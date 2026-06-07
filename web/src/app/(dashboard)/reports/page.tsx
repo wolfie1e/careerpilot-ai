@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUpDown, Download, FileText, HardDrive, Loader2, Search, Star } from "lucide-react";
+import { ArrowUpDown, Download, FileText, HardDrive, Loader2, RotateCcw, Search, Star } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -173,6 +173,12 @@ export default function ReportsPage() {
                 <option value="size_asc">Smallest file</option>
               </select>
             </label>
+          </div>
+          <div className="flex justify-end">
+            <button onClick={() => setReportsView({ search: "", sort: "newest" })} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reset report view
+            </button>
           </div>
           {visibleResumes.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900 p-10 text-center">
