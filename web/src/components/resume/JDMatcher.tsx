@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2, History } from "lucide-react";
+import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2, History, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 const PROGRESS_STEPS = [
   "Parsing job description…",
@@ -164,6 +165,14 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     toast.success("Saved job descriptions cleared");
   }
 
+  function exportRecentMatches() {
+    downloadJson("careerpilot-recent-jd-matches.json", {
+      exported_at: new Date().toISOString(),
+      resume_id: resumeId,
+      matches: recentMatchesForResume,
+    });
+  }
+
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
     if (!jdReady) { toast.error(`Add at least ${MIN_JD_WORDS} words for a reliable match`); return; }
@@ -290,10 +299,16 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
 
       {recentMatchesForResume.length > 0 && (
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-            <History className="h-4 w-4 text-violet-400" />
-            Recent Match Results
-          </h4>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h4 className="flex items-center gap-2 text-sm font-semibold text-white">
+              <History className="h-4 w-4 text-violet-400" />
+              Recent Match Results
+            </h4>
+            <button onClick={exportRecentMatches} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+              <Download className="h-3.5 w-3.5" />
+              Export
+            </button>
+          </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {recentMatchesForResume.map((match) => (
               <div key={match.id} className="rounded-xl border border-gray-800 bg-gray-950/50 px-4 py-3">
