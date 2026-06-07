@@ -174,8 +174,17 @@ export default function InterviewHistoryPage() {
               value={historyView.search}
               onChange={(e) => setHistoryView((view) => ({ ...view, search: e.target.value }))}
               placeholder="Search roles..."
-              className="w-full rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-16 text-sm text-white outline-none transition focus:border-blue-500"
             />
+            {historyView.search && (
+              <button
+                type="button"
+                onClick={() => setHistoryView((view) => ({ ...view, search: "" }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500 transition hover:text-white"
+              >
+                Clear
+              </button>
+            )}
           </label>
           <select value={historyView.difficulty} onChange={(e) => setHistoryView((view) => ({ ...view, difficulty: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">All difficulties</option>
