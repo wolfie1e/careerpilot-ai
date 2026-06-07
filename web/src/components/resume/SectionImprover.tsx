@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wand2, Loader2, Download } from "lucide-react";
+import { Wand2, Loader2, Download, RefreshCw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
@@ -131,6 +131,10 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
                 <span className="text-sm font-medium text-emerald-400">Improved {section}</span>
                 <div className="flex gap-2">
                   <CopyButton value={result.improved_text} />
+                  <button onClick={() => { setSectionText(result.improved_text); setResult(null); }} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Use text
+                  </button>
                   <button onClick={() => downloadJson(`careerpilot-${section}-improvement.json`, { section, target_role: targetRole || null, ...result })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
                     <Download className="h-3.5 w-3.5" />
                     Export
