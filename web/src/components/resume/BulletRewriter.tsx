@@ -20,13 +20,15 @@ interface BulletRewriterProps {
   resumeId: string;
 }
 
+const MAX_BULLETS = 5;
+
 export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
   const [targetRole, setTargetRole] = useState("");
   const [bullets, setBullets] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<RewriteResult[]>([]);
 
-  const addBullet = () => setBullets((b) => [...b, ""]);
+  const addBullet = () => setBullets((b) => b.length < MAX_BULLETS ? [...b, ""] : b);
   const removeBullet = (i: number) => setBullets((b) => b.filter((_, j) => j !== i));
   const updateBullet = (i: number, val: string) =>
     setBullets((b) => b.map((x, j) => (j === i ? val : x)));
@@ -82,10 +84,12 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
               <input
                 type="text"
                 value={b}
+                maxLength={300}
                 onChange={(e) => updateBullet(i, e.target.value)}
                 placeholder={`Bullet ${i + 1} — e.g. "Made a website using React"`}
                 className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
               />
+              <span className={cn("w-14 self-center text-right text-xs", b.length > 250 ? "text-amber-400" : "text-gray-600")}>{b.length}/300</span>
               {bullets.length > 1 && (
                 <button onClick={() => removeBullet(i)} className="p-2.5 text-gray-600 hover:text-rose-400 transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -96,8 +100,8 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
         </div>
 
         <div className="flex gap-3">
-          <button onClick={addBullet} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-            <Plus className="w-3.5 h-3.5" />Add another bullet
+          <button onClick={addBullet} disabled={bullets.length >= MAX_BULLETS} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40">
+            <Plus className="w-3.5 h-3.5" />Add another bullet ({bullets.length}/{MAX_BULLETS})
           </button>
           <button
             onClick={handleRewrite}
