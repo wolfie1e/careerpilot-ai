@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
+import CopyButton from "@/components/shared/CopyButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { api } from "@/lib/api-client";
@@ -171,6 +172,7 @@ export default function DashboardPage() {
         ? { href: "/interview/setup", label: "Practice an interview", desc: "Turn your resume work into answer confidence." }
         : { href: "/analytics", label: "Review progress", desc: "Compare score trends and choose your next focus area." };
   const focusItems = getFocusItems(analytics, resumes, sessions);
+  const focusPlanText = focusItems.map((item, index) => `${index + 1}. ${item.label} - ${item.desc}`).join("\n");
 
   function dismissOnboarding() {
     setOnboardingDismissed(true);
@@ -310,9 +312,12 @@ export default function DashboardPage() {
 
       {!loading && focusItems.length > 0 && (
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-          <div className="mb-4 flex items-center gap-2">
-            <ListChecks className="h-4 w-4 text-blue-400" />
-            <h3 className="text-sm font-semibold text-white">Priority Focus</h3>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <ListChecks className="h-4 w-4 text-blue-400" />
+              <h3 className="text-sm font-semibold text-white">Priority Focus</h3>
+            </div>
+            <CopyButton value={focusPlanText} label="Copy plan" />
           </div>
           <div className="grid gap-3 md:grid-cols-3">
             {focusItems.map((item) => (
