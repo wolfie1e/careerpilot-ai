@@ -15,6 +15,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { cn, scoreColor, formatRelativeTime, formatBytes, formatDelta } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { downloadJson } from "@/lib/export-utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface ResumeData {
   id: string;
@@ -193,6 +194,9 @@ export default function ResumePage() {
     suggestionPriority === "all" || suggestion.priority === suggestionPriority
   )) ?? [];
   const selectedResumeItem = resume ? pastResumes.find((item) => item.id === resume.id) : null;
+  const visibleSuggestionText = visibleSuggestions.map((suggestion) => (
+    `[${suggestion.priority.toUpperCase()}] ${suggestion.section}: ${suggestion.message}`
+  )).join("\n");
 
   function handleUploaded(r: ResumeData) {
     setResume(r);
@@ -208,6 +212,15 @@ export default function ResumePage() {
       sort: resumeManagerView.sort,
       pinned_resume_id: pinnedResumeId,
       resumes: visibleResumes,
+    });
+  }
+
+  function exportVisibleSuggestions() {
+    downloadJson("careerpilot-resume-suggestions.json", {
+      exported_at: new Date().toISOString(),
+      resume_id: resume?.id ?? null,
+      priority: suggestionPriority,
+      suggestions: visibleSuggestions,
     });
   }
 
@@ -436,19 +449,26 @@ export default function ResumePage() {
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                   <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2"><Lightbulb className="w-4 h-4" />Priority Improvements</h4>
-                    <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
-                      {(["all", "high", "medium", "low"] as SuggestionPriority[]).map((priority) => (
-                        <button
-                          key={priority}
-                          onClick={() => setSuggestionPriority(priority)}
-                          className={cn(
-                            "rounded-md px-2 py-1 text-xs font-medium capitalize transition",
-                            suggestionPriority === priority ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"
-                          )}
-                        >
-                          {priority}
-                        </button>
-                      ))}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <CopyButton value={visibleSuggestionText || "No suggestions"} label="Copy" />
+                      <button onClick={exportVisibleSuggestions} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                        <Download className="h-3.5 w-3.5" />
+                        Export
+                      </button>
+                      <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
+                        {(["all", "high", "medium", "low"] as SuggestionPriority[]).map((priority) => (
+                          <button
+                            key={priority}
+                            onClick={() => setSuggestionPriority(priority)}
+                            className={cn(
+                              "rounded-md px-2 py-1 text-xs font-medium capitalize transition",
+                              suggestionPriority === priority ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"
+                            )}
+                          >
+                            {priority}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2">
