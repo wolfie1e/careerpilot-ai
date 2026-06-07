@@ -29,6 +29,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
   const [targetRole, setTargetRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ImproveResult | null>(null);
+  const wordCount = sectionText.trim().split(/\s+/).filter(Boolean).length;
 
   function handleSectionChange(s: string) {
     setSection(s);
@@ -88,6 +89,11 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
           rows={6}
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
         />
+
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>{wordCount} word{wordCount === 1 ? "" : "s"}</span>
+          <span>{sectionText.length} characters</span>
+        </div>
 
         <button onClick={handleImprove} disabled={loading || !sectionText.trim()}
           className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl text-sm transition-all">
