@@ -15,6 +15,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { cn, formatDelta, scoreLabel, scoreTone } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -155,6 +156,16 @@ export default function AnalyticsPage() {
   ];
   const readinessGap = Math.max(0, readinessGoal - data.readiness_score);
   const focusItems = getAnalyticsFocusItems(data);
+  const analyticsSummaryText = [
+    `Readiness: ${data.readiness_score}/100`,
+    `Latest ATS: ${data.latest_ats_score ?? "No data"}`,
+    `Average interview: ${data.avg_interview_score ?? "No data"}`,
+    `Resumes analyzed: ${data.total_resumes_analyzed}`,
+    `Interviews completed: ${data.total_interviews}`,
+    `Best ATS in range: ${rangeBestCards[0].value ?? "No data"}`,
+    `Best interview in range: ${rangeBestCards[1].value ?? "No data"}`,
+    `Best match in range: ${rangeBestCards[2].value ?? "No data"}`,
+  ].join("\n");
 
   function exportTrends() {
     downloadCsv("careerpilot-score-trends.csv", combinedTrend.map((row) => ({
@@ -214,6 +225,7 @@ export default function AnalyticsPage() {
             <Download className="h-4 w-4" />
             Export JSON
           </button>
+          <CopyButton value={analyticsSummaryText} label="Copy summary" />
           <button onClick={resetAnalyticsPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
             <RotateCcw className="h-4 w-4" />
             Reset
