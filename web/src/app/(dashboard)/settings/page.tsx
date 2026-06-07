@@ -41,6 +41,11 @@ export default function SettingsPage() {
     typeof window === "undefined" ? 0 : Object.values(LOCAL_STORAGE_KEYS).filter((key) => window.localStorage.getItem(key) !== null).length
   ));
   const profileDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
+  const savedPreferenceNames = typeof window === "undefined"
+    ? []
+    : Object.entries(LOCAL_STORAGE_KEYS)
+        .filter(([, key]) => window.localStorage.getItem(key) !== null)
+        .map(([name]) => name);
 
   async function submitProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -204,6 +209,15 @@ export default function SettingsPage() {
           <span className="rounded-full bg-gray-800 px-2 py-1 text-xs font-medium text-gray-400">{localPreferenceCount} saved</span>
         </div>
         <p className="mt-1 text-sm text-gray-500">Reset local-only UI preferences, saved job descriptions, recent matches, and pinned items.</p>
+        {savedPreferenceNames.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {savedPreferenceNames.map((name) => (
+              <span key={name} className="rounded-full border border-gray-700 bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-400">
+                {name}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="mt-4 flex flex-wrap gap-2">
           <button onClick={exportLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <Download className="h-4 w-4" />
