@@ -20,6 +20,7 @@ export const LOCAL_STORAGE_KEYS = {
   sidebarCollapsed: "careerpilot_sidebar_collapsed",
   reportsView: "careerpilot_reports_view",
   analyticsTimeRange: "careerpilot_analytics_time_range",
+  interviewHistoryView: "careerpilot_interview_history_view",
 } as const;
 
 export const MAX_FILE_SIZE_MB = 10;

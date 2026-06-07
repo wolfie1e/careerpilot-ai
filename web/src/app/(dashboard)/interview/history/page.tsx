@@ -23,36 +23,49 @@ interface Session {
   created_at: string;
 }
 
+interface HistoryView {
+  search: string;
+  difficulty: string;
+  interviewType: string;
+  sessionMode: string;
+  status: string;
+  scoreFilter: string;
+  showPinnedOnly: boolean;
+  sortBy: string;
+}
+
 export default function InterviewHistoryPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [interviewType, setInterviewType] = useState("");
-  const [sessionMode, setSessionMode] = useState("");
-  const [status, setStatus] = useState("");
-  const [scoreFilter, setScoreFilter] = useState("");
-  const [showPinnedOnly, setShowPinnedOnly] = useState(false);
-  const [sortBy, setSortBy] = useState("newest");
+  const [historyView, setHistoryView] = useLocalStorage<HistoryView>(LOCAL_STORAGE_KEYS.interviewHistoryView, {
+    search: "",
+    difficulty: "",
+    interviewType: "",
+    sessionMode: "",
+    status: "",
+    scoreFilter: "",
+    showPinnedOnly: false,
+    sortBy: "newest",
+  });
   const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
-  const deferredSearch = useDeferredValue(search);
-  const hasFilters = Boolean(search || difficulty || interviewType || sessionMode || status || scoreFilter || showPinnedOnly);
+  const deferredSearch = useDeferredValue(historyView.search);
+  const hasFilters = Boolean(historyView.search || historyView.difficulty || historyView.interviewType || historyView.sessionMode || historyView.status || historyView.scoreFilter || historyView.showPinnedOnly);
   const pinnedSessionSet = new Set(pinnedSessionIds);
   const sortedSessions = [...sessions].sort((a, b) => {
     if (pinnedSessionSet.has(a.id) !== pinnedSessionSet.has(b.id)) {
       return pinnedSessionSet.has(a.id) ? -1 : 1;
     }
-    if (sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    if (sortBy === "score_desc") return (b.overall_score ?? -1) - (a.overall_score ?? -1);
-    if (sortBy === "score_asc") return (a.overall_score ?? 101) - (b.overall_score ?? 101);
-    if (sortBy === "role") return a.role_title.localeCompare(b.role_title);
+    if (historyView.sortBy === "oldest") return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    if (historyView.sortBy === "score_desc") return (b.overall_score ?? -1) - (a.overall_score ?? -1);
+    if (historyView.sortBy === "score_asc") return (a.overall_score ?? 101) - (b.overall_score ?? 101);
+    if (historyView.sortBy === "role") return a.role_title.localeCompare(b.role_title);
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
   const visibleSessions = sortedSessions.filter((session) => {
-    if (showPinnedOnly && !pinnedSessionSet.has(session.id)) return false;
-    if (scoreFilter === "strong") return (session.overall_score ?? 0) >= 75;
-    if (scoreFilter === "needs_focus") return session.overall_score !== null && session.overall_score < 75;
-    if (scoreFilter === "unscored") return session.overall_score === null;
+    if (historyView.showPinnedOnly && !pinnedSessionSet.has(session.id)) return false;
+    if (historyView.scoreFilter === "strong") return (session.overall_score ?? 0) >= 75;
+    if (historyView.scoreFilter === "needs_focus") return session.overall_score !== null && session.overall_score < 75;
+    if (historyView.scoreFilter === "unscored") return session.overall_score === null;
     return true;
   });
   const visibleScoredSessions = visibleSessions.filter((session) => session.overall_score !== null);
@@ -61,13 +74,7 @@ export default function InterviewHistoryPage() {
     : null;
 
   function clearFilters() {
-    setSearch("");
-    setDifficulty("");
-    setInterviewType("");
-    setSessionMode("");
-    setStatus("");
-    setScoreFilter("");
-    setShowPinnedOnly(false);
+    setHistoryView((view) => ({ ...view, search: "", difficulty: "", interviewType: "", sessionMode: "", status: "", scoreFilter: "", showPinnedOnly: false }));
   }
 
   function togglePinnedSession(sessionId: string) {
@@ -102,16 +109,16 @@ export default function InterviewHistoryPage() {
   useEffect(() => {
     const params = new URLSearchParams();
     if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
-    if (difficulty) params.set("difficulty", difficulty);
-    if (interviewType) params.set("interview_type", interviewType);
-    if (sessionMode) params.set("session_mode", sessionMode);
-    if (status) params.set("status", status);
+    if (historyView.difficulty) params.set("difficulty", historyView.difficulty);
+    if (historyView.interviewType) params.set("interview_type", historyView.interviewType);
+    if (historyView.sessionMode) params.set("session_mode", historyView.sessionMode);
+    if (historyView.status) params.set("status", historyView.status);
 
     api.get<{ sessions: Session[] }>(`/interview/history${params.size ? `?${params}` : ""}`)
       .then((d) => setSessions(d.sessions || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [deferredSearch, difficulty, interviewType, sessionMode, status]);
+  }, [deferredSearch, historyView.difficulty, historyView.interviewType, historyView.sessionMode, historyView.status]);
 
   return (
     <div className="max-w-3xl space-y-5">
@@ -154,29 +161,29 @@ export default function InterviewHistoryPage() {
           <label className="relative md:col-span-2">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
             <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={historyView.search}
+              onChange={(e) => setHistoryView((view) => ({ ...view, search: e.target.value }))}
               placeholder="Search roles..."
               className="w-full rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500"
             />
           </label>
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select value={historyView.difficulty} onChange={(e) => setHistoryView((view) => ({ ...view, difficulty: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">All difficulties</option>
             {DIFFICULTY_LEVELS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
           </select>
-          <select value={interviewType} onChange={(e) => setInterviewType(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select value={historyView.interviewType} onChange={(e) => setHistoryView((view) => ({ ...view, interviewType: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">All types</option>
             {INTERVIEW_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
-          <select value={sessionMode} onChange={(e) => setSessionMode(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select value={historyView.sessionMode} onChange={(e) => setHistoryView((view) => ({ ...view, sessionMode: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">Any mode</option>
             {INTERVIEW_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select value={historyView.status} onChange={(e) => setHistoryView((view) => ({ ...view, status: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">Any status</option>
             {INTERVIEW_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
-          <select value={scoreFilter} onChange={(e) => setScoreFilter(e.target.value)} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-3">
+          <select value={historyView.scoreFilter} onChange={(e) => setHistoryView((view) => ({ ...view, scoreFilter: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-3">
             <option value="">Any score</option>
             <option value="strong">75+ strong</option>
             <option value="needs_focus">Below 75</option>
@@ -184,7 +191,7 @@ export default function InterviewHistoryPage() {
           </select>
           <label className="relative md:col-span-3">
             <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-full appearance-none rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500">
+            <select value={historyView.sortBy} onChange={(e) => setHistoryView((view) => ({ ...view, sortBy: e.target.value }))} className="w-full appearance-none rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500">
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
               <option value="score_desc">Highest score</option>
@@ -195,13 +202,13 @@ export default function InterviewHistoryPage() {
         </div>
         {pinnedSessionIds.length > 0 && (
           <button
-            onClick={() => setShowPinnedOnly((value) => !value)}
+            onClick={() => setHistoryView((view) => ({ ...view, showPinnedOnly: !view.showPinnedOnly }))}
             className={cn(
               "mt-3 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition",
-              showPinnedOnly ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white"
+              historyView.showPinnedOnly ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white"
             )}
           >
-            <Star className={cn("h-3.5 w-3.5", showPinnedOnly && "fill-amber-400 text-amber-400")} />
+            <Star className={cn("h-3.5 w-3.5", historyView.showPinnedOnly && "fill-amber-400 text-amber-400")} />
             Pinned only
           </button>
         )}
