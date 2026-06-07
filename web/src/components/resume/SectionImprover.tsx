@@ -62,6 +62,13 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
     setResult(null);
   }
 
+  function resetImprover() {
+    setSection("summary");
+    setSectionText("");
+    setTargetRole("");
+    setResult(null);
+  }
+
   return (
     <div className="space-y-5">
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
@@ -109,10 +116,16 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
           <span>{sectionText.length} characters</span>
         </div>
 
-        <button onClick={handleImprove} disabled={loading || !sectionText.trim()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl text-sm transition-all">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Improving…</> : <><Wand2 className="w-4 h-4" />Improve Section</>}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleImprove} disabled={loading || !sectionText.trim()}
+            className="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-600/40 text-white font-semibold rounded-xl text-sm transition-all">
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Improving…</> : <><Wand2 className="w-4 h-4" />Improve Section</>}
+          </button>
+          <button type="button" onClick={resetImprover} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-400 transition hover:text-white disabled:opacity-40">
+            <RefreshCw className="h-4 w-4" />
+            Reset
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
