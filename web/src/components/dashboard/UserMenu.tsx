@@ -2,7 +2,7 @@
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
-import { LogOut, Settings, ChevronDown } from "lucide-react";
+import { BarChart2, Download, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function UserMenu() {
@@ -46,6 +46,18 @@ export default function UserMenu() {
             <Link href="/settings" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
               <Settings className="w-3.5 h-3.5" />
               Settings
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item asChild>
+            <Link href="/analytics" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
+              <BarChart2 className="w-3.5 h-3.5" />
+              Analytics
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item asChild>
+            <Link href="/reports" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
+              <Download className="w-3.5 h-3.5" />
+              Reports
             </Link>
           </DropdownMenu.Item>
 
