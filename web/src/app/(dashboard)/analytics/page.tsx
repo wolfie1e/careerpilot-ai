@@ -71,7 +71,7 @@ function getAnalyticsFocusItems(data: AnalyticsData) {
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState<TimeRange>("all");
+  const [timeRange, setTimeRange] = useLocalStorage<TimeRange>(LOCAL_STORAGE_KEYS.analyticsTimeRange, "all");
   const [readinessGoal, setReadinessGoal] = useLocalStorage(LOCAL_STORAGE_KEYS.readinessGoal, 80);
 
   useEffect(() => {

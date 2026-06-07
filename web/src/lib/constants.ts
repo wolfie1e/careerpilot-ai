@@ -19,6 +19,7 @@ export const LOCAL_STORAGE_KEYS = {
   resumeManagerView: "careerpilot_resume_manager_view",
   sidebarCollapsed: "careerpilot_sidebar_collapsed",
   reportsView: "careerpilot_reports_view",
+  analyticsTimeRange: "careerpilot_analytics_time_range",
 } as const;
 
 export const MAX_FILE_SIZE_MB = 10;
