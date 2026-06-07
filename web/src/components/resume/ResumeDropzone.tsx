@@ -56,6 +56,10 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
 
   const onDropRejected = useCallback((rejections: FileRejection[]) => {
     const firstError = rejections[0]?.errors[0];
+    if (firstError?.code === "too-many-files") {
+      toast.error("Upload one resume at a time.");
+      return;
+    }
     if (firstError?.code === "file-too-large") {
       toast.error(`File too large. Max ${MAX_FILE_SIZE_MB}MB.`);
       return;
