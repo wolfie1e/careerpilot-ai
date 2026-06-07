@@ -159,6 +159,11 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     toast.success("Saved job description removed");
   }
 
+  function clearSavedDrafts() {
+    setSavedJds([]);
+    toast.success("Saved job descriptions cleared");
+  }
+
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
     if (!jdReady) { toast.error(`Add at least ${MIN_JD_WORDS} words for a reliable match`); return; }
@@ -253,7 +258,13 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
 
       {savedJds.length > 0 && (
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-          <h4 className="mb-3 text-sm font-semibold text-white">Saved Job Descriptions</h4>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h4 className="text-sm font-semibold text-white">Saved Job Descriptions</h4>
+            <button onClick={clearSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear all
+            </button>
+          </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {savedJds.map((draft) => (
               <div
