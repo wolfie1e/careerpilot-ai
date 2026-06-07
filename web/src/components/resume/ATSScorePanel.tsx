@@ -39,6 +39,8 @@ const categoryWeights: Record<string, number> = {
 };
 
 export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProps) {
+  const weakestCategory = Object.entries(breakdown).sort(([, a], [, b]) => a - b)[0];
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
@@ -59,6 +61,14 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
           />
         </div>
       </div>
+
+      {weakestCategory && (
+        <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
+          <div className="text-xs font-semibold uppercase tracking-wide text-amber-400">Top ATS focus</div>
+          <div className="mt-1 text-sm font-semibold text-white">{categoryLabels[weakestCategory[0]] || weakestCategory[0]}</div>
+          <div className="mt-1 text-xs text-gray-500">Currently scoring {weakestCategory[1]}/100 in this category.</div>
+        </div>
+      )}
 
       {/* Category breakdown */}
       <div className="space-y-3">
