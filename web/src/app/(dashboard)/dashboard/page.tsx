@@ -174,6 +174,8 @@ export default function DashboardPage() {
         : { href: "/analytics", label: "Review progress", desc: "Compare score trends and choose your next focus area." };
   const focusItems = getFocusItems(analytics, resumes, sessions);
   const focusPlanText = focusItems.map((item, index) => `${index + 1}. ${item.label} - ${item.desc}`).join("\n");
+  const readinessScore = analytics?.readiness_score ?? 0;
+  const readinessLabel = readinessScore >= 85 ? "Application ready" : readinessScore >= 70 ? "Nearly ready" : readinessScore >= 50 ? "Needs polish" : "Build the basics";
 
   function dismissOnboarding() {
     setOnboardingDismissed(true);
@@ -334,6 +336,21 @@ export default function DashboardPage() {
           </div>
           <ArrowRight className="w-4 h-4 text-gray-500 shrink-0" />
         </Link>
+      )}
+
+      {!loading && (
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-gray-500">Readiness Pulse</div>
+              <div className="mt-1 text-sm font-semibold text-white">{readinessLabel}</div>
+            </div>
+            <div className="text-2xl font-bold text-white">{readinessScore}<span className="text-sm text-gray-500">/100</span></div>
+          </div>
+          <div className="h-2 rounded-full bg-gray-800">
+            <div className="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500" style={{ width: `${Math.min(readinessScore, 100)}%` }} />
+          </div>
+        </div>
       )}
 
       {!loading && focusItems.length > 0 && (
