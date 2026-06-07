@@ -42,6 +42,7 @@ export default function ReportsPage() {
     resume.filename.toLowerCase().includes(reportsView.search.trim().toLowerCase())
   ));
   const totalStorage = resumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
+  const visibleStorage = visibleResumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
   const pinnedResume = pinnedResumeId ? resumes.find((resume) => resume.id === pinnedResumeId) ?? null : null;
 
   useEffect(() => {
@@ -177,7 +178,10 @@ export default function ReportsPage() {
               </select>
             </label>
           </div>
-          <div className="flex justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="text-xs text-gray-500">
+              Showing {visibleResumes.length} report{visibleResumes.length === 1 ? "" : "s"} · {formatBytes(visibleStorage)}
+            </div>
             <button onClick={() => setReportsView({ search: "", sort: "newest" })} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
               <RotateCcw className="h-3.5 w-3.5" />
               Reset report view
