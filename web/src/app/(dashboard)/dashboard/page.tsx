@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { useAuth } from "@/hooks/useAuth";
@@ -115,22 +115,32 @@ export default function DashboardPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(LOCAL_STORAGE_KEYS.onboardingDismissed, false);
 
-  useEffect(() => {
-    Promise.all([
+  const loadDashboard = useCallback(async () => {
+    const [analyticsData, resumeData, sessionData] = await Promise.all([
       api.get<AnalyticsData>("/analytics"),
       api.get<Resume[]>("/resume"),
       api.get<{ sessions: Session[] }>("/interview/history").then((d) => d.sessions || []),
-    ])
-      .then(([analyticsData, resumeData, sessionData]) => {
-        setAnalytics(analyticsData);
-        setResumes(resumeData);
-        setSessions(sessionData);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    ]);
+    setAnalytics(analyticsData);
+    setResumes(resumeData);
+    setSessions(sessionData);
   }, []);
+
+  useEffect(() => {
+    loadDashboard().catch(() => {}).finally(() => setLoading(false));
+  }, [loadDashboard]);
+
+  async function refreshDashboard() {
+    setRefreshing(true);
+    try {
+      await loadDashboard();
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   const stepsCompleted = [
     resumes.length > 0,
@@ -162,12 +172,18 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Greeting */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
+        <div>
         <h2 className="text-xl font-semibold text-white">
           Good {getGreeting()},{" "}
           <span className="gradient-text">{user?.full_name || user?.username || "there"}</span> 👋
         </h2>
         <p className="text-gray-400 text-sm mt-1">Here&apos;s your career readiness snapshot</p>
+        </div>
+        <button onClick={refreshDashboard} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-800 px-3 py-2 text-xs font-semibold text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
+          <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+          Refresh
+        </button>
       </motion.div>
 
       {/* Onboarding checklist */}
