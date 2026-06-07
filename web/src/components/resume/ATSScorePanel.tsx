@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowUpDown } from "lucide-react";
 import { cn, scoreColor } from "@/lib/utils";
 
 interface ATSBreakdown {
@@ -39,7 +41,11 @@ const categoryWeights: Record<string, number> = {
 };
 
 export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProps) {
+  const [sortWeakestFirst, setSortWeakestFirst] = useState(false);
   const weakestCategory = Object.entries(breakdown).sort(([, a], [, b]) => a - b)[0];
+  const categories = sortWeakestFirst
+    ? Object.entries(breakdown).sort(([, a], [, b]) => a - b)
+    : Object.entries(breakdown);
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
@@ -71,8 +77,15 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
       )}
 
       {/* Category breakdown */}
+      <div className="mb-3 flex items-center justify-between">
+        <div className="text-xs font-medium uppercase tracking-wide text-gray-500">Category breakdown</div>
+        <button onClick={() => setSortWeakestFirst((value) => !value)} className={cn("inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition", sortWeakestFirst ? "border-blue-500/40 bg-blue-500/10 text-blue-300" : "border-gray-700 text-gray-500 hover:text-white")}>
+          <ArrowUpDown className="h-3.5 w-3.5" />
+          Weakest first
+        </button>
+      </div>
       <div className="space-y-3">
-        {Object.entries(breakdown).map(([key, score]) => (
+        {categories.map(([key, score]) => (
           <div key={key}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-gray-400">{categoryLabels[key] || key}</span>
