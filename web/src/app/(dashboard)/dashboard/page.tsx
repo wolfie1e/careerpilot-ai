@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
-import CopyButton from "@/components/shared/CopyButton";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { api } from "@/lib/api-client";
