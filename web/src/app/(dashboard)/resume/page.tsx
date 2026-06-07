@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpDown, FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench, Search } from "lucide-react";
+import { ArrowUpDown, FileText, Zap, Loader2, CheckCircle, AlertCircle, Lightbulb, Plus, Trash2, Star, Target, PenLine, Wrench, Search, RotateCcw } from "lucide-react";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import ATSScorePanel from "@/components/resume/ATSScorePanel";
 import JDMatcher from "@/components/resume/JDMatcher";
@@ -48,6 +48,7 @@ interface ResumeListItem {
 type Tab = "analysis" | "ats" | "jd" | "rewrite" | "improve" | "projects";
 type SuggestionPriority = "all" | "high" | "medium" | "low";
 type ResumeManagerView = { search: string; sort: string };
+const DEFAULT_RESUME_MANAGER_VIEW: ResumeManagerView = { search: "", sort: "newest" };
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "analysis", label: "Analysis" },
@@ -87,7 +88,7 @@ export default function ResumePage() {
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<string | null>(null);
-  const [resumeManagerView, setResumeManagerView] = useLocalStorage<ResumeManagerView>(LOCAL_STORAGE_KEYS.resumeManagerView, { search: "", sort: "newest" });
+  const [resumeManagerView, setResumeManagerView] = useLocalStorage<ResumeManagerView>(LOCAL_STORAGE_KEYS.resumeManagerView, DEFAULT_RESUME_MANAGER_VIEW);
   const [pinnedResumeId, setPinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
 
   useEffect(() => {
@@ -249,6 +250,15 @@ export default function ResumePage() {
               </select>
             </label>
           </div>
+          {(resumeManagerView.search || resumeManagerView.sort !== DEFAULT_RESUME_MANAGER_VIEW.sort) && (
+            <button
+              onClick={() => setResumeManagerView(DEFAULT_RESUME_MANAGER_VIEW)}
+              className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reset resume view
+            </button>
+          )}
           <div className="flex flex-wrap gap-2">
             {visibleResumes.map((r) => (
               <div key={r.id} className={cn("flex items-center rounded-xl border transition-all",
