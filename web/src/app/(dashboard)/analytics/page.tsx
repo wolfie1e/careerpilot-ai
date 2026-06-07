@@ -7,7 +7,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, Legend
 } from "recharts";
-import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2 } from "lucide-react";
+import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2, RotateCcw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -176,6 +176,11 @@ export default function AnalyticsPage() {
     });
   }
 
+  function resetAnalyticsPreferences() {
+    setTimeRange("all");
+    setReadinessGoal(80);
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -203,6 +208,10 @@ export default function AnalyticsPage() {
           <button onClick={exportAnalyticsJson} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
             <Download className="h-4 w-4" />
             Export JSON
+          </button>
+          <button onClick={resetAnalyticsPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+            <RotateCcw className="h-4 w-4" />
+            Reset
           </button>
         </div>
       </div>
