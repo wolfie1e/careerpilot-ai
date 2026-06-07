@@ -117,6 +117,7 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
               ))}
             </div>
             <div className="flex justify-end gap-2">
+              <CopyButton value={projects.map((project) => `• ${project.resume_bullet}`).join("\n")} label="Copy all bullets" />
               <button onClick={() => downloadJson("careerpilot-project-recommendations.json", { target_role: targetRole, level, projects })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export JSON
