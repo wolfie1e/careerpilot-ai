@@ -37,6 +37,8 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const totalWeeks = projects.reduce((sum, project) => sum + project.estimated_weeks, 0);
+  const coveredSkills = new Set(projects.flatMap((project) => project.skills_demonstrated || [])).size;
 
   async function handleGenerate() {
     if (!targetRole.trim()) { toast.error("Enter a target role"); return; }
@@ -101,6 +103,18 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
       <AnimatePresence>
         {projects.length > 0 && (
           <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: "Ideas", value: projects.length },
+                { label: "Total weeks", value: totalWeeks },
+                { label: "Skills covered", value: coveredSkills },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-center">
+                  <div className="text-lg font-bold text-white">{item.value}</div>
+                  <div className="text-xs text-gray-500">{item.label}</div>
+                </div>
+              ))}
+            </div>
             {projects.map((p, i) => (
               <motion.div key={p.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                 className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
