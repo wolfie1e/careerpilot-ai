@@ -127,7 +127,8 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
       <AnimatePresence>
         {results.length > 0 && (
           <div className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <CopyButton value={results.map((result) => `• ${result.rewritten}`).join("\n")} label="Copy all" />
               <button onClick={() => setResults([])} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
                 <X className="h-3.5 w-3.5" />
                 Clear results
