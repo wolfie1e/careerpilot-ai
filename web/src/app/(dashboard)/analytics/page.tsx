@@ -148,6 +148,11 @@ export default function AnalyticsPage() {
     { label: "Interview momentum", current: interviewTrend.at(-1)?.score ?? null, previous: interviewTrend.at(-2)?.score ?? null },
     { label: "Match momentum", current: matchTrend.at(-1)?.score ?? null, previous: matchTrend.at(-2)?.score ?? null },
   ];
+  const rangeBestCards = [
+    { label: "Best ATS", value: atsTrend.length ? Math.max(...atsTrend.map((item) => item.score)) : null },
+    { label: "Best interview", value: interviewTrend.length ? Math.max(...interviewTrend.map((item) => item.score)) : null },
+    { label: "Best match", value: matchTrend.length ? Math.max(...matchTrend.map((item) => item.score)) : null },
+  ];
   const readinessGap = Math.max(0, readinessGoal - data.readiness_score);
   const focusItems = getAnalyticsFocusItems(data);
 
@@ -282,6 +287,15 @@ export default function AnalyticsPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        {rangeBestCards.map((card) => (
+          <div key={card.label} className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+            <div className="text-xs text-gray-500 mb-1">{card.label}</div>
+            <div className="text-sm font-semibold text-white">{card.value !== null ? `${card.value}/100` : "No data"}</div>
+          </div>
+        ))}
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
