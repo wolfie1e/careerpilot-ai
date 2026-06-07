@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Sparkles, Loader2, ArrowRight, RotateCcw, X, Download } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, ArrowRight, RotateCcw, X, Download, RefreshCw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
