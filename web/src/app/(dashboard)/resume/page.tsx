@@ -192,6 +192,7 @@ export default function ResumePage() {
   const visibleSuggestions = analysis?.suggestions?.filter((suggestion) => (
     suggestionPriority === "all" || suggestion.priority === suggestionPriority
   )) ?? [];
+  const selectedResumeItem = resume ? pastResumes.find((item) => item.id === resume.id) : null;
 
   function handleUploaded(r: ResumeData) {
     setResume(r);
@@ -335,6 +336,27 @@ export default function ResumePage() {
           </motion.div>
         )}
       </div>
+      )}
+
+      {resume && selectedResumeItem && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 shrink-0 text-blue-400" />
+              <span className="truncate text-sm font-semibold text-white">{selectedResumeItem.filename}</span>
+              {pinnedResumeId === selectedResumeItem.id && (
+                <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-300">Primary</span>
+              )}
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              {formatBytes(selectedResumeItem.file_size)} · Uploaded {formatRelativeTime(selectedResumeItem.created_at)}
+            </div>
+          </div>
+          <button onClick={handleAnalyze} disabled={analyzing} className="inline-flex items-center gap-2 rounded-xl border border-blue-500/40 px-3 py-2 text-xs font-semibold text-blue-300 transition hover:bg-blue-500/10 disabled:opacity-50">
+            {analyzing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+            Analyze again
+          </button>
+        </div>
       )}
 
       {/* Feature tabs — shown as soon as resume is uploaded */}
