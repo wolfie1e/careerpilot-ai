@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { Plus, Trash2, Sparkles, Loader2, ArrowRight, RotateCcw, X } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,12 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
   const removeBullet = (i: number) => setBullets((b) => b.filter((_, j) => j !== i));
   const updateBullet = (i: number, val: string) =>
     setBullets((b) => b.map((x, j) => (j === i ? val : x)));
+
+  function resetInputs() {
+    setTargetRole("");
+    setBullets([""]);
+    setResults([]);
+  }
 
   async function handleRewrite() {
     const filled = bullets.filter((b) => b.trim());
@@ -110,6 +116,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</> : <><Sparkles className="w-4 h-4" />Rewrite Bullets</>}
           </button>
+          <button onClick={resetInputs} disabled={loading} className="inline-flex items-center gap-1.5 rounded-xl border border-gray-700 px-3 py-2 text-xs font-medium text-gray-400 transition hover:text-white disabled:opacity-40">
+            <RotateCcw className="h-3.5 w-3.5" />
+            Reset
+          </button>
         </div>
       </div>
 
@@ -117,6 +127,12 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
       <AnimatePresence>
         {results.length > 0 && (
           <div className="space-y-4">
+            <div className="flex justify-end">
+              <button onClick={() => setResults([])} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                <X className="h-3.5 w-3.5" />
+                Clear results
+              </button>
+            </div>
             {results.map((r, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
                 className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-4">
