@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
@@ -34,19 +34,21 @@ interface HistoryView {
   sortBy: string;
 }
 
+const DEFAULT_HISTORY_VIEW: HistoryView = {
+  search: "",
+  difficulty: "",
+  interviewType: "",
+  sessionMode: "",
+  status: "",
+  scoreFilter: "",
+  showPinnedOnly: false,
+  sortBy: "newest",
+};
+
 export default function InterviewHistoryPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [historyView, setHistoryView] = useLocalStorage<HistoryView>(LOCAL_STORAGE_KEYS.interviewHistoryView, {
-    search: "",
-    difficulty: "",
-    interviewType: "",
-    sessionMode: "",
-    status: "",
-    scoreFilter: "",
-    showPinnedOnly: false,
-    sortBy: "newest",
-  });
+  const [historyView, setHistoryView] = useLocalStorage<HistoryView>(LOCAL_STORAGE_KEYS.interviewHistoryView, DEFAULT_HISTORY_VIEW);
   const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
   const deferredSearch = useDeferredValue(historyView.search);
   const hasFilters = Boolean(historyView.search || historyView.difficulty || historyView.interviewType || historyView.sessionMode || historyView.status || historyView.scoreFilter || historyView.showPinnedOnly);
@@ -75,6 +77,10 @@ export default function InterviewHistoryPage() {
 
   function clearFilters() {
     setHistoryView((view) => ({ ...view, search: "", difficulty: "", interviewType: "", sessionMode: "", status: "", scoreFilter: "", showPinnedOnly: false }));
+  }
+
+  function resetHistoryView() {
+    setHistoryView(DEFAULT_HISTORY_VIEW);
   }
 
   function togglePinnedSession(sessionId: string) {
@@ -156,6 +162,10 @@ export default function InterviewHistoryPage() {
               Clear filters
             </button>
           )}
+          <button onClick={resetHistoryView} className={cn("text-xs font-medium text-gray-500 transition hover:text-white", !hasFilters && "ml-auto")}>
+            <RotateCcw className="mr-1 inline h-3.5 w-3.5" />
+            Reset view
+          </button>
         </div>
         <div className="grid gap-3 md:grid-cols-6">
           <label className="relative md:col-span-2">
