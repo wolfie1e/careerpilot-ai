@@ -173,6 +173,11 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     });
   }
 
+  function clearRecentMatches() {
+    setRecentMatches((prev) => prev.filter((match) => match.resume_id !== resumeId));
+    toast.success("Recent match results cleared");
+  }
+
   async function handleMatch() {
     if (!jdText.trim()) { toast.error("Paste a job description first"); return; }
     if (!jdReady) { toast.error(`Add at least ${MIN_JD_WORDS} words for a reliable match`); return; }
@@ -307,6 +312,10 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             <button onClick={exportRecentMatches} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
               <Download className="h-3.5 w-3.5" />
               Export
+            </button>
+            <button onClick={clearRecentMatches} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear
             </button>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
