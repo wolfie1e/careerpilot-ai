@@ -36,7 +36,7 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
   const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string[]>([]);
   const totalWeeks = projects.reduce((sum, project) => sum + project.estimated_weeks, 0);
   const coveredSkills = new Set(projects.flatMap((project) => project.skills_demonstrated || [])).size;
 
@@ -115,10 +115,20 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
                 </div>
               ))}
             </div>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setExpanded(projects.map((project) => project.title))} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <ChevronDown className="h-3.5 w-3.5" />
+                Expand all
+              </button>
+              <button onClick={() => setExpanded([])} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <ChevronUp className="h-3.5 w-3.5" />
+                Collapse all
+              </button>
+            </div>
             {projects.map((p, i) => (
               <motion.div key={p.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                 className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-                <button onClick={() => setExpanded(expanded === p.title ? null : p.title)}
+                <button onClick={() => setExpanded((current) => current.includes(p.title) ? current.filter((title) => title !== p.title) : [...current, p.title])}
                   className="w-full flex items-start gap-4 p-5 text-left hover:bg-gray-800/30 transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -132,11 +142,11 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
                     </div>
                     <p className="text-xs text-gray-400 line-clamp-2">{p.description}</p>
                   </div>
-                  {expanded === p.title ? <ChevronUp className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" /> : <ChevronDown className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />}
+                  {expanded.includes(p.title) ? <ChevronUp className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" /> : <ChevronDown className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />}
                 </button>
 
                 <AnimatePresence>
-                  {expanded === p.title && (
+                  {expanded.includes(p.title) && (
                     <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }}
                       className="overflow-hidden border-t border-gray-800">
                       <div className="p-5 space-y-4">
