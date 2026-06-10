@@ -8,6 +8,7 @@ import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface Question {
   id: string;
@@ -47,6 +48,13 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
 
   const questions = session?.questions || [];
   const currentQ = questions[currentIdx];
+  const feedbackSummary = feedback ? [
+    `Transcript: ${feedback.transcript}`,
+    `Score: ${feedback.score}/100`,
+    `What worked: ${feedback.feedback_positive.join("; ") || "None"}`,
+    `To improve: ${feedback.feedback_improve.join("; ") || "None"}`,
+    `Model hint: ${feedback.model_answer_hint || "None"}`,
+  ].join("\n") : "";
 
   async function handleStopAndSubmit() {
     setProcessing(true);
@@ -183,6 +191,7 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
                 <div className="text-sm text-gray-400 mb-0.5">Answer Score</div>
                 <div className={cn("text-3xl font-extrabold", scoreColor(feedback.score))}>{feedback.score}<span className="text-sm font-normal text-gray-500">/100</span></div>
               </div>
+              <CopyButton value={feedbackSummary} label="Copy feedback" />
             </div>
 
             {feedback.feedback_positive?.length > 0 && (
