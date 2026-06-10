@@ -45,6 +45,11 @@ export default function InterviewSetupPage() {
     `${form.session_mode} answers · ${estimatedMinutes}-${estimatedMinutes + 5} min`,
   ];
   const sessionPlanText = sessionPlan.map((item, index) => `${index + 1}. ${item}`).join("\n");
+  const setupReadiness = [
+    { label: "Target role selected", done: form.role_title.trim().length >= 2 },
+    { label: "Interview format selected", done: Boolean(form.interview_type && form.session_mode) },
+    { label: "Practice length selected", done: form.question_count >= 3 },
+  ];
 
   async function handleStart() {
     const parsed = interviewSetupSchema.safeParse(form);
@@ -134,6 +139,14 @@ export default function InterviewSetupPage() {
               >
                 {role}
               </button>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {setupReadiness.map((item) => (
+              <span key={item.label} className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium", item.done ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300" : "border-gray-700 bg-gray-800 text-gray-500")}>
+                <CheckCircle className="h-3 w-3" />
+                {item.label}
+              </span>
             ))}
           </div>
         </div>
