@@ -198,6 +198,14 @@ export default function DashboardPage() {
     });
   }
 
+  function exportRecentActivity() {
+    downloadJson("careerpilot-recent-activity.json", {
+      exported_at: new Date().toISOString(),
+      recent_resumes: resumes.slice(0, 5),
+      recent_interviews: sessions.slice(0, 5),
+    });
+  }
+
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Greeting */}
@@ -397,6 +405,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent activity */}
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300">Recent Activity</h3>
+        <button onClick={exportRecentActivity} disabled={loading} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white disabled:opacity-40">
+          <Download className="h-3.5 w-3.5" />
+          Export activity
+        </button>
+      </div>
       <div className="grid lg:grid-cols-2 gap-4">
         {/* Recent resumes */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
