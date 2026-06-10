@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Mic, Clock, TrendingUp, ChevronRight } from "lucide-react";
+import { Plus, Mic, Clock, TrendingUp, ChevronRight, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 import { interviewSessionHref } from "@/lib/interview-utils";
@@ -24,13 +24,24 @@ interface Session {
 export default function InterviewPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  function loadSessions() {
+    return api.get<{ sessions: Session[] }>("/interview/history")
+      .then((d) => setSessions(d.sessions || []))
+      .catch(() => {});
+  }
 
   useEffect(() => {
-    api.get<{ sessions: Session[] }>("/interview/history")
-      .then((d) => setSessions(d.sessions || []))
-      .catch(() => {})
+    loadSessions()
       .finally(() => setLoading(false));
   }, []);
+
+  async function refreshSessions() {
+    setRefreshing(true);
+    await loadSessions();
+    setRefreshing(false);
+  }
 
   const scoredSessions = sessions.filter((session) => session.overall_score !== null);
   const avgScore = scoredSessions.length
@@ -45,13 +56,18 @@ export default function InterviewPage() {
           <h2 className="text-xl font-semibold text-white">Mock Interview</h2>
           <p className="text-sm text-gray-400 mt-0.5">Practice with AI-evaluated feedback on every answer</p>
         </div>
-        <Link
-          href="/interview/setup"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          New Interview
-        </Link>
+        <div className="flex gap-2">
+          <button onClick={refreshSessions} disabled={refreshing} className="rounded-xl border border-gray-800 px-3 text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-50" title="Refresh sessions">
+            <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
+          </button>
+          <Link
+            href="/interview/setup"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            New Interview
+          </Link>
+        </div>
       </div>
 
       {/* Quick stats */}
