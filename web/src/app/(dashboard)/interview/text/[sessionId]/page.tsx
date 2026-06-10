@@ -7,6 +7,7 @@ import { CheckCircle, AlertCircle, Lightbulb, Send, Loader2, Trophy, X } from "l
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface Question {
   id: string;
@@ -49,6 +50,12 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
   const currentQ = questions[currentIdx];
   const progress = ((currentIdx) / Math.max(questions.length, 1)) * 100;
   const answerWordCount = answer.trim().split(/\s+/).filter(Boolean).length;
+  const feedbackSummary = feedback ? [
+    `Score: ${feedback.score}/100`,
+    `What worked: ${feedback.feedback_positive.join("; ") || "None"}`,
+    `To improve: ${feedback.feedback_improve.join("; ") || "None"}`,
+    `Model hint: ${feedback.model_answer_hint || "None"}`,
+  ].join("\n") : "";
 
   async function handleSubmit() {
     if (!answer.trim() || !currentQ) return;
@@ -175,6 +182,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
               <div className="w-16 h-16 rounded-full border-4 flex items-center justify-center" style={{ borderColor: feedback.score >= 80 ? "#10b981" : feedback.score >= 60 ? "#f59e0b" : "#ef4444" }}>
                 <span className={cn("text-sm font-bold", scoreColor(feedback.score))}>{feedback.score}</span>
               </div>
+              <CopyButton value={feedbackSummary} label="Copy feedback" />
             </div>
 
             {/* Positives */}
