@@ -98,8 +98,8 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Voice Interview Complete!</h2>
         <p className="text-gray-400 mb-6">Great work! Your answers have been transcribed and evaluated.</p>
-        <button onClick={() => router.push("/interview")} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition-all">
-          View History
+        <button onClick={() => router.push(`/interview/history/${sessionId}`)} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition-all">
+          View Full Review
         </button>
       </motion.div>
     );
