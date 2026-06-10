@@ -335,6 +335,15 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
           </motion.div>
           );
         })}
+        {visibleQuestions.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-emerald-500/20 bg-emerald-500/5 p-8 text-center">
+            <CheckCircle className="mx-auto mb-2 h-7 w-7 text-emerald-400" />
+            <div className="text-sm font-semibold text-white">Nothing needs attention in this view</div>
+            <button onClick={() => setQuestionFilter("all")} className="mt-2 text-xs font-medium text-blue-400 transition hover:text-blue-300">
+              Show all questions
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
