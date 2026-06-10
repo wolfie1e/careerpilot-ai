@@ -10,6 +10,7 @@ import { interviewSessionHref } from "@/lib/interview-utils";
 import { formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 import { DIFFICULTY_LEVELS, INTERVIEW_MODES, INTERVIEW_STATUSES, INTERVIEW_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 interface Session {
   id: string;
@@ -74,6 +75,9 @@ export default function InterviewHistoryPage() {
   const visibleAverageScore = visibleScoredSessions.length
     ? Math.round(visibleScoredSessions.reduce((sum, session) => sum + (session.overall_score || 0), 0) / visibleScoredSessions.length)
     : null;
+  const visibleSessionText = visibleSessions.map((session) => (
+    `${session.role_title} · ${session.difficulty} · ${session.interview_type.replace("_", " ")} · ${session.overall_score ?? session.status}`
+  )).join("\n");
 
   function clearFilters() {
     setHistoryView((view) => ({ ...view, search: "", difficulty: "", interviewType: "", sessionMode: "", status: "", scoreFilter: "", showPinnedOnly: false }));
@@ -143,6 +147,7 @@ export default function InterviewHistoryPage() {
               <Download className="h-4 w-4" />
               Export JSON
             </button>
+            <CopyButton value={visibleSessionText || "No sessions"} label="Copy visible" className="rounded-xl px-3 py-2 text-sm" />
             {pinnedSessionIds.length > 0 && (
               <button onClick={exportPinnedSessionsJson} className="inline-flex items-center gap-2 rounded-xl border border-amber-700/50 bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-500/20">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
