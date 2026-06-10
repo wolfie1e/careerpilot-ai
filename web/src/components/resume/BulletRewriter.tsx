@@ -28,6 +28,9 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
   const [bullets, setBullets] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<RewriteResult[]>([]);
+  const averageImpact = results.length
+    ? Math.round(results.reduce((sum, result) => sum + result.impact_score, 0) / results.length)
+    : null;
 
   const addBullet = () => setBullets((b) => b.length < MAX_BULLETS ? [...b, ""] : b);
   const removeBullet = (i: number) => setBullets((b) => b.filter((_, j) => j !== i));
@@ -134,7 +137,11 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
       <AnimatePresence>
         {results.length > 0 && (
           <div className="space-y-4">
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className={cn("rounded-full border px-3 py-1 text-xs font-semibold", impactColor(averageImpact ?? 0))}>
+                Average impact: {averageImpact}/100
+              </div>
+              <div className="flex flex-wrap justify-end gap-2">
               <CopyButton value={results.map((result) => `• ${result.rewritten}`).join("\n")} label="Copy all" />
               <button onClick={useRewrittenBullets} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -148,6 +155,7 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
                 <X className="h-3.5 w-3.5" />
                 Clear results
               </button>
+              </div>
             </div>
             {results.map((r, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
