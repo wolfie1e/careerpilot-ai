@@ -180,6 +180,13 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     });
   }
 
+  function exportSavedDrafts() {
+    downloadJson("careerpilot-saved-job-descriptions.json", {
+      exported_at: new Date().toISOString(),
+      drafts: savedJds,
+    });
+  }
+
   function clearRecentMatches() {
     setRecentMatches((prev) => prev.filter((match) => match.resume_id !== resumeId));
     toast.success("Recent match results cleared");
@@ -285,10 +292,16 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h4 className="text-sm font-semibold text-white">Saved Job Descriptions</h4>
-            <button onClick={clearSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
-              <Trash2 className="h-3.5 w-3.5" />
-              Clear all
-            </button>
+            <div className="flex gap-3">
+              <button onClick={exportSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export
+              </button>
+              <button onClick={clearSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
+                <Trash2 className="h-3.5 w-3.5" />
+                Clear all
+              </button>
+            </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {savedJds.map((draft) => (
