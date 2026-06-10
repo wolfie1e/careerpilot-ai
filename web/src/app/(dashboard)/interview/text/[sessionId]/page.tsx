@@ -92,8 +92,8 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Interview Complete!</h2>
         <p className="text-gray-400 mb-6">Your answers have been evaluated. Check your history for the full report.</p>
-        <button onClick={() => router.push("/interview")} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all text-sm">
-          View History
+        <button onClick={() => router.push(`/interview/history/${sessionId}`)} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all text-sm">
+          View Full Review
         </button>
       </motion.div>
     );
