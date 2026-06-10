@@ -121,6 +121,7 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
   }
 
   function exportReview() {
+    if (!session) return;
     downloadJson(`careerpilot-interview-review-${session.session.id}.json`, {
       exported_at: new Date().toISOString(),
       ...session,
