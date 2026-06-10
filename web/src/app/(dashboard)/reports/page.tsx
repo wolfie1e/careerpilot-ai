@@ -93,7 +93,7 @@ export default function ReportsPage() {
       filename: resume.filename,
       file_size: resume.file_size ?? "",
       uploaded_at: resume.created_at,
-      is_primary: resume.id === pinnedResumeId,
+      is_primary: resume.id === pinnedResumeId ? "yes" : "no",
     })));
   }
   const manifestText = visibleResumes.map((resume) => `${resume.filename} · ${formatBytes(resume.file_size)} · ${new Date(resume.created_at).toLocaleDateString()}`).join("\n");
