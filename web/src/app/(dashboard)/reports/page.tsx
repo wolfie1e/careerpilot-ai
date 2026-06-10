@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { formatBytes, safeFilename } from "@/lib/utils";
 
 interface Resume {
@@ -88,6 +88,14 @@ export default function ReportsPage() {
       is_primary: resume.id === pinnedResumeId,
     })));
   }
+  function exportManifestCsv() {
+    downloadCsv("careerpilot-report-manifest.csv", visibleResumes.map((resume) => ({
+      filename: resume.filename,
+      file_size: resume.file_size ?? "",
+      uploaded_at: resume.created_at,
+      is_primary: resume.id === pinnedResumeId,
+    })));
+  }
   const manifestText = visibleResumes.map((resume) => `${resume.filename} · ${formatBytes(resume.file_size)} · ${new Date(resume.created_at).toLocaleDateString()}`).join("\n");
 
   return (
@@ -110,6 +118,10 @@ export default function ReportsPage() {
             <button onClick={exportManifest} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
               <Download className="h-4 w-4" />
               Export JSON
+            </button>
+            <button onClick={exportManifestCsv} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
+              <Download className="h-4 w-4" />
+              Export CSV
             </button>
             <CopyButton value={manifestText || "No reports"} label="Copy list" className="rounded-xl px-3 py-2 text-sm" />
           </div>
