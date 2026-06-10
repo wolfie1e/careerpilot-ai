@@ -134,6 +134,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
             {currentQ.topic && (
               <span className="text-xs text-gray-500">{currentQ.topic}</span>
             )}
+            <CopyButton value={currentQ.text} label="Copy question" className="ml-auto" />
           </div>
           <p className="text-white font-medium leading-relaxed">{currentQ.text}</p>
         </motion.div>
