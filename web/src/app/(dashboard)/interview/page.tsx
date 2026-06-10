@@ -49,6 +49,14 @@ export default function InterviewPage() {
     ? `${Math.round(scoredSessions.reduce((sum, session) => sum + (session.overall_score || 0), 0) / scoredSessions.length)}/100`
     : "—";
   const bestScore = scoredSessions.length ? `${Math.max(...scoredSessions.map((session) => session.overall_score || 0))}/100` : "—";
+  const averageScoreNumber = scoredSessions.length
+    ? Math.round(scoredSessions.reduce((sum, session) => sum + (session.overall_score || 0), 0) / scoredSessions.length)
+    : null;
+  const practiceRecommendation = sessions.length === 0
+    ? { href: "/interview/setup", label: "Start your first practice session", desc: "Build a baseline with a short five-question interview." }
+    : averageScoreNumber !== null && averageScoreNumber < 75
+      ? { href: "/interview/history", label: "Review recent feedback", desc: `Your average is ${averageScoreNumber}/100. Revisit low-scoring answers before the next session.` }
+      : { href: "/interview/setup", label: "Increase the challenge", desc: "Try a harder difficulty or a different interview format." };
 
   function exportOverview() {
     downloadJson("careerpilot-interview-overview.json", {
@@ -103,6 +111,15 @@ export default function InterviewPage() {
           </div>
         ))}
       </div>
+
+      <Link href={practiceRecommendation.href} className="flex items-center justify-between gap-4 rounded-2xl border border-blue-500/20 bg-blue-500/5 px-5 py-4 transition hover:border-blue-500/40 hover:bg-blue-500/10">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-blue-400">Recommended practice</div>
+          <div className="mt-1 text-sm font-semibold text-white">{practiceRecommendation.label}</div>
+          <div className="mt-1 text-xs text-gray-500">{practiceRecommendation.desc}</div>
+        </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-blue-400" />
+      </Link>
 
       {/* Session history */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
