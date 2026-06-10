@@ -181,7 +181,10 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             {/* Transcript */}
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-              <div className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Transcript</div>
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <div className="text-xs uppercase tracking-wide text-gray-500">Transcript</div>
+                <CopyButton value={feedback.transcript} label="Copy transcript" />
+              </div>
               <p className="text-sm text-gray-300 italic">&ldquo;{feedback.transcript}&rdquo;</p>
             </div>
 
