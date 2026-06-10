@@ -200,6 +200,15 @@ export default function AnalyticsPage() {
     })));
   }
 
+  function exportFocusPlan() {
+    downloadJson("careerpilot-analytics-focus-plan.json", {
+      exported_at: new Date().toISOString(),
+      readiness_score: data.readiness_score,
+      readiness_goal: readinessGoal,
+      focus_items: focusItems,
+    });
+  }
+
   function resetAnalyticsPreferences() {
     setTimeRange("all");
     setReadinessGoal(80);
@@ -323,7 +332,13 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <h3 className="mb-4 text-sm font-semibold text-white">Analytics Focus</h3>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-white">Analytics Focus</h3>
+          <button onClick={exportFocusPlan} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+            <Download className="h-3.5 w-3.5" />
+            Export plan
+          </button>
+        </div>
         <div className="grid gap-3 md:grid-cols-3">
           {focusItems.map((item) => (
             <Link key={item.label} href={item.href} className="rounded-xl border border-gray-800 bg-gray-950/50 p-4 transition hover:border-blue-700/60 hover:bg-gray-800/50">
