@@ -201,6 +201,7 @@ export default function AnalyticsPage() {
   }
 
   function exportFocusPlan() {
+    if (!data) return;
     downloadJson("careerpilot-analytics-focus-plan.json", {
       exported_at: new Date().toISOString(),
       readiness_score: data.readiness_score,
