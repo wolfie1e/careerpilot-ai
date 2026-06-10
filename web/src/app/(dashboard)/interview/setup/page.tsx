@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle, RotateCcw, Trash2 } from "lucide-react";
+import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle, RotateCcw, Trash2, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { INTERVIEW_TYPES, DIFFICULTY_LEVELS, QUESTION_COUNTS, INTERVIEW_PREP_TIP
 import { interviewSetupSchema } from "@/lib/validations";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 interface SessionResponse {
   session_id: string;
@@ -70,6 +71,15 @@ export default function InterviewSetupPage() {
   function resetSetup() {
     setForm(DEFAULT_INTERVIEW_SETUP);
     setRoleError("");
+  }
+
+  function exportSetup() {
+    downloadJson("careerpilot-interview-setup.json", {
+      exported_at: new Date().toISOString(),
+      ...form,
+      estimated_minutes: estimatedMinutes,
+      prep_tip: prepTip,
+    });
   }
 
   return (
@@ -232,7 +242,13 @@ export default function InterviewSetupPage() {
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-white">Session Plan</h3>
-            <CopyButton value={sessionPlanText} label="Copy plan" />
+            <div className="flex gap-2">
+              <CopyButton value={sessionPlanText} label="Copy plan" />
+              <button onClick={exportSetup} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export
+              </button>
+            </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
             {sessionPlan.map((item) => (
