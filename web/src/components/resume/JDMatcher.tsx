@@ -131,6 +131,9 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const visibleRoadmap = result?.learning_roadmap.filter((item) => (
     roadmapPriority === "all" || item.priority === roadmapPriority
   )) ?? [];
+  const roadmapText = visibleRoadmap.map((item, index) => (
+    `${index + 1}. ${item.skill} (${item.priority}, ${item.weeks_to_learn} weeks)\n${item.why_it_matters}\nProject: ${item.project_idea || "Not specified"}`
+  )).join("\n\n");
 
   function saveDraft() {
     if (!jdText.trim()) {
@@ -423,7 +426,9 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h4 className="text-sm font-semibold text-blue-400">Learning Roadmap</h4>
-                  <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CopyButton value={roadmapText} label="Copy roadmap" />
+                    <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
                     {roadmapPriorities.map((priority) => (
                       <button
                         key={priority}
@@ -436,6 +441,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
                         {priority.replace("_", " ")}
                       </button>
                     ))}
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">
