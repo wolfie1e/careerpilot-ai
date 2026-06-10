@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadJson } from "@/lib/export-utils";
 import { passwordSchema, profileSchema } from "@/lib/validations";
+import { CopyButton } from "@/components/shared/CopyButton";
 
 type FieldErrors = Record<string, string>;
 
@@ -46,6 +47,12 @@ export default function SettingsPage() {
     : Object.entries(LOCAL_STORAGE_KEYS)
         .filter(([, key]) => window.localStorage.getItem(key) !== null)
         .map(([name]) => name);
+  const profileSummary = [
+    `Name: ${profile.full_name || "Not set"}`,
+    `Username: ${profile.username || "Not set"}`,
+    `Email: ${user?.email || "Not set"}`,
+    `Plan: ${user?.plan || "free"}`,
+  ].join("\n");
 
   async function submitProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -161,7 +168,10 @@ export default function SettingsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <form onSubmit={submitProfile} className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
-          <h3 className="mb-1 font-semibold text-white">Profile</h3>
+          <div className="mb-1 flex items-center justify-between gap-3">
+            <h3 className="font-semibold text-white">Profile</h3>
+            <CopyButton value={profileSummary} label="Copy profile" />
+          </div>
           <p className="mb-5 text-sm text-gray-500">Keep your workspace identity accurate for reports.</p>
           <div className="space-y-4">
             <label className="block">
