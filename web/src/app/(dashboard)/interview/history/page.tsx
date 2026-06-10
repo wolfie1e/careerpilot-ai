@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star, RotateCcw } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star, RotateCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
@@ -149,10 +149,16 @@ export default function InterviewHistoryPage() {
             </button>
             <CopyButton value={visibleSessionText || "No sessions"} label="Copy visible" className="rounded-xl px-3 py-2 text-sm" />
             {pinnedSessionIds.length > 0 && (
+              <>
               <button onClick={exportPinnedSessionsJson} className="inline-flex items-center gap-2 rounded-xl border border-amber-700/50 bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-500/20">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                 Export pinned
               </button>
+              <button onClick={() => setPinnedSessionIds([])} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-400 transition hover:border-rose-500/40 hover:text-rose-300">
+                <Trash2 className="h-4 w-4" />
+                Clear pins
+              </button>
+              </>
             )}
           </div>
         )}
