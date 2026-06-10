@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle, RotateCcw } from "lucide-react";
+import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle, RotateCcw, Trash2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -91,7 +91,13 @@ export default function InterviewSetupPage() {
           {roleError && <p className="mt-1.5 text-xs text-rose-400">{roleError}</p>}
           {recentRoles.length > 0 && (
             <>
-              <div className="mt-3 text-xs font-medium text-gray-500">Recent roles</div>
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <div className="text-xs font-medium text-gray-500">Recent roles</div>
+                <button type="button" onClick={() => setRecentRoles([])} className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 transition hover:text-rose-300">
+                  <Trash2 className="h-3 w-3" />
+                  Clear
+                </button>
+              </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {recentRoles.map((role) => (
                   <button
