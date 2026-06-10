@@ -259,7 +259,10 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
                   <div className="p-5 space-y-4">
                     {/* Answer text */}
                     <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1.5">Your Answer</div>
+                      <div className="mb-1.5 flex items-center justify-between gap-3">
+                        <div className="text-xs uppercase tracking-wide text-gray-500">Your Answer</div>
+                        <CopyButton value={q.answer.transcript || q.answer.answer_text || "No answer recorded"} label="Copy answer" />
+                      </div>
                       <p className="text-sm text-gray-300 bg-gray-800/50 rounded-xl px-4 py-3 italic">
                         &ldquo;{q.answer.transcript || q.answer.answer_text || "No answer recorded"}&rdquo;
                       </p>
