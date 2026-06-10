@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Mic, Clock, TrendingUp, ChevronRight, RefreshCw } from "lucide-react";
+import { Plus, Mic, Clock, TrendingUp, ChevronRight, RefreshCw, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 import { interviewSessionHref } from "@/lib/interview-utils";
 import { formatRelativeTime, scoreColor } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { downloadJson } from "@/lib/export-utils";
 
 interface Session {
   id: string;
@@ -49,6 +50,18 @@ export default function InterviewPage() {
     : "—";
   const bestScore = scoredSessions.length ? `${Math.max(...scoredSessions.map((session) => session.overall_score || 0))}/100` : "—";
 
+  function exportOverview() {
+    downloadJson("careerpilot-interview-overview.json", {
+      exported_at: new Date().toISOString(),
+      total_sessions: sessions.length,
+      completed_sessions: sessions.filter((session) => session.status === "completed").length,
+      active_sessions: sessions.filter((session) => session.status === "active").length,
+      average_score: avgScore,
+      best_score: bestScore,
+      sessions,
+    });
+  }
+
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
@@ -57,6 +70,11 @@ export default function InterviewPage() {
           <p className="text-sm text-gray-400 mt-0.5">Practice with AI-evaluated feedback on every answer</p>
         </div>
         <div className="flex gap-2">
+          {sessions.length > 0 && (
+            <button onClick={exportOverview} className="rounded-xl border border-gray-800 px-3 text-gray-400 transition hover:bg-gray-900 hover:text-white" title="Export overview">
+              <Download className="h-4 w-4" />
+            </button>
+          )}
           <button onClick={refreshSessions} disabled={refreshing} className="rounded-xl border border-gray-800 px-3 text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-50" title="Refresh sessions">
             <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
           </button>
