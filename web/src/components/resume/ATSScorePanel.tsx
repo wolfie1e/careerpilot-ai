@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Download } from "lucide-react";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { cn, scoreColor } from "@/lib/utils";
+import { downloadJson } from "@/lib/export-utils";
 
 interface ATSBreakdown {
   section_presence: number;
@@ -52,12 +53,29 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
     ...Object.entries(breakdown).map(([key, score]) => `${categoryLabels[key] || key}: ${score}/100`),
   ].join("\n");
 
+  function exportAtsBreakdown() {
+    downloadJson("careerpilot-ats-breakdown.json", {
+      exported_at: new Date().toISOString(),
+      ats_score: atsScore,
+      weakest_category: weakestCategory ? {
+        category: categoryLabels[weakestCategory[0]] || weakestCategory[0],
+        score: weakestCategory[1],
+      } : null,
+      breakdown,
+      weights: categoryWeights,
+    });
+  }
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-semibold text-white">ATS Score</h3>
         <div className="flex items-center gap-3">
           <CopyButton value={summary} label="Copy summary" />
+          <button onClick={exportAtsBreakdown} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+            <Download className="h-3.5 w-3.5" />
+            Export
+          </button>
           <span className={cn("text-3xl font-extrabold", scoreColor(atsScore))}>
             {atsScore}<span className="text-sm font-normal text-gray-500">/100</span>
           </span>
