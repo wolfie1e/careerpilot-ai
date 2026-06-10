@@ -224,6 +224,16 @@ export default function ResumePage() {
     });
   }
 
+  function exportCurrentAnalysis() {
+    if (!resume || !analysis) return;
+    downloadJson(`careerpilot-analysis-${resume.id}.json`, {
+      exported_at: new Date().toISOString(),
+      resume: selectedResumeItem,
+      analysis,
+      previous_analysis: previousAnalysis,
+    });
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -369,6 +379,12 @@ export default function ResumePage() {
             {analyzing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
             Analyze again
           </button>
+          {analysis && (
+            <button onClick={exportCurrentAnalysis} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-xs font-semibold text-gray-400 transition hover:text-white">
+              <Download className="h-3.5 w-3.5" />
+              Export analysis
+            </button>
+          )}
         </div>
       )}
 
