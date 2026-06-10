@@ -48,6 +48,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
   const questions = session?.questions || [];
   const currentQ = questions[currentIdx];
   const progress = ((currentIdx) / Math.max(questions.length, 1)) * 100;
+  const answerWordCount = answer.trim().split(/\s+/).filter(Boolean).length;
 
   async function handleSubmit() {
     if (!answer.trim() || !currentQ) return;
@@ -141,6 +142,10 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
             rows={6}
             className="w-full bg-gray-900 border border-gray-700 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
           />
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"}</span>
+            <span>{answer.length} characters</span>
+          </div>
           <button
             onClick={handleSubmit}
             disabled={!answer.trim() || submitting}
