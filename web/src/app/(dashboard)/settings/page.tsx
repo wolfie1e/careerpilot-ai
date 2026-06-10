@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RotateCcw, Shield, Upload, UserRound } from "lucide-react";
+import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RefreshCw, RotateCcw, Shield, Upload, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -104,6 +104,11 @@ export default function SettingsPage() {
     });
     setLocalPreferenceCount(0);
     toast.success("Local workspace preferences reset");
+  }
+
+  function recountLocalPreferences() {
+    setLocalPreferenceCount(Object.values(LOCAL_STORAGE_KEYS).filter((key) => window.localStorage.getItem(key) !== null).length);
+    toast.success("Preference count refreshed");
   }
 
   function exportLocalPreferences() {
@@ -300,6 +305,10 @@ export default function SettingsPage() {
           <button onClick={resetLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <RotateCcw className="h-4 w-4" />
             Reset local preferences
+          </button>
+          <button onClick={recountLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <RefreshCw className="h-4 w-4" />
+            Recount
           </button>
         </div>
       </div>
