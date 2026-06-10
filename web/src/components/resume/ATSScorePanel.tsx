@@ -53,6 +53,7 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
     ...Object.entries(breakdown).map(([key, score]) => `${categoryLabels[key] || key}: ${score}/100`),
   ].join("\n");
   const readinessLabel = atsScore >= 85 ? "Strong ATS readiness" : atsScore >= 70 ? "Competitive with improvements" : atsScore >= 50 ? "Needs targeted edits" : "Major ATS gaps";
+  const categoriesNeedingWork = Object.values(breakdown).filter((score) => score < 75).length;
 
   function exportAtsBreakdown() {
     downloadJson("careerpilot-ats-breakdown.json", {
@@ -101,6 +102,7 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
           <div className="text-xs font-semibold uppercase tracking-wide text-amber-400">Top ATS focus</div>
           <div className="mt-1 text-sm font-semibold text-white">{categoryLabels[weakestCategory[0]] || weakestCategory[0]}</div>
           <div className="mt-1 text-xs text-gray-500">Currently scoring {weakestCategory[1]}/100 in this category.</div>
+          <div className="mt-1 text-xs text-gray-500">{categoriesNeedingWork} categor{categoriesNeedingWork === 1 ? "y" : "ies"} below 75/100.</div>
         </div>
       )}
 
