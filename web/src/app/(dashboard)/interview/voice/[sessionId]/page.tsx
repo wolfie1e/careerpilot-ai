@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Square, RotateCcw, Loader2, CheckCircle, AlertCircle, Trophy } from "lucide-react";
+import { Mic, Square, RotateCcw, Loader2, CheckCircle, AlertCircle, Trophy, Lightbulb } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
@@ -205,6 +205,16 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                 <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-2 mb-3"><AlertCircle className="w-4 h-4" />To improve</h4>
                 <ul className="space-y-1.5">{feedback.feedback_improve.map((p, i) => <li key={i} className="text-sm text-gray-300 flex gap-2"><span className="text-amber-400">•</span>{p}</li>)}</ul>
+              </div>
+            )}
+
+            {feedback.model_answer_hint && (
+              <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
+                <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-blue-400">
+                  <Lightbulb className="h-4 w-4" />
+                  Model answer hint
+                </h4>
+                <p className="text-sm leading-relaxed text-gray-300">{feedback.model_answer_hint}</p>
               </div>
             )}
 
