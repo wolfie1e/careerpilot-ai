@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2, History, Download } from "lucide-react";
+import { Target, CheckCircle, Loader2, ChevronDown, ChevronUp, ExternalLink, Save, Trash2, History, Download, X } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -165,6 +165,13 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     toast.success("Saved job descriptions cleared");
   }
 
+  function clearCurrentJobDescription() {
+    setJdTitle("");
+    setJdText("");
+    setResult(null);
+    setRoadmapPriority("all");
+  }
+
   function exportRecentMatches() {
     downloadJson("careerpilot-recent-jd-matches.json", {
       exported_at: new Date().toISOString(),
@@ -265,6 +272,10 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           >
             <Save className="h-4 w-4" />
             Save JD
+          </button>
+          <button onClick={clearCurrentJobDescription} disabled={!jdText && !jdTitle && !result} className="flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-400 transition hover:text-white disabled:opacity-40">
+            <X className="h-4 w-4" />
+            Clear
           </button>
         </div>
         {loading && <MatchingProgress />}
