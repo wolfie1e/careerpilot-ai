@@ -52,6 +52,7 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
     `ATS score: ${atsScore}/100`,
     ...Object.entries(breakdown).map(([key, score]) => `${categoryLabels[key] || key}: ${score}/100`),
   ].join("\n");
+  const readinessLabel = atsScore >= 85 ? "Strong ATS readiness" : atsScore >= 70 ? "Competitive with improvements" : atsScore >= 50 ? "Needs targeted edits" : "Major ATS gaps";
 
   function exportAtsBreakdown() {
     downloadJson("careerpilot-ats-breakdown.json", {
@@ -84,6 +85,7 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
 
       {/* Overall progress bar */}
       <div className="mb-6">
+        <div className="mb-2 text-xs font-medium text-gray-500">{readinessLabel}</div>
         <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
