@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle } from "lucide-react";
+import { Clock, Mic, MessageSquare, Loader2, ChevronRight, CheckCircle, RotateCcw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -63,6 +63,11 @@ export default function InterviewSetupPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function resetSetup() {
+    setForm(DEFAULT_INTERVIEW_SETUP);
+    setRoleError("");
   }
 
   return (
@@ -228,17 +233,22 @@ export default function InterviewSetupPage() {
           </div>
         </div>
 
-        <button
-          onClick={handleStart}
-          disabled={loading || !form.role_title.trim()}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/40 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-600/20 text-sm"
-        >
-          {loading ? (
-            <><Loader2 className="w-4 h-4 animate-spin" />Generating questions…</>
-          ) : (
-            <>Start Interview <ChevronRight className="w-4 h-4" /></>
-          )}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleStart}
+            disabled={loading || !form.role_title.trim()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500 disabled:bg-blue-600/40"
+          >
+            {loading ? (
+              <><Loader2 className="w-4 h-4 animate-spin" />Generating questions…</>
+            ) : (
+              <>Start Interview <ChevronRight className="w-4 h-4" /></>
+            )}
+          </button>
+          <button onClick={resetSetup} disabled={loading} title="Reset setup" className="rounded-xl border border-gray-700 px-4 text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+            <RotateCcw className="h-4 w-4" />
+          </button>
+        </div>
 
         <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
           <Clock className="w-3.5 h-3.5" />
