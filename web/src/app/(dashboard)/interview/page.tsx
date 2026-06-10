@@ -165,7 +165,7 @@ export default function InterviewPage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-800">
-            {sessions.map((s, i) => (
+            {sessions.slice(0, 5).map((s, i) => (
               <motion.div
                 key={s.id}
                 initial={{ opacity: 0, x: -10 }}
