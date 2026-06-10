@@ -306,7 +306,10 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
                     {/* Model hint */}
                     {q.answer.model_answer_hint && (
                       <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl px-4 py-3">
-                        <div className="text-xs font-semibold text-blue-400 flex items-center gap-1.5 mb-1.5"><Lightbulb className="w-3.5 h-3.5" />Model answer hint</div>
+                        <div className="mb-1.5 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-400"><Lightbulb className="w-3.5 h-3.5" />Model answer hint</div>
+                          <CopyButton value={q.answer.model_answer_hint} label="Copy hint" />
+                        </div>
                         <p className="text-xs text-gray-300 leading-relaxed">{q.answer.model_answer_hint}</p>
                       </div>
                     )}
