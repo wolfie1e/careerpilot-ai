@@ -118,6 +118,24 @@ export default function SettingsPage() {
     });
   }
 
+  function exportAccountSummary() {
+    downloadJson("careerpilot-account-summary.json", {
+      exported_at: new Date().toISOString(),
+      profile: {
+        full_name: profile.full_name || null,
+        username: profile.username || null,
+        email: user?.email || null,
+        avatar_url: profile.avatar_url || null,
+        plan: user?.plan || "free",
+      },
+      activity: {
+        total_resumes: user?.total_resumes ?? 0,
+        total_interviews: user?.total_interviews ?? 0,
+      },
+      local_preference_count: localPreferenceCount,
+    });
+  }
+
   async function importLocalPreferences(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -164,6 +182,13 @@ export default function SettingsPage() {
           <div className="text-sm text-gray-500">Interviews</div>
           <div className="mt-1 text-lg font-bold text-white">{user?.total_interviews ?? 0} completed</div>
         </motion.div>
+      </div>
+
+      <div className="flex justify-end">
+        <button onClick={exportAccountSummary} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-gray-900 hover:text-white">
+          <Download className="h-4 w-4" />
+          Export account summary
+        </button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
