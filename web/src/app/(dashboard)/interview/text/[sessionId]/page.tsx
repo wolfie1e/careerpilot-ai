@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, AlertCircle, Lightbulb, Send, Loader2, Trophy } from "lucide-react";
+import { CheckCircle, AlertCircle, Lightbulb, Send, Loader2, Trophy, X } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
@@ -146,13 +146,19 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
             <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"}</span>
             <span>{answer.length} characters</span>
           </div>
-          <button
-            onClick={handleSubmit}
-            disabled={!answer.trim() || submitting}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/40 text-white font-semibold rounded-xl transition-all text-sm"
-          >
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Evaluating…</> : <><Send className="w-4 h-4" />Submit Answer</>}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSubmit}
+              disabled={!answer.trim() || submitting}
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/40 text-white font-semibold rounded-xl transition-all text-sm"
+            >
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Evaluating…</> : <><Send className="w-4 h-4" />Submit Answer</>}
+            </button>
+            <button onClick={() => setAnswer("")} disabled={!answer || submitting} className="inline-flex items-center gap-1.5 rounded-xl border border-gray-700 px-3 text-xs font-medium text-gray-400 transition hover:text-white disabled:opacity-40">
+              <X className="h-3.5 w-3.5" />
+              Clear
+            </button>
+          </div>
         </div>
       )}
 
