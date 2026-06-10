@@ -31,6 +31,12 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ImproveResult | null>(null);
   const wordCount = sectionText.trim().split(/\s+/).filter(Boolean).length;
+  const changeSummary = result
+    ? [
+        ...result.changes_made.map((change) => `- ${change}`),
+        result.keywords_added.length ? `Keywords added: ${result.keywords_added.join(", ")}` : "",
+      ].filter(Boolean).join("\n")
+    : "";
 
   function handleSectionChange(s: string) {
     setSection(s);
@@ -171,6 +177,9 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
             </div>
 
             {/* Changes + keywords */}
+            <div className="flex justify-end">
+              <CopyButton value={changeSummary} label="Copy change summary" />
+            </div>
             <div className="grid sm:grid-cols-2 gap-4">
               {result.changes_made?.length > 0 && (
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
