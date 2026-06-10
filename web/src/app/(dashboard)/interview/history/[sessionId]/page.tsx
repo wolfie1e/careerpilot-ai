@@ -3,10 +3,11 @@
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronDown, ChevronUp, CheckCircle, AlertCircle, Lightbulb, Loader2, Trophy, Mic, MessageSquare } from "lucide-react";
+import { ChevronLeft, ChevronDown, ChevronUp, CheckCircle, AlertCircle, Lightbulb, Loader2, Trophy, Mic, MessageSquare, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { formatDate, scoreColor, cn } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 interface Answer {
   id: string;
@@ -113,6 +114,14 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
     ));
   }
 
+  function exportReview() {
+    downloadJson(`careerpilot-interview-review-${session.session.id}.json`, {
+      exported_at: new Date().toISOString(),
+      ...session,
+      rubric_averages: rubricAverages,
+    });
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
       {/* Back link */}
@@ -148,7 +157,13 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
                 <div className="text-xs text-gray-500">Overall</div>
               </div>
             )}
-            <CopyButton value={formatReviewSummary(session, weakestRubric?.key ?? null)} label="Copy review" />
+            <div className="flex gap-2">
+              <CopyButton value={formatReviewSummary(session, weakestRubric?.key ?? null)} label="Copy review" />
+              <button onClick={exportReview} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export
+              </button>
+            </div>
           </div>
         </div>
 
