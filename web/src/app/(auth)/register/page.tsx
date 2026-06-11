@@ -23,8 +23,10 @@ export default function RegisterPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [field]: e.target.value }));
+    setFieldErrors((errors) => ({ ...errors, [field]: "" }));
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
