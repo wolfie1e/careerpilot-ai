@@ -270,7 +270,7 @@ export default function SettingsPage() {
               </label>
             ))}
             <div className="flex flex-wrap gap-2">
-              <button disabled={savingPassword} className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:opacity-60">
+              <button disabled={savingPassword || !password.current_password || !password.new_password || !password.confirm_password} className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:opacity-60">
                 {savingPassword && <Loader2 className="h-4 w-4 animate-spin" />} Update password
               </button>
               <button type="button" onClick={resetPasswordForm} disabled={savingPassword} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-400 transition hover:text-white disabled:opacity-40">
