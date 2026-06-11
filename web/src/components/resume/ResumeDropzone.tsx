@@ -88,9 +88,10 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
         </div>
         <button
           onClick={() => { setFile(null); setDone(false); }}
-          className="ml-auto text-gray-400 hover:text-white"
+          className="ml-auto inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-white"
         >
           <X className="w-4 h-4" />
+          Upload another
         </button>
       </div>
     );
