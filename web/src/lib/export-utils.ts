@@ -19,7 +19,7 @@ export function toCsv(rows: CsvRow[]): string {
 
 export function downloadCsv(filename: string, rows: CsvRow[]) {
   const csv = toCsv(rows);
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
