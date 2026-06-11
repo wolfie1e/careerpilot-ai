@@ -27,7 +27,8 @@ function LoginForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const result = loginSchema.safeParse({ email, password });
+    const normalizedEmail = email.trim();
+    const result = loginSchema.safeParse({ email: normalizedEmail, password });
     if (!result.success) {
       const errs: Record<string, string> = {};
       result.error.issues.forEach((err) => { if (err.path[0]) errs[String(err.path[0])] = err.message; });
@@ -37,7 +38,7 @@ function LoginForm() {
     setFieldErrors({});
     setLoading(true);
     try {
-      await login(email, password);
+      await login(normalizedEmail, password);
       toast.success("Welcome back!");
       router.push(from);
     } catch (err: unknown) {
