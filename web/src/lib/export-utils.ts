@@ -25,7 +25,7 @@ export function downloadCsv(filename: string, rows: CsvRow[]) {
   link.href = url;
   link.download = filename.endsWith(".csv") ? filename : `${filename}.csv`;
   link.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 export function downloadJson(filename: string, data: unknown) {
@@ -35,5 +35,5 @@ export function downloadJson(filename: string, data: unknown) {
   link.href = url;
   link.download = filename.endsWith(".json") ? filename : `${filename}.json`;
   link.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
