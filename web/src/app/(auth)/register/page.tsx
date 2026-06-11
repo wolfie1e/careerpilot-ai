@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Zap, Loader2, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Zap, Loader2, CheckCircle, RotateCcw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { registerSchema } from "@/lib/validations";
@@ -63,6 +63,11 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function resetForm() {
+    setForm({ email: "", username: "", password: "", full_name: "" });
+    setFieldErrors({});
   }
 
   return (
@@ -180,6 +185,10 @@ export default function RegisterPage() {
               ) : (
                 "Create Free Account"
               )}
+            </button>
+            <button type="button" onClick={resetForm} disabled={loading || !Object.values(form).some(Boolean)} className="w-full inline-flex items-center justify-center gap-2 py-2 text-sm font-medium text-gray-500 transition hover:text-white disabled:opacity-40">
+              <RotateCcw className="h-3.5 w-3.5" />
+              Clear form
             </button>
           </form>
 
