@@ -133,6 +133,7 @@ export default function RegisterPage() {
                 placeholder="alex_dev"
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
               />
+              <div className="mt-1 text-right text-xs text-gray-600">{form.username.length}/50</div>
               {fieldErrors.username && <p className="text-xs text-rose-400 mt-1">{fieldErrors.username}</p>}
             </div>
             <div>
