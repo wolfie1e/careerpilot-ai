@@ -106,7 +106,7 @@ function LoginForm() {
               {fieldErrors.password && <p className="mt-1 text-xs text-rose-400">{fieldErrors.password}</p>}
             </div>
 
-            <button type="submit" disabled={loading}
+            <button type="submit" disabled={loading || !email.trim() || !password}
               className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-600/20">
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Signing in…</> : "Sign In"}
             </button>
