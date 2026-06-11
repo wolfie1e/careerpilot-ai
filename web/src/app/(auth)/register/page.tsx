@@ -28,7 +28,13 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const result = registerSchema.safeParse(form);
+    const normalizedForm = {
+      ...form,
+      email: form.email.trim(),
+      username: form.username.trim(),
+      full_name: form.full_name.trim(),
+    };
+    const result = registerSchema.safeParse(normalizedForm);
     if (!result.success) {
       const errs: Record<string, string> = {};
       result.error.issues.forEach((err) => { if (err.path[0]) errs[String(err.path[0])] = err.message; });
@@ -38,7 +44,7 @@ export default function RegisterPage() {
     setFieldErrors({});
     setLoading(true);
     try {
-      await register(form.email, form.username, form.password, form.full_name || undefined);
+      await register(normalizedForm.email, normalizedForm.username, normalizedForm.password, normalizedForm.full_name || undefined);
       toast.success("Account created! Welcome to CareerPilot AI.");
       router.push("/dashboard");
     } catch (err: unknown) {
