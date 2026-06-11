@@ -42,6 +42,13 @@ export default function SettingsPage() {
     typeof window === "undefined" ? 0 : Object.values(LOCAL_STORAGE_KEYS).filter((key) => window.localStorage.getItem(key) !== null).length
   ));
   const profileDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
+  const newPasswordStrength = [
+    password.new_password.length >= 8,
+    /[A-Z]/.test(password.new_password),
+    /[a-z]/.test(password.new_password),
+    /\d/.test(password.new_password),
+    /[^A-Za-z0-9]/.test(password.new_password),
+  ].filter(Boolean).length;
   const savedPreferenceNames = typeof window === "undefined"
     ? []
     : Object.entries(LOCAL_STORAGE_KEYS)
@@ -255,6 +262,11 @@ export default function SettingsPage() {
                 <span className="mb-1.5 block text-sm font-medium text-gray-300">{label}</span>
                 <input type={showPasswords ? "text" : "password"} value={password[key as keyof typeof password]} onChange={(e) => setPassword((p) => ({ ...p, [key]: e.target.value }))} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-violet-500" />
                 {passwordErrors[key] && <span className="mt-1 block text-xs text-rose-400">{passwordErrors[key]}</span>}
+                {key === "new_password" && password.new_password && (
+                  <span className="mt-2 flex gap-1">
+                    {[1, 2, 3, 4, 5].map((level) => <span key={level} className={`h-1 flex-1 rounded-full ${newPasswordStrength >= level ? "bg-violet-500" : "bg-gray-800"}`} />)}
+                  </span>
+                )}
               </label>
             ))}
             <div className="flex flex-wrap gap-2">
