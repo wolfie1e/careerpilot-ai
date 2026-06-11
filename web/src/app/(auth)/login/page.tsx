@@ -12,7 +12,8 @@ import { loginSchema } from "@/lib/validations";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get("from") || "/dashboard";
+  const requestedFrom = searchParams.get("from");
+  const from = requestedFrom?.startsWith("/") && !requestedFrom.startsWith("//") ? requestedFrom : "/dashboard";
   const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
