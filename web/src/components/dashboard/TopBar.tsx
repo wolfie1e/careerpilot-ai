@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart2, Download, FileText, LayoutDashboard, MessageSquare, Plus, Settings } from "lucide-react";
 import UserMenu from "@/components/dashboard/UserMenu";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 const pageTitles: Record<string, { title: string; subtitle: string; actionHref: string; actionLabel: string; actionIcon: typeof Plus }> = {
   "/dashboard": { title: "Overview", subtitle: "Your career progress at a glance", actionHref: "/resume", actionLabel: "Add Resume", actionIcon: Plus },
@@ -44,6 +45,7 @@ export default function TopBar() {
           <ActionIcon className="h-3.5 w-3.5" />
           {page.actionLabel}
         </Link>
+        <ThemeToggle />
         <UserMenu />
       </div>
     </header>
