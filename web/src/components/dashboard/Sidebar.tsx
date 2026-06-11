@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, MessageSquare, BarChart2, Download,
-  Zap, ChevronLeft, ChevronRight, LogOut, Settings
+  Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -88,6 +88,10 @@ export default function Sidebar() {
 
       {/* Bottom: user + logout */}
       <div className="px-2 pb-4 space-y-1 border-t border-gray-800 pt-3">
+        <Link href="/interview/setup" title={collapsed ? "New interview" : undefined} className={cn("mb-2 flex items-center gap-3 rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500", collapsed && "justify-center px-0")}>
+          <Plus className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>New Interview</span>}
+        </Link>
         <button
           onClick={() => logout()}
           title={collapsed ? "Sign out" : undefined}
