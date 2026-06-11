@@ -22,6 +22,14 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
+  const passwordStrength = [
+    form.password.length >= 8,
+    /[A-Z]/.test(form.password),
+    /[a-z]/.test(form.password),
+    /\d/.test(form.password),
+    /[^A-Za-z0-9]/.test(form.password),
+  ].filter(Boolean).length;
+  const passwordStrengthLabel = passwordStrength >= 5 ? "Strong" : passwordStrength >= 3 ? "Good" : passwordStrength >= 1 ? "Weak" : "Not started";
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [field]: e.target.value }));
@@ -146,6 +154,14 @@ export default function RegisterPage() {
                 >
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex flex-1 gap-1">
+                  {[1, 2, 3, 4, 5].map((level) => (
+                    <span key={level} className={`h-1 flex-1 rounded-full ${passwordStrength >= level ? "bg-blue-500" : "bg-gray-800"}`} />
+                  ))}
+                </div>
+                <span className="text-xs font-medium text-gray-500">{passwordStrengthLabel}</span>
               </div>
               {fieldErrors.password && <p className="text-xs text-rose-400 mt-1">{fieldErrors.password}</p>}
             </div>
