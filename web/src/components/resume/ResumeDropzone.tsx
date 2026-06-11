@@ -107,7 +107,7 @@ export default function ResumeDropzone({ onUploaded }: ResumeDropzoneProps) {
         uploading && "cursor-not-allowed opacity-60"
       )}
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps({ "aria-label": "Upload resume file" })} />
       {uploading ? (
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
