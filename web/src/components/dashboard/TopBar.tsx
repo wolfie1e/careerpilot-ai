@@ -17,7 +17,16 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
 export default function TopBar() {
   const pathname = usePathname();
   const base = "/" + pathname.split("/")[1];
-  const page = pageTitles[base] || { title: "CareerPilot AI", subtitle: "", actionHref: "/settings", actionLabel: "Settings", actionIcon: Settings };
+  const nestedInterviewPage = pathname.startsWith("/interview/setup")
+    ? { ...pageTitles["/interview"], title: "Interview Setup", subtitle: "Configure your next practice session" }
+    : pathname.startsWith("/interview/history/")
+      ? { ...pageTitles["/interview"], title: "Interview Review", subtitle: "Review scores, answers, and feedback" }
+      : pathname === "/interview/history"
+        ? { ...pageTitles["/interview"], title: "Interview History", subtitle: "Search, filter, and revisit sessions" }
+        : pathname.startsWith("/interview/text/") || pathname.startsWith("/interview/voice/")
+          ? { ...pageTitles["/interview"], title: "Practice Session", subtitle: "Answer questions and receive feedback" }
+          : null;
+  const page = nestedInterviewPage || pageTitles[base] || { title: "CareerPilot AI", subtitle: "", actionHref: "/settings", actionLabel: "Settings", actionIcon: Settings };
   const ActionIcon = page.actionIcon;
   const todayLabel = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date());
 
