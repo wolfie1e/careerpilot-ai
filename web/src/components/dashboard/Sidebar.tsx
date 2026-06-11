@@ -33,7 +33,7 @@ export default function Sidebar() {
       className="relative flex flex-col bg-gray-900 border-r border-gray-800 h-screen shrink-0 overflow-hidden"
     >
       {/* Logo */}
-      <div className={cn("flex items-center gap-2 h-16 px-4 border-b border-gray-800 shrink-0", collapsed && "justify-center px-0")}>
+      <Link href="/dashboard" title="Dashboard overview" className={cn("flex items-center gap-2 h-16 px-4 border-b border-gray-800 shrink-0", collapsed && "justify-center px-0")}>
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shrink-0">
           <Zap className="w-4 h-4 text-white" />
         </div>
@@ -49,7 +49,7 @@ export default function Sidebar() {
             </motion.span>
           )}
         </AnimatePresence>
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
