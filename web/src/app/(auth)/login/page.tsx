@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Zap, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Zap, Loader2, RotateCcw } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { loginSchema } from "@/lib/validations";
@@ -46,6 +46,12 @@ function LoginForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function clearForm() {
+    setEmail("");
+    setPassword("");
+    setFieldErrors({});
   }
 
   return (
@@ -103,6 +109,10 @@ function LoginForm() {
             <button type="submit" disabled={loading}
               className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-600/20">
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Signing in…</> : "Sign In"}
+            </button>
+            <button type="button" onClick={clearForm} disabled={loading || (!email && !password)} className="w-full inline-flex items-center justify-center gap-2 py-2 text-sm font-medium text-gray-500 transition hover:text-white disabled:opacity-40">
+              <RotateCcw className="h-3.5 w-3.5" />
+              Clear form
             </button>
           </form>
 
