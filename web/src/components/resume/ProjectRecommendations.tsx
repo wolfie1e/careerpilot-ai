@@ -187,7 +187,10 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
 
                         {/* Why it helps */}
                         <div>
-                          <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Why it helps</div>
+                          <div className="mb-1 flex items-center justify-between gap-3">
+                            <div className="text-xs uppercase tracking-wide text-gray-500">Why it helps</div>
+                            <CopyButton value={`${p.title}\n${p.description}\nStack: ${p.tech_stack.join(", ")}\n${p.why_it_helps}`} label="Copy project" />
+                          </div>
                           <p className="text-sm text-gray-300">{p.why_it_helps}</p>
                         </div>
 
