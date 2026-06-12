@@ -121,6 +121,7 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
               <span className="text-xs text-gray-400">{categoryLabels[key] || key}</span>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">×{categoryWeights[key]}%</span>
+                <span className="text-xs text-gray-600">{Math.round((score * categoryWeights[key]) / 100)} pts</span>
                 <span className={cn("text-xs font-semibold", scoreColor(score))}>{score}</span>
               </div>
             </div>
