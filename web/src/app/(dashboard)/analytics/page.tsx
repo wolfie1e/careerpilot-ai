@@ -449,7 +449,10 @@ export default function AnalyticsPage() {
         {(data.skill_coverage.matched + data.skill_coverage.missing) > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <h3 className="font-medium text-white mb-4">Skill Coverage Overview</h3>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h3 className="font-medium text-white">Skill Coverage Overview</h3>
+              <CopyButton value={`Matched: ${data.skill_coverage.matched}\nMissing: ${data.skill_coverage.missing}\nCritical: ${data.skill_coverage.critical}`} label="Copy coverage" />
+            </div>
             <ResponsiveContainer width="100%" height={200}>
               <RadarChart data={[
                 { skill: "Matched", value: data.skill_coverage.matched },
