@@ -51,6 +51,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
   const progress = ((currentIdx) / Math.max(questions.length, 1)) * 100;
   const answerWordCount = answer.trim().split(/\s+/).filter(Boolean).length;
   const estimatedSpeakingSeconds = Math.max(0, Math.round((answerWordCount / 130) * 60));
+  const answerDepth = answerWordCount >= 120 ? "Detailed" : answerWordCount >= 60 ? "Solid" : answerWordCount > 0 ? "Brief" : "Not started";
   const feedbackSummary = feedback ? [
     `Score: ${feedback.score}/100`,
     `What worked: ${feedback.feedback_positive.join("; ") || "None"}`,
@@ -152,7 +153,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
             className="w-full bg-gray-900 border border-gray-700 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 resize-none transition-all"
           />
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"}</span>
+            <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"} · {answerDepth}</span>
             <div className="flex items-center gap-2">
               <CopyButton value={answer} label="Copy draft" />
               <span>{estimatedSpeakingSeconds}s spoken · {answer.length} characters</span>
