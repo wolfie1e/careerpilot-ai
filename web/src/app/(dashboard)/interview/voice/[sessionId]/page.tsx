@@ -156,6 +156,7 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
                 ))}
               </div>
               <div className="text-sm text-violet-400 font-medium">Recording · {formatTime(seconds)}</div>
+              <div className="text-xs text-gray-500">Aim for 1:00-2:00 with a clear situation, action, and result.</div>
               <button onClick={handleStopAndSubmit}
                 className="flex items-center gap-2 mx-auto px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl transition-all text-sm">
                 <Square className="w-4 h-4 fill-current" />Stop & Evaluate
