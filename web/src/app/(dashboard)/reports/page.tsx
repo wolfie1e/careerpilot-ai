@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUpDown, Download, FileText, HardDrive, Loader2, RotateCcw, Search, Star } from "lucide-react";
+import { ArrowUpDown, Download, FileText, HardDrive, Loader2, RefreshCw, RotateCcw, Search, Star } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -27,6 +27,7 @@ export default function ReportsPage() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [reportsView, setReportsView] = useLocalStorage<ReportsView>(LOCAL_STORAGE_KEYS.reportsView, { search: "", sort: "newest" });
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const orderedResumes = [...resumes].sort((a, b) => {
@@ -51,6 +52,19 @@ export default function ReportsPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  async function refreshReports() {
+    setRefreshing(true);
+    try {
+      const data = await api.get<Resume[]>("/resume");
+      setResumes(data);
+      toast.success("Reports refreshed");
+    } catch {
+      toast.error("Could not refresh reports");
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   async function downloadReport(resumeId: string, format: "pdf" | "md", filename = "resume-report") {
     setDownloading(`${resumeId}-${format}`);
@@ -109,6 +123,10 @@ export default function ReportsPage() {
         </div>
         {resumes.length > 0 && (
           <div className="flex flex-wrap gap-2">
+            <button onClick={refreshReports} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
+              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
             {pinnedResume && (
               <button onClick={() => downloadReport(pinnedResume.id, "pdf", pinnedResume.filename)} disabled={!!downloading} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50">
                 {downloading === `${pinnedResume.id}-pdf` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4 fill-white" />}
