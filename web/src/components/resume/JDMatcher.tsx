@@ -514,6 +514,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
                               {item.project_idea && (
                                 <p className="text-blue-300 italic">💡 Project idea: {item.project_idea}</p>
                               )}
+                              <CopyButton value={`${item.skill} (${item.priority}, ${item.weeks_to_learn} weeks)\n${item.why_it_matters}\nProject: ${item.project_idea || "Not specified"}`} label="Copy study plan" />
                               {item.resources?.length > 0 && (
                                 <div>
                                   <span className="text-xs text-gray-500 uppercase tracking-wide">Resources</span>
