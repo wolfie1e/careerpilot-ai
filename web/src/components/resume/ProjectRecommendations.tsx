@@ -39,6 +39,7 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
   const [projects, setProjects] = useState<Project[]>([]);
   const [expanded, setExpanded] = useState<string[]>([]);
   const totalWeeks = projects.reduce((sum, project) => sum + project.estimated_weeks, 0);
+  const averageWeeks = projects.length ? Math.round(totalWeeks / projects.length) : 0;
   const coveredSkills = new Set(projects.flatMap((project) => project.skills_demonstrated || [])).size;
   const projectPlanText = projects.map((project, index) => (
     `${index + 1}. ${project.title} (${project.difficulty}, ${project.estimated_weeks} weeks)\nStack: ${project.tech_stack.join(", ")}\nSkills: ${project.skills_demonstrated.join(", ")}`
@@ -120,11 +121,12 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
       <AnimatePresence>
         {projects.length > 0 && (
           <div className="space-y-3">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
                 { label: "Ideas", value: projects.length },
                 { label: "Total weeks", value: totalWeeks },
                 { label: "Skills covered", value: coveredSkills },
+                { label: "Avg weeks", value: averageWeeks },
               ].map((item) => (
                 <div key={item.label} className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-center">
                   <div className="text-lg font-bold text-white">{item.value}</div>
