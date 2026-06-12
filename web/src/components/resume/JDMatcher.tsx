@@ -123,6 +123,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const [recentMatches, setRecentMatches] = useLocalStorage<RecentMatchSummary[]>(LOCAL_STORAGE_KEYS.recentMatches, []);
   const jdWordCount = countWords(jdText);
   const jdReady = jdWordCount >= MIN_JD_WORDS;
+  const wordsRemaining = Math.max(0, MIN_JD_WORDS - jdWordCount);
   const readingMinutes = Math.max(1, Math.ceil(jdWordCount / 180));
   const recentMatchesForResume = recentMatches.filter((match) => match.resume_id === resumeId);
   const roadmapPriorities = result
@@ -284,7 +285,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           </div>
         </div>
         <div className="flex justify-end text-xs">
-          {!jdReady && <span className="text-gray-500">Minimum {MIN_JD_WORDS} words recommended</span>}
+          {!jdReady && <span className="text-gray-500">{wordsRemaining} more word{wordsRemaining === 1 ? "" : "s"} recommended</span>}
           <CopyButton value={jdText} label="Copy JD" className="ml-auto" />
         </div>
         <div className="flex flex-wrap gap-2">
