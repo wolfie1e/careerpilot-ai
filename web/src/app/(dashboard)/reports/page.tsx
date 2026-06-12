@@ -44,6 +44,7 @@ export default function ReportsPage() {
   ));
   const totalStorage = resumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
   const visibleStorage = visibleResumes.reduce((sum, resume) => sum + (resume.file_size ?? 0), 0);
+  const averageVisibleSize = visibleResumes.length ? Math.round(visibleStorage / visibleResumes.length) : 0;
   const pinnedResume = pinnedResumeId ? resumes.find((resume) => resume.id === pinnedResumeId) ?? null : null;
 
   useEffect(() => {
@@ -214,6 +215,7 @@ export default function ReportsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-gray-500">
               Showing {visibleResumes.length} report{visibleResumes.length === 1 ? "" : "s"} · {formatBytes(visibleStorage)}
+              {visibleResumes.length > 0 && ` · ${formatBytes(averageVisibleSize)} avg`}
             </div>
             <button onClick={() => setReportsView({ search: "", sort: "newest" })} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
               <RotateCcw className="h-3.5 w-3.5" />
