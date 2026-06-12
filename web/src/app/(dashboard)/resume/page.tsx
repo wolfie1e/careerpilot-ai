@@ -470,7 +470,7 @@ export default function ResumePage() {
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                   <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2"><Lightbulb className="w-4 h-4" />Priority Improvements</h4>
+                    <h4 className="text-sm font-semibold text-blue-400 flex items-center gap-2"><Lightbulb className="w-4 h-4" />Priority Improvements <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs">{visibleSuggestions.length}</span></h4>
                     <div className="flex flex-wrap items-center gap-2">
                       <CopyButton value={visibleSuggestionText || "No suggestions"} label="Copy" />
                       <button onClick={exportVisibleSuggestions} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
