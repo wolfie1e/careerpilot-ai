@@ -50,6 +50,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
   const currentQ = questions[currentIdx];
   const progress = ((currentIdx) / Math.max(questions.length, 1)) * 100;
   const answerWordCount = answer.trim().split(/\s+/).filter(Boolean).length;
+  const estimatedSpeakingSeconds = Math.max(0, Math.round((answerWordCount / 130) * 60));
   const feedbackSummary = feedback ? [
     `Score: ${feedback.score}/100`,
     `What worked: ${feedback.feedback_positive.join("; ") || "None"}`,
@@ -152,7 +153,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
           />
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"}</span>
-            <span>{answer.length} characters</span>
+            <span>{estimatedSpeakingSeconds}s spoken · {answer.length} characters</span>
           </div>
           <div className="flex gap-2">
             <button
