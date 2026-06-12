@@ -7,7 +7,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PieChart, Pie, Cell, Legend
 } from "recharts";
-import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2, RotateCcw } from "lucide-react";
+import { CalendarDays, Download, TrendingUp, Mic, FileText, Target, Loader2, RefreshCw, RotateCcw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import StatCard from "@/components/dashboard/StatCard";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -72,6 +72,7 @@ function getAnalyticsFocusItems(data: AnalyticsData) {
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [timeRange, setTimeRange] = useLocalStorage<TimeRange>(LOCAL_STORAGE_KEYS.analyticsTimeRange, "all");
   const [readinessGoal, setReadinessGoal] = useLocalStorage(LOCAL_STORAGE_KEYS.readinessGoal, 80);
 
@@ -215,6 +216,15 @@ export default function AnalyticsPage() {
     setReadinessGoal(80);
   }
 
+  async function refreshAnalytics() {
+    setRefreshing(true);
+    try {
+      setData(await api.get<AnalyticsData>("/analytics"));
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -223,6 +233,10 @@ export default function AnalyticsPage() {
           <p className="text-sm text-gray-400 mt-1">Your career readiness over time</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button onClick={refreshAnalytics} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
+            <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
+            Refresh
+          </button>
           <div className="inline-flex items-center gap-1 rounded-xl border border-gray-800 bg-gray-900 p-1">
             <CalendarDays className="ml-2 h-4 w-4 text-gray-500" />
             {TIME_RANGES.map((range) => (
