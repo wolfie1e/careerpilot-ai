@@ -49,6 +49,7 @@ export default function SettingsPage() {
     /\d/.test(password.new_password),
     /[^A-Za-z0-9]/.test(password.new_password),
   ].filter(Boolean).length;
+  const passwordsMatch = Boolean(password.new_password && password.confirm_password && password.new_password === password.confirm_password);
   const savedPreferenceNames = typeof window === "undefined"
     ? []
     : Object.entries(LOCAL_STORAGE_KEYS)
@@ -250,6 +251,11 @@ export default function SettingsPage() {
                 Reset changes
               </button>
             </div>
+            {password.confirm_password && (
+              <div className={`text-xs font-medium ${passwordsMatch ? "text-emerald-400" : "text-amber-400"}`}>
+                {passwordsMatch ? "New passwords match" : "New passwords do not match yet"}
+              </div>
+            )}
           </div>
         </form>
 
