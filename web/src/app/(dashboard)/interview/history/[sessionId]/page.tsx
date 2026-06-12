@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronDown, ChevronUp, CheckCircle, AlertCircle, Lightbul
 import { api } from "@/lib/api-client";
 import { formatDate, scoreColor, cn } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 interface Answer {
   id: string;
@@ -129,6 +129,18 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
     });
   }
 
+  function exportQuestionScores() {
+    if (!session) return;
+    downloadCsv(`careerpilot-interview-scores-${session.session.id}.csv`, session.questions.map((question) => ({
+      question_number: question.number,
+      question: question.text,
+      type: question.type || "",
+      topic: question.topic || "",
+      score: question.answer?.score ?? "",
+      answer: question.answer?.transcript || question.answer?.answer_text || "",
+    })));
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
       {/* Back link */}
@@ -169,6 +181,10 @@ export default function SessionDetailPage({ params }: { params: Promise<{ sessio
               <button onClick={exportReview} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export
+              </button>
+              <button onClick={exportQuestionScores} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                CSV
               </button>
             </div>
           </div>
