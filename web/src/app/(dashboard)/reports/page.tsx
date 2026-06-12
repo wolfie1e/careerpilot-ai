@@ -128,10 +128,13 @@ export default function ReportsPage() {
               Refresh
             </button>
             {pinnedResume && (
+              <>
               <button onClick={() => downloadReport(pinnedResume.id, "pdf", pinnedResume.filename)} disabled={!!downloading} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50">
                 {downloading === `${pinnedResume.id}-pdf` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4 fill-white" />}
                 Primary PDF
               </button>
+              <CopyButton value={`${pinnedResume.filename} · ${formatBytes(pinnedResume.file_size)} · ${new Date(pinnedResume.created_at).toLocaleDateString()}`} label="Copy primary" className="rounded-xl px-3 py-2 text-sm" />
+              </>
             )}
             <button onClick={exportManifest} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
               <Download className="h-4 w-4" />
