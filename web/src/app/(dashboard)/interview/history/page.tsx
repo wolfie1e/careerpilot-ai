@@ -124,6 +124,19 @@ export default function InterviewHistoryPage() {
     downloadJson("careerpilot-pinned-interviews.json", sessions.filter((session) => pinnedSessionSet.has(session.id)));
   }
 
+  function exportPinnedSessionsCsv() {
+    downloadCsv("careerpilot-pinned-interviews.csv", sessions.filter((session) => pinnedSessionSet.has(session.id)).map((session) => ({
+      role: session.role_title,
+      difficulty: session.difficulty,
+      type: session.interview_type,
+      mode: session.session_mode,
+      status: session.status,
+      score: session.overall_score ?? "",
+      questions: session.question_count,
+      created_at: session.created_at,
+    })));
+  }
+
   async function refreshHistory() {
     setRefreshing(true);
     try {
@@ -181,6 +194,10 @@ export default function InterviewHistoryPage() {
               <button onClick={exportPinnedSessionsJson} className="inline-flex items-center gap-2 rounded-xl border border-amber-700/50 bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-500/20">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                 Export pinned
+              </button>
+              <button onClick={exportPinnedSessionsCsv} className="inline-flex items-center gap-2 rounded-xl border border-amber-700/50 px-3 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-500/10">
+                <Download className="h-4 w-4" />
+                Pinned CSV
               </button>
               <button onClick={() => setPinnedSessionIds([])} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-400 transition hover:border-rose-500/40 hover:text-rose-300">
                 <Trash2 className="h-4 w-4" />
