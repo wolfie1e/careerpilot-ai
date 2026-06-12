@@ -157,6 +157,7 @@ export default function AnalyticsPage() {
   ];
   const readinessGap = Math.max(0, readinessGoal - data.readiness_score);
   const focusItems = getAnalyticsFocusItems(data);
+  const focusPlanText = focusItems.map((item, index) => `${index + 1}. ${item.label} - ${item.desc}`).join("\n");
   const analyticsSummaryText = [
     `Readiness: ${data.readiness_score}/100`,
     `Latest ATS: ${data.latest_ats_score ?? "No data"}`,
@@ -349,10 +350,13 @@ export default function AnalyticsPage() {
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-white">Analytics Focus</h3>
-          <button onClick={exportFocusPlan} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
-            <Download className="h-3.5 w-3.5" />
-            Export plan
-          </button>
+          <div className="flex gap-2">
+            <CopyButton value={focusPlanText} label="Copy plan" />
+            <button onClick={exportFocusPlan} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+              <Download className="h-3.5 w-3.5" />
+              Export plan
+            </button>
+          </div>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
           {focusItems.map((item) => (
