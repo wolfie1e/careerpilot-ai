@@ -79,6 +79,9 @@ export default function InterviewHistoryPage() {
   const visibleCompletionRate = visibleSessions.length
     ? Math.round((visibleSessions.filter((session) => session.status === "completed").length / visibleSessions.length) * 100)
     : 0;
+  const visibleBestScore = visibleScoredSessions.length
+    ? Math.max(...visibleScoredSessions.map((session) => session.overall_score || 0))
+    : null;
   const visibleSessionText = visibleSessions.map((session) => (
     `${session.role_title} · ${session.difficulty} · ${session.interview_type.replace("_", " ")} · ${session.overall_score ?? session.status}`
   )).join("\n");
@@ -269,13 +272,14 @@ export default function InterviewHistoryPage() {
       </div>
 
       {sessions.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
           {[
             { label: "Visible", value: visibleSessions.length },
             { label: "Avg score", value: visibleAverageScore !== null ? `${visibleAverageScore}/100` : "—" },
             { label: "Active", value: visibleSessions.filter((session) => session.status === "active").length },
             { label: "Pinned", value: visibleSessions.filter((session) => pinnedSessionSet.has(session.id)).length },
             { label: "Completion", value: `${visibleCompletionRate}%` },
+            { label: "Best score", value: visibleBestScore !== null ? `${visibleBestScore}/100` : "—" },
           ].map((item) => (
             <div key={item.label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
               <div className="text-xs text-gray-500">{item.label}</div>
