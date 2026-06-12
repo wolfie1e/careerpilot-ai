@@ -153,7 +153,10 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
           />
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>{answerWordCount} word{answerWordCount === 1 ? "" : "s"}</span>
-            <span>{estimatedSpeakingSeconds}s spoken · {answer.length} characters</span>
+            <div className="flex items-center gap-2">
+              <CopyButton value={answer} label="Copy draft" />
+              <span>{estimatedSpeakingSeconds}s spoken · {answer.length} characters</span>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
