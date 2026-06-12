@@ -38,6 +38,9 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
       ].filter(Boolean).join("\n")
     : "";
   const qualityGain = result ? result.quality_after - result.quality_before : 0;
+  const comparisonText = result
+    ? `Original ${section}:\n${sectionText}\n\nImproved ${section}:\n${result.improved_text}\n\nQuality: ${result.quality_before} -> ${result.quality_after}`
+    : "";
 
   function handleSectionChange(s: string) {
     setSection(s);
@@ -183,6 +186,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
 
             {/* Changes + keywords */}
             <div className="flex justify-end">
+              <CopyButton value={comparisonText} label="Copy comparison" />
               <CopyButton value={changeSummary} label="Copy change summary" />
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
