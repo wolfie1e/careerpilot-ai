@@ -135,6 +135,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const roadmapText = visibleRoadmap.map((item, index) => (
     `${index + 1}. ${item.skill} (${item.priority}, ${item.weeks_to_learn} weeks)\n${item.why_it_matters}\nProject: ${item.project_idea || "Not specified"}`
   )).join("\n\n");
+  const visibleRoadmapWeeks = visibleRoadmap.reduce((sum, item) => sum + item.weeks_to_learn, 0);
   const skillCoverage = result && result.skills_matched.length + result.skills_missing.length > 0
     ? Math.round((result.skills_matched.length / (result.skills_matched.length + result.skills_missing.length)) * 100)
     : null;
@@ -464,7 +465,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             {result.learning_roadmap.length > 0 && (
               <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <h4 className="text-sm font-semibold text-blue-400">Learning Roadmap</h4>
+                  <h4 className="text-sm font-semibold text-blue-400">Learning Roadmap <span className="font-normal text-gray-500">· {visibleRoadmapWeeks} weeks</span></h4>
                   <div className="flex flex-wrap items-center gap-2">
                     <CopyButton value={roadmapText} label="Copy roadmap" />
                     <div className="flex rounded-lg border border-gray-800 bg-gray-950/60 p-0.5">
