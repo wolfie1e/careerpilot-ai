@@ -125,7 +125,7 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
           </button>
           <button
             onClick={handleRewrite}
-            disabled={loading}
+            disabled={loading || filledBulletCount === 0}
             className="flex items-center gap-2 px-5 py-2 ml-auto bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/40 text-white font-semibold rounded-xl text-sm transition-all"
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Rewriting…</> : <><Sparkles className="w-4 h-4" />Rewrite Bullets</>}
