@@ -79,7 +79,7 @@ export default function ReportsPage() {
       a.href = url;
       a.download = `${safeFilename(filename)}-careerpilot-report.${format === "pdf" ? "pdf" : "md"}`;
       a.click();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
       toast.success("Report downloaded!");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Download failed");
