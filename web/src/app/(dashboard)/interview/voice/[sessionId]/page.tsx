@@ -3,12 +3,13 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Square, RotateCcw, Loader2, CheckCircle, AlertCircle, Trophy, Lightbulb } from "lucide-react";
+import { Mic, Square, RotateCcw, Loader2, CheckCircle, AlertCircle, Trophy, Lightbulb, Download } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 interface Question {
   id: string;
@@ -198,6 +199,10 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
                 <div className={cn("text-3xl font-extrabold", scoreColor(feedback.score))}>{feedback.score}<span className="text-sm font-normal text-gray-500">/100</span></div>
               </div>
               <CopyButton value={feedbackSummary} label="Copy feedback" />
+              <button onClick={() => downloadJson(`careerpilot-voice-feedback-${currentQ?.number || currentIdx + 1}.json`, { question: currentQ, feedback })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export
+              </button>
             </div>
 
             {feedback.feedback_positive?.length > 0 && (
