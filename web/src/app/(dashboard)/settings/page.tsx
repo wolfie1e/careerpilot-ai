@@ -6,7 +6,7 @@ import { CheckCircle, Download, Eye, EyeOff, KeyRound, Loader2, RefreshCw, Rotat
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { passwordSchema, profileSchema } from "@/lib/validations";
 import { CopyButton } from "@/components/shared/CopyButton";
 
@@ -133,6 +133,14 @@ export default function SettingsPage() {
       exported_at: new Date().toISOString(),
       preferences,
     });
+  }
+
+  function exportPreferenceInventory() {
+    downloadCsv("careerpilot-preference-inventory.csv", Object.entries(LOCAL_STORAGE_KEYS).map(([name, key]) => ({
+      preference: name,
+      storage_key: key,
+      saved: window.localStorage.getItem(key) !== null ? "yes" : "no",
+    })));
   }
 
   function exportAccountSummary() {
@@ -310,6 +318,10 @@ export default function SettingsPage() {
           <button onClick={exportLocalPreferences} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <Download className="h-4 w-4" />
             Export local preferences
+          </button>
+          <button onClick={exportPreferenceInventory} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+            <Download className="h-4 w-4" />
+            Export inventory
           </button>
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
             <Upload className="h-4 w-4" />
