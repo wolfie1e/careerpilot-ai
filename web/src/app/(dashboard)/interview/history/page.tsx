@@ -86,6 +86,9 @@ export default function InterviewHistoryPage() {
   const visibleSessionText = visibleSessions.map((session) => (
     `${session.role_title} · ${session.difficulty} · ${session.interview_type.replace("_", " ")} · ${session.overall_score ?? session.status}`
   )).join("\n");
+  const pinnedSessionText = sessions.filter((session) => pinnedSessionSet.has(session.id)).map((session) => (
+    `${session.role_title} · ${session.difficulty} · ${session.overall_score ?? session.status}`
+  )).join("\n");
 
   function clearFilters() {
     setHistoryView((view) => ({ ...view, search: "", difficulty: "", interviewType: "", sessionMode: "", status: "", scoreFilter: "", showPinnedOnly: false }));
@@ -199,6 +202,7 @@ export default function InterviewHistoryPage() {
                 <Download className="h-4 w-4" />
                 Pinned CSV
               </button>
+              <CopyButton value={pinnedSessionText} label="Copy pinned" className="rounded-xl px-3 py-2 text-sm" />
               <button onClick={() => setPinnedSessionIds([])} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-400 transition hover:border-rose-500/40 hover:text-rose-300">
                 <Trash2 className="h-4 w-4" />
                 Clear pins
