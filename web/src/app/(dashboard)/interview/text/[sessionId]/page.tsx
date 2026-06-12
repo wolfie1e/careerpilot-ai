@@ -3,11 +3,12 @@
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, AlertCircle, Lightbulb, Send, Loader2, Trophy, X } from "lucide-react";
+import { CheckCircle, AlertCircle, Lightbulb, Send, Loader2, Trophy, X, Download } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn, scoreColor } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
+import { downloadJson } from "@/lib/export-utils";
 
 interface Question {
   id: string;
@@ -189,6 +190,10 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
                 <span className={cn("text-sm font-bold", scoreColor(feedback.score))}>{feedback.score}</span>
               </div>
               <CopyButton value={feedbackSummary} label="Copy feedback" />
+              <button onClick={() => downloadJson(`careerpilot-text-feedback-${currentQ?.number || currentIdx + 1}.json`, { question: currentQ, answer, feedback })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export
+              </button>
             </div>
 
             {/* Positives */}
