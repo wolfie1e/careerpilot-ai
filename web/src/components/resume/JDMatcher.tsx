@@ -135,6 +135,9 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
   const roadmapText = visibleRoadmap.map((item, index) => (
     `${index + 1}. ${item.skill} (${item.priority}, ${item.weeks_to_learn} weeks)\n${item.why_it_matters}\nProject: ${item.project_idea || "Not specified"}`
   )).join("\n\n");
+  const skillCoverage = result && result.skills_matched.length + result.skills_missing.length > 0
+    ? Math.round((result.skills_matched.length / (result.skills_matched.length + result.skills_missing.length)) * 100)
+    : null;
 
   function saveDraft() {
     if (!jdText.trim()) {
@@ -402,11 +405,12 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             </div>
 
             {/* Score summary */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
                 { label: "Overall Match", value: `${result.overall_score}%`, color: scoreColor(result.overall_score) },
                 { label: "Semantic Similarity", value: `${Math.round(result.semantic_score * 100)}%`, color: "text-blue-400" },
                 { label: "Keyword Match", value: `${result.keyword_score}%`, color: "text-violet-400" },
+                { label: "Skill Coverage", value: skillCoverage !== null ? `${skillCoverage}%` : "—", color: "text-emerald-400" },
               ].map((s) => (
                 <div key={s.label} className="bg-gray-900 border border-gray-800 rounded-2xl p-4 text-center">
                   <div className={cn("text-2xl font-extrabold mb-0.5", s.color)}>{s.value}</div>
