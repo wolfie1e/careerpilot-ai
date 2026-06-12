@@ -120,7 +120,10 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
 
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span>{wordCount} word{wordCount === 1 ? "" : "s"}</span>
-          <span>{sectionText.length} characters</span>
+          <div className="flex items-center gap-2">
+            <CopyButton value={sectionText} label="Copy input" />
+            <span>{sectionText.length} characters</span>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
