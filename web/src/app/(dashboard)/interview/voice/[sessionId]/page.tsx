@@ -55,6 +55,7 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
     `To improve: ${feedback.feedback_improve.join("; ") || "None"}`,
     `Model hint: ${feedback.model_answer_hint || "None"}`,
   ].join("\n") : "";
+  const transcriptWordCount = feedback?.transcript.trim().split(/\s+/).filter(Boolean).length ?? 0;
 
   async function handleStopAndSubmit() {
     setProcessing(true);
@@ -187,6 +188,7 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
                 <CopyButton value={feedback.transcript} label="Copy transcript" />
               </div>
               <p className="text-sm text-gray-300 italic">&ldquo;{feedback.transcript}&rdquo;</p>
+              <div className="mt-2 text-xs text-gray-500">{transcriptWordCount} words · about {Math.max(1, Math.round((transcriptWordCount / 130) * 60))} seconds spoken</div>
             </div>
 
             {/* Score */}
