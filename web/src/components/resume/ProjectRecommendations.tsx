@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FolderGit2, Loader2, Clock, ChevronDown, ChevronUp, Download, RotateCcw } from "lucide-react";
+import { FolderGit2, Loader2, Clock, ChevronDown, ChevronUp, Download, RotateCcw, X } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -135,6 +135,10 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
               ))}
             </div>
             <div className="flex justify-end gap-2">
+              <button onClick={() => { setProjects([]); setExpanded([]); }} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <X className="h-3.5 w-3.5" />
+                Clear results
+              </button>
               <CopyButton value={projectPlanText} label="Copy build plan" />
               <CopyButton value={projects.map((project) => `• ${project.resume_bullet}`).join("\n")} label="Copy all bullets" />
               <button onClick={() => downloadJson("careerpilot-project-recommendations.json", { target_role: targetRole, level, projects })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
