@@ -112,7 +112,10 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
 
       {weakestCategory && (
         <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-amber-400">Top ATS focus</div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-xs font-semibold uppercase tracking-wide text-amber-400">Top ATS focus</div>
+            <CopyButton value={`${categoryLabels[weakestCategory[0]] || weakestCategory[0]}: ${weakestCategory[1]}/100`} label="Copy focus" />
+          </div>
           <div className="mt-1 text-sm font-semibold text-white">{categoryLabels[weakestCategory[0]] || weakestCategory[0]}</div>
           <div className="mt-1 text-xs text-gray-500">Currently scoring {weakestCategory[1]}/100 in this category.</div>
           <div className="mt-1 text-xs text-gray-500">{categoriesNeedingWork} categor{categoriesNeedingWork === 1 ? "y" : "ies"} below 75/100.</div>
