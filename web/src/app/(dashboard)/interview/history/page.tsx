@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star, RotateCcw, Trash2 } from "lucide-react";
+import { Download, Mic, Clock, ChevronRight, Loader2, Search, SlidersHorizontal, ArrowUpDown, Star, RotateCcw, Trash2, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
@@ -49,6 +49,7 @@ const DEFAULT_HISTORY_VIEW: HistoryView = {
 export default function InterviewHistoryPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [historyView, setHistoryView] = useLocalStorage<HistoryView>(LOCAL_STORAGE_KEYS.interviewHistoryView, DEFAULT_HISTORY_VIEW);
   const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
   const deferredSearch = useDeferredValue(historyView.search);
@@ -119,6 +120,22 @@ export default function InterviewHistoryPage() {
     downloadJson("careerpilot-pinned-interviews.json", sessions.filter((session) => pinnedSessionSet.has(session.id)));
   }
 
+  async function refreshHistory() {
+    setRefreshing(true);
+    try {
+      const params = new URLSearchParams();
+      if (historyView.search.trim()) params.set("search", historyView.search.trim());
+      if (historyView.difficulty) params.set("difficulty", historyView.difficulty);
+      if (historyView.interviewType) params.set("interview_type", historyView.interviewType);
+      if (historyView.sessionMode) params.set("session_mode", historyView.sessionMode);
+      if (historyView.status) params.set("status", historyView.status);
+      const data = await api.get<{ sessions: Session[] }>(`/interview/history${params.size ? `?${params}` : ""}`);
+      setSessions(data.sessions || []);
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (deferredSearch.trim()) params.set("search", deferredSearch.trim());
@@ -142,6 +159,10 @@ export default function InterviewHistoryPage() {
         </p>
         {sessions.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={refreshHistory} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-50">
+              <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
+              Refresh
+            </button>
             <button onClick={exportSessions} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-900 hover:text-white">
               <Download className="h-4 w-4" />
               Export CSV
