@@ -285,6 +285,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         </div>
         <div className="flex justify-end text-xs">
           {!jdReady && <span className="text-gray-500">Minimum {MIN_JD_WORDS} words recommended</span>}
+          <CopyButton value={jdText} label="Copy JD" className="ml-auto" />
         </div>
         <div className="flex flex-wrap gap-2">
           <button
