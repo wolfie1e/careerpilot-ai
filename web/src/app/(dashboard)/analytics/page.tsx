@@ -202,6 +202,15 @@ export default function AnalyticsPage() {
     })));
   }
 
+  function exportMomentum() {
+    downloadCsv("careerpilot-score-momentum.csv", momentumCards.map((card) => ({
+      metric: card.label,
+      current_score: card.current ?? "",
+      previous_score: card.previous ?? "",
+      change: formatDelta(card.current, card.previous),
+    })));
+  }
+
   function exportFocusPlan() {
     if (!data) return;
     downloadJson("careerpilot-analytics-focus-plan.json", {
@@ -324,6 +333,12 @@ export default function AnalyticsPage() {
             <div className={`text-sm font-semibold ${scoreTone(score as number | null)}`}>{scoreLabel(score as number | null)}</div>
           </div>
         ))}
+      </div>
+      <div className="flex justify-end">
+        <button onClick={exportMomentum} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+          <Download className="h-3.5 w-3.5" />
+          Export momentum
+        </button>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-3">
