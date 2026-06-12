@@ -455,7 +455,10 @@ export default function ResumePage() {
               </div>
                 <div className="lg:col-span-2 space-y-4">
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-                  <h4 className="text-sm font-semibold text-emerald-400 flex items-center gap-2 mb-3"><CheckCircle className="w-4 h-4" />Strengths</h4>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-semibold text-emerald-400 flex items-center gap-2"><CheckCircle className="w-4 h-4" />Strengths</h4>
+                    <CopyButton value={analysis.strengths?.map((item) => `- ${item}`).join("\n") || ""} label="Copy strengths" />
+                  </div>
                   <ul className="space-y-1.5">{analysis.strengths?.map((s, i) => <li key={i} className="text-sm text-gray-300 flex gap-2"><span className="text-emerald-400 mt-0.5">•</span>{s}</li>)}</ul>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
