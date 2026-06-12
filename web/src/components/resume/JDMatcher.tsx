@@ -183,6 +183,16 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     });
   }
 
+  function exportRecentMatchesCsv() {
+    downloadCsv("careerpilot-recent-jd-matches.csv", recentMatchesForResume.map((match) => ({
+      title: match.title,
+      overall_score: match.overall_score,
+      matched_skills: match.matched_count,
+      missing_skills: match.missing_count,
+      created_at: match.created_at,
+    })));
+  }
+
   function exportSavedDrafts() {
     downloadJson("careerpilot-saved-job-descriptions.json", {
       exported_at: new Date().toISOString(),
@@ -352,6 +362,10 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             <button onClick={exportRecentMatches} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
               <Download className="h-3.5 w-3.5" />
               Export
+            </button>
+            <button onClick={exportRecentMatchesCsv} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+              <Download className="h-3.5 w-3.5" />
+              CSV
             </button>
             <button onClick={clearRecentMatches} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
               <Trash2 className="h-3.5 w-3.5" />
