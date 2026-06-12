@@ -31,6 +31,7 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
   const averageImpact = results.length
     ? Math.round(results.reduce((sum, result) => sum + result.impact_score, 0) / results.length)
     : null;
+  const filledBulletCount = bullets.filter((bullet) => bullet.trim()).length;
 
   const addBullet = () => setBullets((b) => b.length < MAX_BULLETS ? [...b, ""] : b);
   const removeBullet = (i: number) => setBullets((b) => b.filter((_, j) => j !== i));
@@ -94,7 +95,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
         />
 
         <div className="space-y-2">
-          <label className="text-xs text-gray-500 uppercase tracking-wide">Bullets to rewrite</label>
+          <div className="flex items-center justify-between gap-3">
+            <label className="text-xs text-gray-500 uppercase tracking-wide">Bullets to rewrite</label>
+            <span className="text-xs text-gray-600">{filledBulletCount} ready</span>
+          </div>
           {bullets.map((b, i) => (
             <div key={i} className="flex gap-2">
               <input
