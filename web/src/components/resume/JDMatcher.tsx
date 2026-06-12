@@ -9,7 +9,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { cn, scoreColor, formatRelativeTime } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 const PROGRESS_STEPS = [
   "Parsing job description…",
@@ -190,6 +190,15 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
     });
   }
 
+  function exportSavedDraftsCsv() {
+    downloadCsv("careerpilot-saved-job-descriptions.csv", savedJds.map((draft) => ({
+      title: draft.title,
+      word_count: countWords(draft.text),
+      updated_at: draft.updated_at,
+      text: draft.text,
+    })));
+  }
+
   function clearRecentMatches() {
     setRecentMatches((prev) => prev.filter((match) => match.resume_id !== resumeId));
     toast.success("Recent match results cleared");
@@ -299,6 +308,10 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
               <button onClick={exportSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export
+              </button>
+              <button onClick={exportSavedDraftsCsv} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                CSV
               </button>
               <button onClick={clearSavedDrafts} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-rose-300">
                 <Trash2 className="h-3.5 w-3.5" />
