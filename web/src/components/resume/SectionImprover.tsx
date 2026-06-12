@@ -37,6 +37,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
         result.keywords_added.length ? `Keywords added: ${result.keywords_added.join(", ")}` : "",
       ].filter(Boolean).join("\n")
     : "";
+  const qualityGain = result ? result.quality_after - result.quality_before : 0;
 
   function handleSectionChange(s: string) {
     setSection(s);
@@ -154,6 +155,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
               <div className="text-center">
                 <div className={cn("text-2xl font-bold", scoreColor(result.quality_after))}>{result.quality_after}</div>
                 <div className="text-xs text-gray-500">After</div>
+                <div className="mt-1 text-xs font-semibold text-emerald-400">+{qualityGain}</div>
               </div>
             </div>
 
