@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { cn, scoreColor, formatRelativeTime, formatBytes, formatDelta } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { CopyButton } from "@/components/shared/CopyButton";
 
 interface ResumeData {
@@ -529,7 +529,13 @@ export default function ResumePage() {
           {/* Analysis history */}
           {activeTab === "analysis" && analysis && analysisHistory.length > 1 && (
             <div className="mt-4 bg-gray-900 border border-gray-800 rounded-2xl p-4">
-              <h4 className="text-xs text-gray-500 uppercase tracking-wide mb-3">Analysis History</h4>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h4 className="text-xs uppercase tracking-wide text-gray-500">Analysis History</h4>
+                <button onClick={() => downloadCsv("careerpilot-analysis-history.csv", analysisHistory.map((item) => ({ created_at: item.created_at || "", overall_score: item.overall_score, ats_score: item.ats_score })))} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                  <Download className="h-3.5 w-3.5" />
+                  Export CSV
+                </button>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {analysisHistory.slice(0, 5).map((a, i) => (
                   <button key={i} onClick={() => setAnalysis(a)}
