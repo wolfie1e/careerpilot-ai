@@ -54,6 +54,7 @@ export default function InterviewHistoryPage() {
   const [pinnedSessionIds, setPinnedSessionIds] = useLocalStorage<string[]>(LOCAL_STORAGE_KEYS.pinnedInterviewSessions, []);
   const deferredSearch = useDeferredValue(historyView.search);
   const hasFilters = Boolean(historyView.search || historyView.difficulty || historyView.interviewType || historyView.sessionMode || historyView.status || historyView.scoreFilter || historyView.showPinnedOnly);
+  const activeFilterCount = [historyView.search, historyView.difficulty, historyView.interviewType, historyView.sessionMode, historyView.status, historyView.scoreFilter, historyView.showPinnedOnly].filter(Boolean).length;
   const pinnedSessionSet = new Set(pinnedSessionIds);
   const sortedSessions = [...sessions].sort((a, b) => {
     if (pinnedSessionSet.has(a.id) !== pinnedSessionSet.has(b.id)) {
@@ -217,6 +218,7 @@ export default function InterviewHistoryPage() {
         <div className="mb-3 flex items-center gap-2 text-sm font-medium text-white">
           <SlidersHorizontal className="h-4 w-4 text-blue-400" />
           Filter sessions
+          {activeFilterCount > 0 && <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-300">{activeFilterCount}</span>}
           {hasFilters && (
             <button onClick={clearFilters} className="ml-auto text-xs font-medium text-gray-500 transition hover:text-white">
               Clear filters
