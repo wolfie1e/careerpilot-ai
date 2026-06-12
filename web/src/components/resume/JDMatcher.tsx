@@ -401,7 +401,13 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="flex items-center justify-between gap-3">
               <h4 className="text-sm font-semibold text-white">Match Summary</h4>
-              <CopyButton value={formatMatchSummary(result, jdTitle.trim())} label="Copy summary" />
+              <div className="flex gap-2">
+                <CopyButton value={formatMatchSummary(result, jdTitle.trim())} label="Copy summary" />
+                <button onClick={() => setResult(null)} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                  <X className="h-3.5 w-3.5" />
+                  Clear result
+                </button>
+              </div>
             </div>
 
             {/* Score summary */}
