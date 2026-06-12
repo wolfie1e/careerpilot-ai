@@ -196,7 +196,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
                 </div>
 
                 {r.rationale && (
-                  <p className="text-xs text-gray-500 italic">{r.rationale}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-xs text-gray-500 italic">{r.rationale}</p>
+                    <CopyButton value={r.rationale} label="Copy rationale" className="shrink-0" />
+                  </div>
                 )}
               </motion.div>
             ))}
