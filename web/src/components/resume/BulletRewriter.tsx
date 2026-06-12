@@ -7,7 +7,7 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 interface RewriteResult {
   original?: string;
@@ -154,6 +154,10 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
               <button onClick={() => downloadJson("careerpilot-rewritten-bullets.json", { target_role: targetRole || null, results })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export JSON
+              </button>
+              <button onClick={() => downloadCsv("careerpilot-rewritten-bullets.csv", results.map((result) => ({ original: result.original || "", rewritten: result.rewritten, impact_score: result.impact_score, keywords: result.keywords_added.join(", "), rationale: result.rationale })))} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export CSV
               </button>
               <button onClick={() => setResults([])} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
                 <X className="h-3.5 w-3.5" />
