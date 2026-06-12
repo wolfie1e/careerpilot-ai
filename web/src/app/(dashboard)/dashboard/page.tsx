@@ -333,9 +333,10 @@ export default function DashboardPage() {
       </div>
 
       {!loading && (
+        <div className="flex items-center gap-2">
         <Link
           href={nextStep.href}
-          className="flex items-center justify-between gap-4 bg-gray-900 border border-gray-800 hover:border-blue-700/60 rounded-2xl px-5 py-4 transition-colors"
+          className="flex flex-1 items-center justify-between gap-4 bg-gray-900 border border-gray-800 hover:border-blue-700/60 rounded-2xl px-5 py-4 transition-colors"
         >
           <div>
             <div className="text-xs uppercase tracking-wider text-gray-500 mb-1">Recommended Next Step</div>
@@ -344,6 +345,8 @@ export default function DashboardPage() {
           </div>
           <ArrowRight className="w-4 h-4 text-gray-500 shrink-0" />
         </Link>
+        <CopyButton value={`${nextStep.label} - ${nextStep.desc}`} label="Copy next step" />
+        </div>
       )}
 
       {!loading && (
