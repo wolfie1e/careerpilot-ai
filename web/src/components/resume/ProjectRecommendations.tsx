@@ -7,7 +7,7 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "@/components/shared/CopyButton";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 const LEVELS = ["beginner", "intermediate", "advanced"] as const;
 const DIFFICULTY_COLORS = {
@@ -140,6 +140,10 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
               <button onClick={() => downloadJson("careerpilot-project-recommendations.json", { target_role: targetRole, level, projects })} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
                 <Download className="h-3.5 w-3.5" />
                 Export JSON
+              </button>
+              <button onClick={() => downloadCsv("careerpilot-project-recommendations.csv", projects.map((project) => ({ title: project.title, difficulty: project.difficulty, estimated_weeks: project.estimated_weeks, tech_stack: project.tech_stack.join(", "), skills: project.skills_demonstrated.join(", "), resume_bullet: project.resume_bullet })))} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export CSV
               </button>
               <button onClick={() => setExpanded(projects.map((project) => project.title))} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
                 <ChevronDown className="h-3.5 w-3.5" />
