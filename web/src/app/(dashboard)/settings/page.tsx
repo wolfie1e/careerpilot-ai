@@ -219,11 +219,13 @@ export default function SettingsPage() {
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-300">Full name</span>
               <input value={profile.full_name} onChange={(e) => { setProfile((p) => ({ ...p, full_name: e.target.value })); setProfileErrors((errors) => ({ ...errors, full_name: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="Your name" />
+              <span className="mt-1 block text-right text-xs text-gray-600">{profile.full_name.length}/255</span>
               {profileErrors.full_name && <span className="mt-1 block text-xs text-rose-400">{profileErrors.full_name}</span>}
             </label>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-300">Username</span>
               <input value={profile.username} onChange={(e) => { setProfile((p) => ({ ...p, username: e.target.value })); setProfileErrors((errors) => ({ ...errors, username: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="username" />
+              <span className="mt-1 block text-right text-xs text-gray-600">{profile.username.length}/50</span>
               {profileErrors.username && <span className="mt-1 block text-xs text-rose-400">{profileErrors.username}</span>}
             </label>
             <label className="block">
