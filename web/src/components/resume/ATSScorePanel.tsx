@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpDown, Download } from "lucide-react";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { cn, scoreColor } from "@/lib/utils";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 interface ATSBreakdown {
   section_presence: number;
@@ -68,6 +68,15 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
     });
   }
 
+  function exportAtsCsv() {
+    downloadCsv("careerpilot-ats-breakdown.csv", Object.entries(breakdown).map(([key, score]) => ({
+      category: categoryLabels[key] || key,
+      score,
+      weight_percent: categoryWeights[key],
+      weighted_points: Math.round((score * categoryWeights[key]) / 100),
+    })));
+  }
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
@@ -77,6 +86,10 @@ export default function ATSScorePanel({ atsScore, breakdown }: ATSScorePanelProp
           <button onClick={exportAtsBreakdown} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
             <Download className="h-3.5 w-3.5" />
             Export
+          </button>
+          <button onClick={exportAtsCsv} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:text-white">
+            <Download className="h-3.5 w-3.5" />
+            CSV
           </button>
           <span className={cn("text-3xl font-extrabold", scoreColor(atsScore))}>
             {atsScore}<span className="text-sm font-normal text-gray-500">/100</span>
