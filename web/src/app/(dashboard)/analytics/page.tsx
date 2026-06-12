@@ -426,7 +426,13 @@ export default function AnalyticsPage() {
         {Object.keys(data.interview_by_type).length > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
             className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <h3 className="font-medium text-white mb-4">Interview Practice by Type</h3>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h3 className="font-medium text-white">Interview Practice by Type</h3>
+              <button onClick={() => downloadCsv("careerpilot-interview-practice-by-type.csv", Object.entries(data.interview_by_type).map(([type, count]) => ({ type, count })))} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+                <Download className="h-3.5 w-3.5" />
+                Export CSV
+              </button>
+            </div>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
