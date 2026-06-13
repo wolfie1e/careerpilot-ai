@@ -276,7 +276,7 @@ export default function SettingsPage() {
             ].map(([key, label]) => (
               <label key={key} className="block">
                 <span className="mb-1.5 block text-sm font-medium text-gray-300">{label}</span>
-                <input type={showPasswords ? "text" : "password"} value={password[key as keyof typeof password]} onChange={(e) => { setPassword((p) => ({ ...p, [key]: e.target.value })); setPasswordErrors((errors) => ({ ...errors, [key]: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-violet-500" />
+                <input type={showPasswords ? "text" : "password"} autoComplete={key === "current_password" ? "current-password" : "new-password"} value={password[key as keyof typeof password]} onChange={(e) => { setPassword((p) => ({ ...p, [key]: e.target.value })); setPasswordErrors((errors) => ({ ...errors, [key]: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-violet-500" />
                 {passwordErrors[key] && <span className="mt-1 block text-xs text-rose-400">{passwordErrors[key]}</span>}
                 {key === "new_password" && password.new_password && (
                   <span className="mt-2 flex gap-1">
