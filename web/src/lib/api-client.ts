@@ -36,7 +36,7 @@ async function request<T>(
       // Lazy import to avoid circular dependency
       const { useAuthStore } = await import("@/store/auth.store");
       useAuthStore.getState().clearAuth();
-      const from = encodeURIComponent(window.location.pathname);
+      const from = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
       window.location.href = `/login?from=${from}`;
       throw new ApiError(401, "Session expired. Please log in again.");
     }
