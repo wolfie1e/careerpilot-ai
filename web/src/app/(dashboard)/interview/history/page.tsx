@@ -260,11 +260,11 @@ export default function InterviewHistoryPage() {
             <option value="">Any mode</option>
             {INTERVIEW_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
-          <select value={historyView.status} onChange={(e) => setHistoryView((view) => ({ ...view, status: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select aria-label="Filter by session status" value={historyView.status} onChange={(e) => setHistoryView((view) => ({ ...view, status: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">Any status</option>
             {INTERVIEW_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
-          <select value={historyView.scoreFilter} onChange={(e) => setHistoryView((view) => ({ ...view, scoreFilter: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-3">
+          <select aria-label="Filter by score" value={historyView.scoreFilter} onChange={(e) => setHistoryView((view) => ({ ...view, scoreFilter: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 md:col-span-3">
             <option value="">Any score</option>
             <option value="strong">75+ strong</option>
             <option value="needs_focus">Below 75</option>
@@ -272,7 +272,7 @@ export default function InterviewHistoryPage() {
           </select>
           <label className="relative md:col-span-3">
             <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
-            <select value={historyView.sortBy} onChange={(e) => setHistoryView((view) => ({ ...view, sortBy: e.target.value }))} className="w-full appearance-none rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500">
+            <select aria-label="Sort interview history" value={historyView.sortBy} onChange={(e) => setHistoryView((view) => ({ ...view, sortBy: e.target.value }))} className="w-full appearance-none rounded-xl border border-gray-700 bg-gray-800 py-2.5 pl-9 pr-3 text-sm text-white outline-none transition focus:border-blue-500">
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
               <option value="score_desc">Highest score</option>
