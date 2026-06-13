@@ -303,6 +303,7 @@ export default function AnalyticsPage() {
             <span className="mb-2 block text-xs font-medium text-gray-400">Readiness goal: {readinessGoal}</span>
             <input
               type="range"
+              aria-label="Readiness score goal"
               min={50}
               max={100}
               step={5}
