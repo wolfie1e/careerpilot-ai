@@ -11,7 +11,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon: Icon, title, description, actionHref, actionLabel }: EmptyStateProps) {
   return (
-    <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-10 text-center">
+    <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-10 text-center">
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-gray-500">
         <Icon className="h-6 w-6" />
       </div>
