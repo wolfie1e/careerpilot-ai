@@ -131,6 +131,7 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
           <span className="text-xs px-2 py-0.5 bg-violet-500/10 text-violet-400 rounded-full border border-violet-500/20 capitalize inline-block mb-3">
             {currentQ.type?.replace("_", " ") || "Question"}
           </span>
+          <CopyButton value={currentQ.text} label="Copy question" className="float-right" />
           <p className="text-white font-medium leading-relaxed">{currentQ.text}</p>
         </motion.div>
       )}
