@@ -348,6 +348,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
                   <span className="block truncate text-sm font-semibold text-white">{draft.title}</span>
                   <span className="mt-1 block text-xs text-gray-500">{countWords(draft.text)} words · {formatRelativeTime(draft.updated_at)}</span>
                 </button>
+                <CopyButton value={draft.text} label="Copy" className="my-auto mr-2 shrink-0" />
                 <button
                   onClick={() => deleteDraft(draft.id)}
                   aria-label={`Delete ${draft.title}`}
