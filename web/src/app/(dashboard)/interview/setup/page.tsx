@@ -292,7 +292,7 @@ export default function InterviewSetupPage() {
               <>Start Interview <ChevronRight className="w-4 h-4" /></>
             )}
           </button>
-          <button onClick={resetSetup} disabled={loading} title="Reset setup" className="rounded-xl border border-gray-700 px-4 text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+          <button onClick={resetSetup} disabled={loading} title="Reset setup" aria-label="Reset interview setup" className="rounded-xl border border-gray-700 px-4 text-gray-400 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
             <RotateCcw className="h-4 w-4" />
           </button>
         </div>
