@@ -215,13 +215,13 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
 
             {/* Model answer hint */}
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-              <button onClick={() => setShowHint((v) => !v)} className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
+              <button onClick={() => setShowHint((v) => !v)} aria-expanded={showHint} aria-controls="model-answer-hint" className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
                 <Lightbulb className="w-4 h-4" />
                 {showHint ? "Hide" : "Show"} model answer hint
               </button>
               <AnimatePresence>
                 {showHint && (
-                  <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                  <motion.p id="model-answer-hint" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                     className="mt-3 text-sm text-gray-300 leading-relaxed">
                     {feedback.model_answer_hint}
                   </motion.p>
