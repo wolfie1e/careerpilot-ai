@@ -148,6 +148,7 @@ export default function TextInterviewPage({ params }: { params: Promise<{ sessio
         <div className="space-y-3">
           <textarea
             value={answer}
+            maxLength={3000}
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Type your answer here…"
             rows={6}
