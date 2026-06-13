@@ -262,7 +262,7 @@ export default function SettingsPage() {
         <form onSubmit={submitPassword} className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
           <div className="flex items-center justify-between gap-3">
             <h3 className="mb-1 flex items-center gap-2 font-semibold text-white"><KeyRound className="h-4 w-4 text-violet-400" /> Security</h3>
-            <button type="button" onClick={() => setShowPasswords((value) => !value)} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
+            <button type="button" onClick={() => setShowPasswords((value) => !value)} aria-pressed={showPasswords} aria-label={showPasswords ? "Hide passwords" : "Show passwords"} className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 transition hover:text-white">
               {showPasswords ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               {showPasswords ? "Hide" : "Show"}
             </button>
