@@ -101,11 +101,13 @@ export default function InterviewSetupPage() {
           <input
             type="text"
             value={form.role_title}
+            maxLength={120}
             onChange={(e) => { update("role_title", e.target.value); setRoleError(""); }}
             placeholder="e.g. Senior Software Engineer, Product Manager, Data Scientist"
             className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
           />
           {roleError && <p className="mt-1.5 text-xs text-rose-400">{roleError}</p>}
+          <div className="mt-1 text-right text-xs text-gray-600">{form.role_title.length}/120 characters</div>
           {recentRoles.length > 0 && (
             <>
               <div className="mt-3 flex items-center justify-between gap-3">
