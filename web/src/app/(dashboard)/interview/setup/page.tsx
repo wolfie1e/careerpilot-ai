@@ -161,6 +161,7 @@ export default function InterviewSetupPage() {
               <button
                 key={t.value}
                 onClick={() => update("interview_type", t.value)}
+                aria-pressed={form.interview_type === t.value}
                 className={cn(
                   "py-2 px-3 rounded-lg text-xs font-medium transition-all border",
                   form.interview_type === t.value
@@ -183,6 +184,7 @@ export default function InterviewSetupPage() {
               <button
                 key={d.value}
                 onClick={() => update("difficulty", d.value)}
+                aria-pressed={form.difficulty === d.value}
                 className={cn(
                   "py-2 px-3 rounded-lg text-xs font-medium transition-all border",
                   form.difficulty === d.value
