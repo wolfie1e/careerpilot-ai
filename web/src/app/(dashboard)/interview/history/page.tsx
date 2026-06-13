@@ -347,6 +347,8 @@ export default function InterviewHistoryPage() {
             >
               <button
                 onClick={() => togglePinnedSession(s.id)}
+                aria-pressed={pinnedSessionSet.has(s.id)}
+                aria-label={pinnedSessionSet.has(s.id) ? `Unpin ${s.role_title} session` : `Pin ${s.role_title} session`}
                 className="px-3 text-gray-600 transition hover:text-amber-400"
                 title={pinnedSessionSet.has(s.id) ? "Unpin session" : "Pin session"}
               >
