@@ -167,11 +167,11 @@ export default function VoiceInterviewPage({ params }: { params: Promise<{ sessi
             </div>
           ) : (
             <div className="space-y-4">
-              <div className={cn("w-16 h-16 rounded-full flex items-center justify-center mx-auto cursor-pointer transition-all",
+              <button type="button" aria-label="Start recording" className={cn("w-16 h-16 rounded-full flex items-center justify-center mx-auto cursor-pointer transition-all",
                 "bg-violet-500/10 hover:bg-violet-500/20 border-2 border-violet-500/30 hover:border-violet-500/60")}
                 onClick={start}>
                 <Mic className="w-7 h-7 text-violet-400" />
-              </div>
+              </button>
               <div className="text-sm text-gray-400">Click to start recording</div>
               <div className="text-xs text-gray-600">Your audio is processed securely and not stored permanently</div>
             </div>
