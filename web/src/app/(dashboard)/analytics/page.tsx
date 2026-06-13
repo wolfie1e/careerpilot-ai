@@ -253,6 +253,7 @@ export default function AnalyticsPage() {
               <button
                 key={range.value}
                 onClick={() => setTimeRange(range.value)}
+                aria-pressed={timeRange === range.value}
                 className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${timeRange === range.value ? "bg-blue-600 text-white" : "text-gray-500 hover:text-white"}`}
               >
                 {range.label}
