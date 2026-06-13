@@ -51,6 +51,9 @@ export default function FaqSection() {
             FAQ
           </span>
           <h2 className="text-3xl font-bold text-white">Common questions</h2>
+          <button onClick={() => setOpen(open === null ? 0 : null)} className="mt-4 text-sm font-medium text-cyan-400 transition hover:text-cyan-300">
+            {open === null ? "Open first question" : "Collapse questions"}
+          </button>
         </motion.div>
 
         <div className="space-y-3">
