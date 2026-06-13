@@ -109,6 +109,7 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Full name <span className="text-gray-600">(optional)</span></label>
               <input
                 type="text"
+                autoComplete="name"
                 value={form.full_name}
                 onChange={update("full_name")}
                 placeholder="Alex Johnson"
@@ -119,6 +120,7 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email address</label>
               <input
                 type="email"
+                autoComplete="email"
                 value={form.email}
                 onChange={update("email")}
                 required
@@ -131,6 +133,7 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Username</label>
               <input
                 type="text"
+                autoComplete="username"
                 value={form.username}
                 onChange={update("username")}
                 required
@@ -146,6 +149,7 @@ export default function RegisterPage() {
               <div className="relative">
                 <input
                   type={showPw ? "text" : "password"}
+                  autoComplete="new-password"
                   value={form.password}
                   onChange={update("password")}
                   required
