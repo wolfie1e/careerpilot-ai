@@ -350,6 +350,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
                 </button>
                 <button
                   onClick={() => deleteDraft(draft.id)}
+                  aria-label={`Delete ${draft.title}`}
                   className="border-l border-gray-800 px-3 text-gray-600 transition hover:bg-rose-500/10 hover:text-rose-400"
                   title="Delete saved job description"
                 >
