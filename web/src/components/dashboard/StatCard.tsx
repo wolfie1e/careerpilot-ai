@@ -47,6 +47,7 @@ export default function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      aria-label={`${title}: ${value}`}
       className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-2xl p-5 transition-colors"
     >
       <div className="flex items-start justify-between mb-3">
