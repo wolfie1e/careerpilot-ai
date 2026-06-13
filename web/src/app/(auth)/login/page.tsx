@@ -80,6 +80,7 @@ function LoginForm() {
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Email address</label>
               <input
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setFieldErrors((errors) => ({ ...errors, email: "" })); }}
                 placeholder="you@example.com"
@@ -93,6 +94,7 @@ function LoginForm() {
               <div className="relative">
                 <input
                   type={showPw ? "text" : "password"}
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setFieldErrors((errors) => ({ ...errors, password: "" })); }}
                   placeholder="••••••••"
