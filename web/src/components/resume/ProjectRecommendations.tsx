@@ -164,6 +164,7 @@ export default function ProjectRecommendations({ resumeId, missingSkills }: Proj
               <motion.div key={p.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                 className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
                 <button onClick={() => setExpanded((current) => current.includes(p.title) ? current.filter((title) => title !== p.title) : [...current, p.title])}
+                  aria-expanded={expanded.includes(p.title)}
                   className="w-full flex items-start gap-4 p-5 text-left hover:bg-gray-800/30 transition-colors">
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
