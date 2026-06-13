@@ -100,6 +100,7 @@ export default function SectionImprover({ resumeId, parsedSections }: SectionImp
         <input
           type="text"
           value={targetRole}
+          maxLength={120}
           onChange={(e) => setTargetRole(e.target.value)}
           placeholder="Target role (optional)"
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
