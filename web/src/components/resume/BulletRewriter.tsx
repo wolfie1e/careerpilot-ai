@@ -113,7 +113,7 @@ export default function BulletRewriter({ resumeId }: BulletRewriterProps) {
               />
               <span className={cn("w-14 self-center text-right text-xs", b.length > 250 ? "text-amber-400" : "text-gray-600")}>{b.length}/300</span>
               {bullets.length > 1 && (
-                <button onClick={() => removeBullet(i)} className="p-2.5 text-gray-600 hover:text-rose-400 transition-colors">
+                <button onClick={() => removeBullet(i)} aria-label={`Remove bullet ${i + 1}`} title={`Remove bullet ${i + 1}`} className="p-2.5 text-gray-600 hover:text-rose-400 transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
               )}
