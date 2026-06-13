@@ -233,7 +233,7 @@ export default function SettingsPage() {
             </label>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-300">Username</span>
-              <input value={profile.username} onChange={(e) => { setProfile((p) => ({ ...p, username: e.target.value })); setProfileErrors((errors) => ({ ...errors, username: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="username" />
+              <input value={profile.username} maxLength={50} onChange={(e) => { setProfile((p) => ({ ...p, username: e.target.value })); setProfileErrors((errors) => ({ ...errors, username: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="username" />
               <span className="mt-1 block text-right text-xs text-gray-600">{profile.username.length}/50</span>
               {profileErrors.username && <span className="mt-1 block text-xs text-rose-400">{profileErrors.username}</span>}
             </label>
