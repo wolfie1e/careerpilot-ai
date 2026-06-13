@@ -65,6 +65,8 @@ export default function FaqSection() {
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
+                aria-expanded={open === i}
+                aria-controls={`faq-answer-${i}`}
                 className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
               >
                 <span className="font-medium text-white text-sm">{faq.q}</span>
@@ -81,7 +83,9 @@ export default function FaqSection() {
                     transition={{ duration: 0.2 }}
                   >
                     <div className="px-5 pb-5 text-sm text-gray-400 leading-relaxed border-t border-gray-800 pt-3">
+                      <span id={`faq-answer-${i}`}>
                       {faq.a}
+                      </span>
                     </div>
                   </motion.div>
                 )}
