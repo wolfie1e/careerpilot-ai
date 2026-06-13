@@ -284,6 +284,7 @@ export default function InterviewHistoryPage() {
         {pinnedSessionIds.length > 0 && (
           <button
             onClick={() => setHistoryView((view) => ({ ...view, showPinnedOnly: !view.showPinnedOnly }))}
+            aria-pressed={historyView.showPinnedOnly}
             className={cn(
               "mt-3 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition",
               historyView.showPinnedOnly ? "border-amber-500/40 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white"
