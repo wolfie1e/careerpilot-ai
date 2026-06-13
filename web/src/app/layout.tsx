@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: "CareerPilot AI — Your AI Career Coach",
   description: "Upload your resume, match it with job descriptions, improve your ATS score, and practice interviews with real-time AI feedback.",
   keywords: ["resume", "career", "interview", "ATS", "job search", "skill gap"],
+  applicationName: "CareerPilot AI",
+  category: "career",
 };
 
 export default function RootLayout({
