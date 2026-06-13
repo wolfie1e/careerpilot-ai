@@ -11,7 +11,7 @@ interface SectionCardProps {
 
 export function SectionCard({ title, description, children, className, action }: SectionCardProps) {
   return (
-    <section className={cn("rounded-2xl border border-gray-800 bg-gray-900 p-5", className)}>
+    <section aria-label={title} className={cn("rounded-2xl border border-gray-800 bg-gray-900 p-5", className)}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="font-semibold text-white">{title}</h3>
