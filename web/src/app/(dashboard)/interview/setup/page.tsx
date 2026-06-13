@@ -206,6 +206,7 @@ export default function InterviewSetupPage() {
               <button
                 key={n}
                 onClick={() => update("question_count", n)}
+                aria-pressed={form.question_count === n}
                 className={cn(
                   "w-12 h-10 rounded-lg text-sm font-medium transition-all border",
                   form.question_count === n
@@ -225,6 +226,7 @@ export default function InterviewSetupPage() {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => update("session_mode", "text")}
+              aria-pressed={form.session_mode === "text"}
               className={cn(
                 "flex items-center gap-3 p-4 rounded-xl border transition-all text-left",
                 form.session_mode === "text"
@@ -240,6 +242,7 @@ export default function InterviewSetupPage() {
             </button>
             <button
               onClick={() => update("session_mode", "voice")}
+              aria-pressed={form.session_mode === "voice"}
               className={cn(
                 "flex items-center gap-3 p-4 rounded-xl border transition-all text-left",
                 form.session_mode === "voice"
