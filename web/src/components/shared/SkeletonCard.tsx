@@ -7,7 +7,7 @@ interface SkeletonCardProps {
 
 export function SkeletonCard({ lines = 3, className }: SkeletonCardProps) {
   return (
-    <div className={cn("bg-gray-900 border border-gray-800 rounded-2xl p-5 animate-pulse", className)}>
+    <div aria-busy="true" aria-label="Loading content" className={cn("bg-gray-900 border border-gray-800 rounded-2xl p-5 animate-pulse", className)}>
       <div className="h-3 bg-gray-800 rounded w-1/2 mb-3" />
       <div className="h-7 bg-gray-800 rounded w-1/3 mb-3" />
       {lines > 2 && <div className="h-2 bg-gray-800 rounded w-2/3" />}
