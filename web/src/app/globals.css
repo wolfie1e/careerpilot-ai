@@ -79,3 +79,8 @@ body {
 @keyframes score-fill {
   from { stroke-dashoffset: 283; }
 }
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
