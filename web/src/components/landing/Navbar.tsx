@@ -104,10 +104,10 @@ export default function Navbar() {
               </a>
             ))}
             <div className="flex gap-3 mt-4">
-              <Link href="/login" className="flex-1 text-center py-2 text-sm font-medium border border-gray-200 dark:border-gray-700 rounded-lg">
+              <Link href="/login" onClick={() => setMobileOpen(false)} className="flex-1 text-center py-2 text-sm font-medium border border-gray-200 dark:border-gray-700 rounded-lg">
                 Sign in
               </Link>
-              <Link href="/register" className="flex-1 text-center py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">
+              <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1 text-center py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg">
                 Get Started
               </Link>
             </div>
