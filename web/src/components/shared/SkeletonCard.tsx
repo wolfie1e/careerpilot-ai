@@ -17,7 +17,7 @@ export function SkeletonCard({ lines = 3, className }: SkeletonCardProps) {
 
 export function SkeletonList({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="space-y-2 animate-pulse">
+    <div aria-busy="true" aria-label="Loading list" className="space-y-2 animate-pulse">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="h-14 bg-gray-900 border border-gray-800 rounded-xl flex items-center gap-3 px-4">
           <div className="w-8 h-8 bg-gray-800 rounded-lg shrink-0" />
