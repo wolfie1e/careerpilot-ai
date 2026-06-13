@@ -32,7 +32,7 @@ export default function TopBar() {
   const todayLabel = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date());
 
   return (
-    <header className="h-16 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
+    <header aria-label="Page header" className="h-16 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
       <div>
         <h1 className="text-base font-semibold text-white">{page.title}</h1>
         <p className="text-xs text-gray-500">{page.subtitle}</p>
