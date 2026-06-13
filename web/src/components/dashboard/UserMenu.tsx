@@ -65,6 +65,7 @@ export default function UserMenu() {
 
           <DropdownMenu.Item
             onSelect={() => logout()}
+            aria-label="Sign out of CareerPilot AI"
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg cursor-default transition-colors outline-none"
           >
             <LogOut className="w-3.5 h-3.5" />
