@@ -239,7 +239,7 @@ export default function SettingsPage() {
             </label>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-300">Avatar URL</span>
-              <input value={profile.avatar_url} onChange={(e) => { setProfile((p) => ({ ...p, avatar_url: e.target.value })); setProfileErrors((errors) => ({ ...errors, avatar_url: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="https://..." />
+              <input value={profile.avatar_url} maxLength={2048} onChange={(e) => { setProfile((p) => ({ ...p, avatar_url: e.target.value })); setProfileErrors((errors) => ({ ...errors, avatar_url: "" })); }} className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-blue-500" placeholder="https://..." />
               {profileErrors.avatar_url && <span className="mt-1 block text-xs text-rose-400">{profileErrors.avatar_url}</span>}
             </label>
             <div className="flex flex-wrap gap-2">
