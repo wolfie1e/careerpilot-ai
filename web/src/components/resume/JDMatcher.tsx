@@ -259,6 +259,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         <input
           type="text"
           value={jdTitle}
+          maxLength={120}
           onChange={(e) => setJdTitle(e.target.value)}
           placeholder="Job title (optional — e.g. Senior Backend Engineer)"
           className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-all"
