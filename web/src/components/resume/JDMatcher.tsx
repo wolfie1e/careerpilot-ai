@@ -278,6 +278,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
             <span className={jdReady ? "font-semibold text-emerald-400" : "font-semibold text-amber-400"}>
               {jdWordCount} word{jdWordCount === 1 ? "" : "s"}
             </span>
+            <span className="block text-gray-600">{jdText.length}/12,000 characters</span>
           </div>
           <div className="rounded-lg border border-gray-800 bg-gray-950/60 px-3 py-2">
             <span className="block text-gray-500">Review size</span>
