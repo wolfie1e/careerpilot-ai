@@ -30,6 +30,7 @@ export function CopyButton({ value, label = "Copy", className }: CopyButtonProps
       onClick={copy}
       disabled={!value.trim()}
       title={!value.trim() ? "Nothing to copy" : label}
+      aria-live="polite"
       className={cn(
         "inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white",
         copied && "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
