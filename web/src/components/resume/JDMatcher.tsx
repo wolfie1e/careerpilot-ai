@@ -266,6 +266,7 @@ export default function JDMatcher({ resumeId, onMatchResult }: JDMatcherProps) {
         />
         <textarea
           value={jdText}
+          maxLength={12000}
           onChange={(e) => setJdText(e.target.value)}
           placeholder="Paste the full job description here…"
           rows={8}
