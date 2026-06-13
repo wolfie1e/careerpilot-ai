@@ -248,15 +248,15 @@ export default function InterviewHistoryPage() {
               </button>
             )}
           </label>
-          <select value={historyView.difficulty} onChange={(e) => setHistoryView((view) => ({ ...view, difficulty: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select aria-label="Filter by difficulty" value={historyView.difficulty} onChange={(e) => setHistoryView((view) => ({ ...view, difficulty: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">All difficulties</option>
             {DIFFICULTY_LEVELS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
           </select>
-          <select value={historyView.interviewType} onChange={(e) => setHistoryView((view) => ({ ...view, interviewType: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select aria-label="Filter by interview type" value={historyView.interviewType} onChange={(e) => setHistoryView((view) => ({ ...view, interviewType: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">All types</option>
             {INTERVIEW_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
-          <select value={historyView.sessionMode} onChange={(e) => setHistoryView((view) => ({ ...view, sessionMode: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
+          <select aria-label="Filter by answer mode" value={historyView.sessionMode} onChange={(e) => setHistoryView((view) => ({ ...view, sessionMode: e.target.value }))} className="rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500">
             <option value="">Any mode</option>
             {INTERVIEW_MODES.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
