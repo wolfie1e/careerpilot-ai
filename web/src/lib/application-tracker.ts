@@ -128,6 +128,10 @@ export function archivedApplicationCount(applications: JobApplication[]): number
   return applications.filter((application) => application.archived).length;
 }
 
+export function highPriorityApplicationCount(applications: JobApplication[]): number {
+  return applications.filter((application) => application.priority === "high" && !application.archived).length;
+}
+
 export function applicationsWithFollowUps(applications: JobApplication[]): JobApplication[] {
   return sortApplications(applications.filter((application) => application.followUpAt && !application.archived));
 }
