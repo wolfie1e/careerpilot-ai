@@ -200,6 +200,7 @@ export default function DashboardPage() {
       interviews_completed: analytics?.total_interviews ?? sessions.length,
       practice_streak_days: practiceStreak,
       open_planner_actions: plannerTasks.filter((task) => task.status !== "done").length,
+      active_job_applications: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
