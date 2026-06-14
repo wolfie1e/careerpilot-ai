@@ -84,6 +84,11 @@ export default function PlannerPage() {
     toast.success("Completed actions cleared");
   }
 
+  function addStarterPlan() {
+    setTasks((current) => [...PLANNER_TEMPLATES.map(createPlannerTask), ...current]);
+    toast.success("Starter plan added");
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -121,6 +126,7 @@ export default function PlannerPage() {
           </button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
+          <button onClick={addStarterPlan} className="rounded-lg border border-blue-500/30 bg-blue-500/10 px-2.5 py-1.5 text-xs font-medium text-blue-300">Add full starter plan</button>
           {PLANNER_TEMPLATES.map((template) => (
             <button key={template} onClick={() => addTask(template)} className="rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition hover:border-gray-600 hover:text-white">
               + {template}
