@@ -10,6 +10,7 @@ import {
   createPlannerTask,
   isPlannerTaskOverdue,
   plannerCompletionRate,
+  plannerOpenMinutes,
   plannerTaskSummary,
   PLANNER_TEMPLATES,
   sortPlannerTasks,
@@ -46,6 +47,7 @@ export default function PlannerPage() {
 
   const completionRate = plannerCompletionRate(tasks);
   const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
+  const openMinutes = plannerOpenMinutes(tasks);
   const summary = sortPlannerTasks(tasks).map(plannerTaskSummary).join("\n\n");
 
   function addTask(taskTitle = title) {
@@ -79,7 +81,7 @@ export default function PlannerPage() {
           ["Actions", tasks.length],
           ["Completed", `${completionRate}%`],
           ["In progress", tasks.filter((task) => task.status === "in_progress").length],
-          ["Overdue", overdueCount],
+          ["Open effort", `${Math.floor(openMinutes / 60)}h ${openMinutes % 60}m`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
