@@ -11,6 +11,7 @@ export interface PlannerTask {
   priority: PlannerPriority;
   category: PlannerCategory;
   estimateMinutes: number;
+  resourceUrl: string;
   status: PlannerStatus;
   dueDate: string;
   createdAt: string;
@@ -25,6 +26,7 @@ export function createPlannerTask(title: string): PlannerTask {
     priority: "medium",
     category: "other",
     estimateMinutes: 30,
+    resourceUrl: "",
     status: "todo",
     dueDate: "",
     createdAt: new Date().toISOString(),
