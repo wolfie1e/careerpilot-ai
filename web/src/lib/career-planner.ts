@@ -47,6 +47,13 @@ export function isPlannerTaskOverdue(task: PlannerTask, today = new Date()): boo
   return task.dueDate < today.toISOString().slice(0, 10);
 }
 
+export function isPlannerTaskDueSoon(task: PlannerTask, today = new Date()): boolean {
+  if (!task.dueDate || task.status === "done") return false;
+  const due = new Date(`${task.dueDate}T00:00:00`);
+  const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
+
 export function plannerCompletionRate(tasks: PlannerTask[]): number {
   if (!tasks.length) return 0;
   return Math.round((tasks.filter((task) => task.status === "done").length / tasks.length) * 100);
