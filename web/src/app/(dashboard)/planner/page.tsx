@@ -113,6 +113,9 @@ export default function PlannerPage() {
           </div>
         ))}
       </div>
+      <div className="h-2 overflow-hidden rounded-full bg-gray-800" aria-label={`Planner completion ${completionRate}%`}>
+        <div className="h-full bg-emerald-500 transition-all" style={{ width: `${completionRate}%` }} />
+      </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
