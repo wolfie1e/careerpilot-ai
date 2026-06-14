@@ -60,3 +60,9 @@ export function sortPlannerTasks(tasks: PlannerTask[]): PlannerTask[] {
     return b.createdAt.localeCompare(a.createdAt);
   });
 }
+
+export function plannerTaskSummary(task: PlannerTask): string {
+  const details = [task.priority, task.status.replace("_", " ")];
+  if (task.dueDate) details.push(`due ${task.dueDate}`);
+  return `${task.title} (${details.join(", ")})${task.notes ? `\n${task.notes}` : ""}`;
+}
