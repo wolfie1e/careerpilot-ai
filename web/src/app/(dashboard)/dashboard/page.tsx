@@ -199,6 +199,7 @@ export default function DashboardPage() {
       resumes_uploaded: resumes.length,
       interviews_completed: analytics?.total_interviews ?? sessions.length,
       practice_streak_days: practiceStreak,
+      open_planner_actions: plannerTasks.filter((task) => task.status !== "done").length,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
