@@ -45,6 +45,7 @@ export default function ApplicationsPage() {
 
   const stageCounts = applicationStageCounts(applications);
   const followUpCount = applications.filter((application) => isApplicationFollowUpDue(application)).length;
+  const followUpApplications = applications.filter((application) => application.followUpAt);
 
   function addApplication() {
     if (!company.trim() || !role.trim()) {
@@ -138,6 +139,7 @@ export default function ApplicationsPage() {
         <CopyButton value={applicationPipelineText(visibleApplications) || "No applications yet"} label="Copy pipeline" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-applications.json", { exported_at: new Date().toISOString(), applications })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-applications.csv", visibleApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, location: application.location, salary: application.salary, applied_at: application.appliedAt, follow_up_at: application.followUpAt, contact: application.contactName, contact_email: application.contactEmail, url: application.url, notes: application.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-application-follow-ups.csv", followUpApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, follow_up_at: application.followUpAt, contact: application.contactName, email: application.contactEmail })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><CalendarClock className="h-4 w-4" />Follow-ups</button>
       </div>
 
       {visibleApplications.length === 0 ? (
