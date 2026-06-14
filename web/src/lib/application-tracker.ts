@@ -46,3 +46,13 @@ export const APPLICATION_STAGES: Array<{ value: ApplicationStage; label: string 
   { value: "rejected", label: "Rejected" },
   { value: "withdrawn", label: "Withdrawn" },
 ];
+
+export function updateApplicationStage(application: JobApplication, stage: ApplicationStage): JobApplication {
+  const today = new Date().toISOString().slice(0, 10);
+  return {
+    ...application,
+    stage,
+    appliedAt: stage === "applied" && !application.appliedAt ? today : application.appliedAt,
+    updatedAt: new Date().toISOString(),
+  };
+}
