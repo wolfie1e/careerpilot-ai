@@ -31,13 +31,15 @@ export default function ApplicationsPage() {
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState<ApplicationStage | "all">("all");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   const visibleApplications = useMemo(() => sortApplications(applications).filter((application) => {
     if (stageFilter !== "all" && application.stage !== stageFilter) return false;
     if (favoritesOnly && !application.favorite) return false;
+    if (!showArchived && application.archived) return false;
     const query = search.trim().toLowerCase();
     return !query || `${application.company} ${application.role} ${application.location} ${application.notes}`.toLowerCase().includes(query);
-  }), [applications, favoritesOnly, search, stageFilter]);
+  }), [applications, favoritesOnly, search, showArchived, stageFilter]);
 
   const stageCounts = applicationStageCounts(applications);
   const followUpCount = applications.filter((application) => isApplicationFollowUpDue(application)).length;
@@ -108,6 +110,7 @@ export default function ApplicationsPage() {
 
       <div className="flex flex-wrap gap-2">
         <button onClick={() => setFavoritesOnly((value) => !value)} aria-pressed={favoritesOnly} className={cn("inline-flex items-center gap-2 rounded-xl border px-3 text-sm font-medium", favoritesOnly ? "border-amber-500/50 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-300")}><Star className="h-4 w-4" />Favorites</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className={cn("rounded-xl border px-3 text-sm font-medium", showArchived ? "border-blue-500/50 bg-blue-500/10 text-blue-300" : "border-gray-700 text-gray-300")}>Archived</button>
         <label className="relative min-w-64 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search company, role, location, or notes" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
