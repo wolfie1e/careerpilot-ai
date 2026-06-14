@@ -9,6 +9,7 @@ export const COOKIE_NAME = "careerpilot_token";
 
 export const LOCAL_STORAGE_KEYS = {
   plannerTasks: "careerpilot-planner-tasks",
+  jobApplications: "careerpilot-job-applications",
   onboardingDismissed: "careerpilot_onboarding_dismissed",
   pinnedResume: "careerpilot_pinned_resume",
   savedJobDescriptions: "careerpilot_saved_job_descriptions",
