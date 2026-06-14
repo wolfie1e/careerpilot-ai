@@ -51,6 +51,7 @@ export default function PlannerPage() {
 
   const completionRate = plannerCompletionRate(tasks);
   const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
+  const dueSoonCount = tasks.filter((task) => isPlannerTaskDueSoon(task)).length;
   const openMinutes = plannerOpenMinutes(tasks);
   const completedThisWeek = plannerCompletedThisWeek(tasks);
   const summary = sortPlannerTasks(tasks).map(plannerTaskSummary).join("\n\n");
@@ -111,7 +112,7 @@ export default function PlannerPage() {
         {[
           ["Actions", tasks.length],
           ["Completed", `${completionRate}%`],
-          ["Done this week", completedThisWeek],
+          ["Due soon", dueSoonCount],
           ["Open effort", `${Math.floor(openMinutes / 60)}h ${openMinutes % 60}m`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
