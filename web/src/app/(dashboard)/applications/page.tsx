@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Trash2 } from "lucide-react";
+import { BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -124,6 +124,9 @@ export default function ApplicationsPage() {
           {visibleApplications.map((application) => (
             <article key={application.id} className={cn("rounded-2xl border bg-gray-900 p-5", isApplicationFollowUpDue(application) ? "border-amber-500/50" : "border-gray-800")}>
               <div className="flex items-start gap-3">
+                <button onClick={() => updateApplication(application.id, { favorite: !application.favorite })} aria-pressed={Boolean(application.favorite)} aria-label={application.favorite ? `Remove ${application.company} from favorites` : `Favorite ${application.company}`} className="text-gray-600 transition hover:text-amber-400">
+                  <Star className={cn("h-4 w-4", application.favorite && "fill-amber-400 text-amber-400")} />
+                </button>
                 <div className="min-w-0 flex-1 space-y-4">
                   <div className="grid gap-2 sm:grid-cols-2">
                     <input value={application.company} maxLength={120} onChange={(event) => updateApplication(application.id, { company: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
