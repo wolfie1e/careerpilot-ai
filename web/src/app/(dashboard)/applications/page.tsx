@@ -9,6 +9,7 @@ import {
   APPLICATION_STAGES,
   applicationActiveCount,
   applicationInterviewRate,
+  highPriorityApplicationCount,
   applicationPipelineText,
   applicationResponseRate,
   applicationStageCounts,
@@ -115,7 +116,7 @@ export default function ApplicationsPage() {
           ["This month", applicationsThisMonth(applications)],
           ["Response rate", `${applicationResponseRate(applications)}%`],
           ["Interview rate", `${applicationInterviewRate(applications)}%`],
-          ["Follow-ups due", followUpCount],
+          ["High priority", highPriorityApplicationCount(applications)],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
