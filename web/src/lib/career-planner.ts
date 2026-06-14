@@ -1,0 +1,27 @@
+export type PlannerPriority = "low" | "medium" | "high";
+
+export type PlannerStatus = "todo" | "in_progress" | "done";
+
+export interface PlannerTask {
+  id: string;
+  title: string;
+  notes: string;
+  priority: PlannerPriority;
+  status: PlannerStatus;
+  dueDate: string;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+export function createPlannerTask(title: string): PlannerTask {
+  return {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    notes: "",
+    priority: "medium",
+    status: "todo",
+    dueDate: "",
+    createdAt: new Date().toISOString(),
+    completedAt: null,
+  };
+}
