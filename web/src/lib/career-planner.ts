@@ -71,6 +71,12 @@ export function plannerCompletedThisWeek(tasks: PlannerTask[], today = new Date(
   return tasks.filter((task) => task.completedAt && new Date(task.completedAt) >= cutoff).length;
 }
 
+export function plannerCategoryCounts(tasks: PlannerTask[]): Record<PlannerCategory, number> {
+  const counts: Record<PlannerCategory, number> = { resume: 0, interview: 0, networking: 0, learning: 0, application: 0, other: 0 };
+  tasks.forEach((task) => { counts[task.category || "other"] += 1; });
+  return counts;
+}
+
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
