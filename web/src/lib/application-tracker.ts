@@ -62,3 +62,10 @@ export function applicationStageCounts(applications: JobApplication[]): Record<A
   applications.forEach((application) => { counts[application.stage] += 1; });
   return counts;
 }
+
+export function applicationResponseRate(applications: JobApplication[]): number {
+  const submitted = applications.filter((application) => application.stage !== "saved");
+  if (!submitted.length) return 0;
+  const responses = submitted.filter((application) => ["screening", "interview", "offer"].includes(application.stage));
+  return Math.round((responses.length / submitted.length) * 100);
+}
