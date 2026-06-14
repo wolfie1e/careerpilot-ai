@@ -25,3 +25,11 @@ export function createPlannerTask(title: string): PlannerTask {
     completedAt: null,
   };
 }
+
+export function updatePlannerTaskStatus(task: PlannerTask, status: PlannerStatus): PlannerTask {
+  return {
+    ...task,
+    status,
+    completedAt: status === "done" ? new Date().toISOString() : null,
+  };
+}
