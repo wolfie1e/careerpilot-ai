@@ -38,14 +38,16 @@ export default function PlannerPage() {
   const [statusFilter, setStatusFilter] = useState<PlannerStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<PlannerPriority | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<PlannerCategory | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
 
   const visibleTasks = useMemo(() => sortPlannerTasks(tasks).filter((task) => {
     if (statusFilter !== "all" && task.status !== statusFilter) return false;
     if (priorityFilter !== "all" && task.priority !== priorityFilter) return false;
     if (categoryFilter !== "all" && (task.category || "other") !== categoryFilter) return false;
+    if (!showArchived && task.archived) return false;
     const query = search.trim().toLowerCase();
     return !query || `${task.title} ${task.notes}`.toLowerCase().includes(query);
-  }), [categoryFilter, priorityFilter, search, statusFilter, tasks]);
+  }), [categoryFilter, priorityFilter, search, showArchived, statusFilter, tasks]);
 
   const completionRate = plannerCompletionRate(tasks);
   const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
@@ -144,6 +146,7 @@ export default function PlannerPage() {
 
       <div className="flex flex-wrap gap-2">
         <button onClick={clearPlannerFilters} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Clear filters</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className={cn("rounded-xl border px-3 text-sm font-medium", showArchived ? "border-blue-500/50 bg-blue-500/10 text-blue-300" : "border-gray-700 text-gray-300")}>Archived</button>
         <button onClick={clearCompletedTasks} disabled={!tasks.some((task) => task.status === "done")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear completed</button>
         <label className="relative min-w-56 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
