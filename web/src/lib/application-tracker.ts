@@ -92,3 +92,10 @@ export function applicationSummary(application: JobApplication): string {
 export function applicationActiveCount(applications: JobApplication[]): number {
   return applications.filter((application) => !["offer", "rejected", "withdrawn"].includes(application.stage)).length;
 }
+
+export function applicationInterviewRate(applications: JobApplication[]): number {
+  const submitted = applications.filter((application) => application.stage !== "saved");
+  if (!submitted.length) return 0;
+  const interviews = submitted.filter((application) => ["interview", "offer"].includes(application.stage));
+  return Math.round((interviews.length / submitted.length) * 100);
+}
