@@ -89,6 +89,10 @@ export default function PlannerPage() {
     toast.success("Starter plan added");
   }
 
+  function duplicateTask(task: PlannerTask) {
+    setTasks((current) => [{ ...task, id: crypto.randomUUID(), title: `${task.title} copy`, createdAt: new Date().toISOString(), completedAt: null, status: "todo" }, ...current]);
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -208,9 +212,10 @@ export default function PlannerPage() {
                     {isPlannerTaskOverdue(task) && <span className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 px-2.5 py-1.5 text-xs font-medium text-rose-300"><Clock3 className="h-3.5 w-3.5" />Overdue</span>}
                   </div>
                 </div>
-                <button onClick={() => removeTask(task.id)} aria-label={`Delete ${task.title}`} className="text-gray-600 transition hover:text-rose-400">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="flex flex-col gap-3">
+                  <button onClick={() => duplicateTask(task)} aria-label={`Duplicate ${task.title}`} className="text-gray-600 transition hover:text-blue-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => removeTask(task.id)} aria-label={`Delete ${task.title}`} className="text-gray-600 transition hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
             </article>
           ))}
