@@ -11,6 +11,7 @@ import { passwordSchema, profileSchema } from "@/lib/validations";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import type { PlannerTask } from "@/lib/career-planner";
+import type { JobApplication } from "@/lib/application-tracker";
 
 type FieldErrors = Record<string, string>;
 
@@ -25,6 +26,7 @@ function collectErrors(issues: Array<{ path: PropertyKey[]; message: string }>) 
 export default function SettingsPage() {
   const { user, updateProfile, changePassword } = useAuth();
   const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [jobApplications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
