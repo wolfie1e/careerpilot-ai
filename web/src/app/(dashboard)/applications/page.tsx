@@ -74,6 +74,13 @@ export default function ApplicationsPage() {
     toast.success("Opportunity duplicated");
   }
 
+  function scheduleFollowUp(id: string) {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    updateApplication(id, { followUpAt: date.toISOString().slice(0, 10) });
+    toast.success("Follow-up scheduled for one week");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -173,6 +180,7 @@ export default function ApplicationsPage() {
                   <textarea value={application.notes} maxLength={2000} onChange={(event) => updateApplication(application.id, { notes: event.target.value })} rows={2} placeholder="Notes, interview details, or next step" className="w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                   <div className="flex flex-wrap gap-3 text-xs">
                     {isApplicationFollowUpDue(application) && <span className="font-semibold text-amber-300">Follow-up due</span>}
+                    {!application.followUpAt && <button onClick={() => scheduleFollowUp(application.id)} className="font-medium text-amber-400 hover:text-amber-300">Schedule 7-day follow-up</button>}
                     {application.url && <a href={application.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-blue-400 hover:text-blue-300"><ExternalLink className="h-3.5 w-3.5" />Open posting</a>}
                     {application.contactEmail && <a href={`mailto:${application.contactEmail}`} className="inline-flex items-center gap-1 font-medium text-violet-400 hover:text-violet-300"><Mail className="h-3.5 w-3.5" />Email contact</a>}
                   </div>
