@@ -74,3 +74,12 @@ export function isApplicationFollowUpDue(application: JobApplication, today = ne
   if (!application.followUpAt || ["offer", "rejected", "withdrawn"].includes(application.stage)) return false;
   return application.followUpAt <= today.toISOString().slice(0, 10);
 }
+
+export function sortApplications(applications: JobApplication[]): JobApplication[] {
+  return [...applications].sort((a, b) => {
+    const aDue = isApplicationFollowUpDue(a);
+    const bDue = isApplicationFollowUpDue(b);
+    if (aDue !== bDue) return aDue ? -1 : 1;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
