@@ -66,3 +66,11 @@ export function plannerTaskSummary(task: PlannerTask): string {
   if (task.dueDate) details.push(`due ${task.dueDate}`);
   return `${task.title} (${details.join(", ")})${task.notes ? `\n${task.notes}` : ""}`;
 }
+
+export const PLANNER_TEMPLATES = [
+  "Tailor resume for target role",
+  "Practice five interview questions",
+  "Reach out to three professional contacts",
+  "Research target companies",
+  "Complete one portfolio improvement",
+] as const;
