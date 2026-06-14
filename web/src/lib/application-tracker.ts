@@ -108,3 +108,10 @@ export function applicationsThisMonth(applications: JobApplication[], today = ne
 export function applicationContactCount(applications: JobApplication[]): number {
   return applications.filter((application) => application.contactName || application.contactEmail).length;
 }
+
+export function companyApplicationCounts(applications: JobApplication[]): Record<string, number> {
+  return applications.reduce<Record<string, number>>((counts, application) => {
+    counts[application.company] = (counts[application.company] || 0) + 1;
+    return counts;
+  }, {});
+}
