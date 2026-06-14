@@ -51,6 +51,7 @@ const quickActions = [
   { href: "/resume?tab=jd", icon: Target, label: "Match a Job Description", desc: "Compare with a JD", color: "text-violet-400" },
   { href: "/interview/setup", icon: Mic, label: "Start Mock Interview", desc: "Practice your answers", color: "text-emerald-400" },
   { href: "/analytics", icon: BarChart2, label: "View Analytics", desc: "Track your progress", color: "text-amber-400" },
+  { href: "/planner", icon: ListChecks, label: "Open Career Planner", desc: "Focus your next actions", color: "text-blue-400" },
 ];
 
 function getGreeting() {
