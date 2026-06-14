@@ -83,3 +83,8 @@ export function sortApplications(applications: JobApplication[]): JobApplication
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function applicationSummary(application: JobApplication): string {
+  const details = [application.stage, application.location, application.salary].filter(Boolean);
+  return `${application.company} — ${application.role}${details.length ? ` (${details.join(", ")})` : ""}`;
+}
