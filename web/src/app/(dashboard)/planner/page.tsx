@@ -14,6 +14,7 @@ import {
   PLANNER_TEMPLATES,
   sortPlannerTasks,
   updatePlannerTaskStatus,
+  type PlannerCategory,
   type PlannerPriority,
   type PlannerStatus,
   type PlannerTask,
@@ -33,13 +34,15 @@ export default function PlannerPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<PlannerStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<PlannerPriority | "all">("all");
+  const [categoryFilter, setCategoryFilter] = useState<PlannerCategory | "all">("all");
 
   const visibleTasks = useMemo(() => sortPlannerTasks(tasks).filter((task) => {
     if (statusFilter !== "all" && task.status !== statusFilter) return false;
     if (priorityFilter !== "all" && task.priority !== priorityFilter) return false;
+    if (categoryFilter !== "all" && (task.category || "other") !== categoryFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${task.title} ${task.notes}`.toLowerCase().includes(query);
-  }), [priorityFilter, search, statusFilter, tasks]);
+  }), [categoryFilter, priorityFilter, search, statusFilter, tasks]);
 
   const completionRate = plannerCompletionRate(tasks);
   const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
@@ -123,6 +126,10 @@ export default function PlannerPage() {
           <option value="high">High priority</option>
           <option value="medium">Medium priority</option>
           <option value="low">Low priority</option>
+        </select>
+        <select aria-label="Filter planner by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as PlannerCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-white">
+          <option value="all">All categories</option>
+          {["resume", "interview", "networking", "learning", "application", "other"].map((category) => <option key={category} value={category}>{category}</option>)}
         </select>
         <CopyButton value={summary || "No career actions yet"} label="Copy plan" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-action-plan.json", { exported_at: new Date().toISOString(), tasks })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
