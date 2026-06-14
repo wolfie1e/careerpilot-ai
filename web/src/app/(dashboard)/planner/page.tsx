@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2 } from "lucide-react";
+import { Archive, CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -220,6 +220,7 @@ export default function PlannerPage() {
                 </div>
                 <div className="flex flex-col gap-3">
                   <button onClick={() => duplicateTask(task)} aria-label={`Duplicate ${task.title}`} className="text-gray-600 transition hover:text-blue-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => updateTask(task.id, { archived: !task.archived })} aria-label={task.archived ? `Restore ${task.title}` : `Archive ${task.title}`} className="text-gray-600 transition hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeTask(task.id)} aria-label={`Delete ${task.title}`} className="text-gray-600 transition hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
