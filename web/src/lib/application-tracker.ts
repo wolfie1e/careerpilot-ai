@@ -104,3 +104,7 @@ export function applicationsThisMonth(applications: JobApplication[], today = ne
   const month = today.toISOString().slice(0, 7);
   return applications.filter((application) => application.appliedAt.startsWith(month)).length;
 }
+
+export function applicationContactCount(applications: JobApplication[]): number {
+  return applications.filter((application) => application.contactName || application.contactEmail).length;
+}
