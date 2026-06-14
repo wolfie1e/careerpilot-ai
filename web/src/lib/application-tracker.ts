@@ -87,6 +87,7 @@ export function isApplicationFollowUpDue(application: JobApplication, today = ne
 
 export function sortApplications(applications: JobApplication[]): JobApplication[] {
   return [...applications].sort((a, b) => {
+    if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
     const aDue = isApplicationFollowUpDue(a);
     const bDue = isApplicationFollowUpDue(b);
     if (aDue !== bDue) return aDue ? -1 : 1;
