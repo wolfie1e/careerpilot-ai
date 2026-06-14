@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Circle, Clock3, Download, ListChecks, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -159,6 +159,7 @@ export default function PlannerPage() {
                   <input value={task.title} maxLength={180} onChange={(event) => updateTask(task.id, { title: event.target.value })} className={cn("w-full bg-transparent font-semibold text-white outline-none", task.status === "done" && "text-gray-500 line-through")} />
                   <textarea value={task.notes} maxLength={1000} onChange={(event) => updateTask(task.id, { notes: event.target.value })} placeholder="Notes, links, or the next concrete step" rows={2} className="w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                   <input type="url" value={task.resourceUrl || ""} onChange={(event) => updateTask(task.id, { resourceUrl: event.target.value })} placeholder="Resource URL" className="w-full rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+                  {task.resourceUrl && <a href={task.resourceUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-blue-400 hover:text-blue-300"><ExternalLink className="h-3.5 w-3.5" />Open resource</a>}
                   <div className="flex flex-wrap gap-2">
                     <select aria-label={`Status for ${task.title}`} value={task.status} onChange={(event) => setTaskStatus(task.id, event.target.value as PlannerStatus)} className="rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs text-gray-300">
                       {STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
