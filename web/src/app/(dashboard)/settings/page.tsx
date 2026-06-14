@@ -164,6 +164,10 @@ export default function SettingsPage() {
         total_interviews: user?.total_interviews ?? 0,
       },
       local_preference_count: localPreferenceCount,
+      planner: {
+        total_actions: plannerTasks.length,
+        completed_actions: plannerTasks.filter((task) => task.status === "done").length,
+      },
     });
   }
 
