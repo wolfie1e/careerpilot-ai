@@ -8,6 +8,7 @@ export interface JobApplication {
   location: string;
   url: string;
   salary: string;
+  source: string;
   contactName: string;
   contactEmail: string;
   notes: string;
@@ -27,6 +28,7 @@ export function createJobApplication(company: string, role: string): JobApplicat
     location: "",
     url: "",
     salary: "",
+    source: "",
     contactName: "",
     contactEmail: "",
     notes: "",
