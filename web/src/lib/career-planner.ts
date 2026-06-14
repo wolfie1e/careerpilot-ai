@@ -2,11 +2,14 @@ export type PlannerPriority = "low" | "medium" | "high";
 
 export type PlannerStatus = "todo" | "in_progress" | "done";
 
+export type PlannerCategory = "resume" | "interview" | "networking" | "learning" | "application" | "other";
+
 export interface PlannerTask {
   id: string;
   title: string;
   notes: string;
   priority: PlannerPriority;
+  category: PlannerCategory;
   status: PlannerStatus;
   dueDate: string;
   createdAt: string;
@@ -19,6 +22,7 @@ export function createPlannerTask(title: string): PlannerTask {
     title: title.trim(),
     notes: "",
     priority: "medium",
+    category: "other",
     status: "todo",
     dueDate: "",
     createdAt: new Date().toISOString(),
