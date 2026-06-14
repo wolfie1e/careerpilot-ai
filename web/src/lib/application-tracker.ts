@@ -124,6 +124,10 @@ export function favoriteApplicationCount(applications: JobApplication[]): number
   return applications.filter((application) => application.favorite).length;
 }
 
+export function archivedApplicationCount(applications: JobApplication[]): number {
+  return applications.filter((application) => application.archived).length;
+}
+
 export function companyApplicationCounts(applications: JobApplication[]): Record<string, number> {
   return applications.reduce<Record<string, number>>((counts, application) => {
     counts[application.company] = (counts[application.company] || 0) + 1;
