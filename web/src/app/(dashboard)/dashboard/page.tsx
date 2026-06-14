@@ -168,7 +168,7 @@ export default function DashboardPage() {
     jobApplications.length > 0,
   ].filter(Boolean).length;
 
-  const showOnboarding = !onboardingDismissed && stepsCompleted < 4;
+  const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
   const latestAts = analytics?.ats_trend?.at(-1)?.score ?? null;
   const previousAts = analytics?.ats_trend?.at(-2)?.score ?? null;
   const latestMatch = analytics?.match_trend?.at(-1)?.score ?? null;
@@ -264,12 +264,12 @@ export default function DashboardPage() {
 
             <div className="mb-3">
               <div className="flex items-center justify-between text-xs text-gray-500 mb-1.5">
-                <span>Progress</span><span>{stepsCompleted}/4 complete</span>
+                <span>Progress</span><span>{stepsCompleted}/{ONBOARDING_STEPS.length} complete</span>
               </div>
               <div className="h-1.5 bg-gray-800 rounded-full">
                 <motion.div
                   className="h-1.5 bg-gradient-to-r from-blue-500 to-violet-500 rounded-full"
-                  animate={{ width: `${(stepsCompleted / 4) * 100}%` }}
+                  animate={{ width: `${(stepsCompleted / ONBOARDING_STEPS.length) * 100}%` }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
