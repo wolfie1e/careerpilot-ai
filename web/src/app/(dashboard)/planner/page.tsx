@@ -8,6 +8,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   createPlannerTask,
+  isPlannerTaskDueSoon,
   isPlannerTaskOverdue,
   plannerCompletionRate,
   plannerOpenMinutes,
@@ -181,6 +182,7 @@ export default function PlannerPage() {
                       <CalendarDays className="h-3.5 w-3.5" />
                       <input type="date" aria-label={`Due date for ${task.title}`} value={task.dueDate} onChange={(event) => updateTask(task.id, { dueDate: event.target.value })} className="bg-transparent text-gray-300 outline-none" />
                     </label>
+                    {isPlannerTaskDueSoon(task) && !isPlannerTaskOverdue(task) && <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-300"><CalendarDays className="h-3.5 w-3.5" />Due soon</span>}
                     {isPlannerTaskOverdue(task) && <span className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 px-2.5 py-1.5 text-xs font-medium text-rose-300"><Clock3 className="h-3.5 w-3.5" />Overdue</span>}
                   </div>
                 </div>
