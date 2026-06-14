@@ -21,6 +21,7 @@ export default function Footer() {
             <Link href="/login" className="hover:text-gray-300 transition-colors">Sign In</Link>
             <Link href="/register" className="hover:text-gray-300 transition-colors">Get Started</Link>
             <Link href="/planner" className="hover:text-gray-300 transition-colors">Career Planner</Link>
+            <Link href="/applications" className="hover:text-gray-300 transition-colors">Applications</Link>
             <a href="#top" className="hover:text-gray-300 transition-colors">Back to top</a>
           </div>
 
