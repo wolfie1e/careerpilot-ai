@@ -168,6 +168,11 @@ export default function PlannerPage() {
                     <select aria-label={`Category for ${task.title}`} value={task.category || "other"} onChange={(event) => updateTask(task.id, { category: event.target.value as PlannerCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs capitalize text-gray-300">
                       {["resume", "interview", "networking", "learning", "application", "other"].map((category) => <option key={category} value={category}>{category}</option>)}
                     </select>
+                    <label className="inline-flex items-center gap-1 rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs text-gray-400">
+                      <Clock3 className="h-3.5 w-3.5" />
+                      <input type="number" min={5} max={480} step={5} aria-label={`Estimated minutes for ${task.title}`} value={task.estimateMinutes || 30} onChange={(event) => updateTask(task.id, { estimateMinutes: Number(event.target.value) })} className="w-12 bg-transparent text-gray-300 outline-none" />
+                      min
+                    </label>
                     <label className="inline-flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs text-gray-400">
                       <CalendarDays className="h-3.5 w-3.5" />
                       <input type="date" aria-label={`Due date for ${task.title}`} value={task.dueDate} onChange={(event) => updateTask(task.id, { dueDate: event.target.value })} className="bg-transparent text-gray-300 outline-none" />
