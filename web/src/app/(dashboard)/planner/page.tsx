@@ -158,6 +158,7 @@ export default function PlannerPage() {
                 <div className="min-w-0 flex-1 space-y-3">
                   <input value={task.title} maxLength={180} onChange={(event) => updateTask(task.id, { title: event.target.value })} className={cn("w-full bg-transparent font-semibold text-white outline-none", task.status === "done" && "text-gray-500 line-through")} />
                   <textarea value={task.notes} maxLength={1000} onChange={(event) => updateTask(task.id, { notes: event.target.value })} placeholder="Notes, links, or the next concrete step" rows={2} className="w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+                  <input type="url" value={task.resourceUrl || ""} onChange={(event) => updateTask(task.id, { resourceUrl: event.target.value })} placeholder="Resource URL" className="w-full rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                   <div className="flex flex-wrap gap-2">
                     <select aria-label={`Status for ${task.title}`} value={task.status} onChange={(event) => setTaskStatus(task.id, event.target.value as PlannerStatus)} className="rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs text-gray-300">
                       {STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
