@@ -14,6 +14,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadJson } from "@/lib/export-utils";
 import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
 import type { PlannerTask } from "@/lib/career-planner";
+import type { JobApplication } from "@/lib/application-tracker";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -131,6 +132,7 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [onboardingDismissed, setOnboardingDismissed] = useLocalStorage(LOCAL_STORAGE_KEYS.onboardingDismissed, false);
   const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [jobApplications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
 
   useEffect(() => {
     fetchDashboardData()
