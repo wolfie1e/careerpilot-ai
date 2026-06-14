@@ -69,3 +69,8 @@ export function applicationResponseRate(applications: JobApplication[]): number 
   const responses = submitted.filter((application) => ["screening", "interview", "offer"].includes(application.stage));
   return Math.round((responses.length / submitted.length) * 100);
 }
+
+export function isApplicationFollowUpDue(application: JobApplication, today = new Date()): boolean {
+  if (!application.followUpAt || ["offer", "rejected", "withdrawn"].includes(application.stage)) return false;
+  return application.followUpAt <= today.toISOString().slice(0, 10);
+}
