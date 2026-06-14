@@ -10,6 +10,7 @@ export interface PlannerTask {
   notes: string;
   priority: PlannerPriority;
   category: PlannerCategory;
+  estimateMinutes: number;
   status: PlannerStatus;
   dueDate: string;
   createdAt: string;
@@ -23,6 +24,7 @@ export function createPlannerTask(title: string): PlannerTask {
     notes: "",
     priority: "medium",
     category: "other",
+    estimateMinutes: 30,
     status: "todo",
     dueDate: "",
     createdAt: new Date().toISOString(),
