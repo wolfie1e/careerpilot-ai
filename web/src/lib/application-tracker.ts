@@ -56,3 +56,9 @@ export function updateApplicationStage(application: JobApplication, stage: Appli
     updatedAt: new Date().toISOString(),
   };
 }
+
+export function applicationStageCounts(applications: JobApplication[]): Record<ApplicationStage, number> {
+  const counts: Record<ApplicationStage, number> = { saved: 0, applied: 0, screening: 0, interview: 0, offer: 0, rejected: 0, withdrawn: 0 };
+  applications.forEach((application) => { counts[application.stage] += 1; });
+  return counts;
+}
