@@ -81,6 +81,11 @@ export default function ApplicationsPage() {
     toast.success("Follow-up scheduled for one week");
   }
 
+  function markApplied(id: string) {
+    setStage(id, "applied");
+    toast.success("Application marked as applied");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -181,6 +186,7 @@ export default function ApplicationsPage() {
                   <div className="flex flex-wrap gap-3 text-xs">
                     {isApplicationFollowUpDue(application) && <span className="font-semibold text-amber-300">Follow-up due</span>}
                     {!application.followUpAt && <button onClick={() => scheduleFollowUp(application.id)} className="font-medium text-amber-400 hover:text-amber-300">Schedule 7-day follow-up</button>}
+                    {application.stage === "saved" && <button onClick={() => markApplied(application.id)} className="font-medium text-emerald-400 hover:text-emerald-300">Mark applied</button>}
                     {application.url && <a href={application.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-blue-400 hover:text-blue-300"><ExternalLink className="h-3.5 w-3.5" />Open posting</a>}
                     {application.contactEmail && <a href={`mailto:${application.contactEmail}`} className="inline-flex items-center gap-1 font-medium text-violet-400 hover:text-violet-300"><Mail className="h-3.5 w-3.5" />Email contact</a>}
                   </div>
