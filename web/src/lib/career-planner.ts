@@ -33,3 +33,8 @@ export function updatePlannerTaskStatus(task: PlannerTask, status: PlannerStatus
     completedAt: status === "done" ? new Date().toISOString() : null,
   };
 }
+
+export function isPlannerTaskOverdue(task: PlannerTask, today = new Date()): boolean {
+  if (!task.dueDate || task.status === "done") return false;
+  return task.dueDate < today.toISOString().slice(0, 10);
+}
