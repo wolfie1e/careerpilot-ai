@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2 } from "lucide-react";
+import { Archive, BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -162,7 +162,10 @@ export default function ApplicationsPage() {
                     {application.contactEmail && <a href={`mailto:${application.contactEmail}`} className="inline-flex items-center gap-1 font-medium text-violet-400 hover:text-violet-300"><Mail className="h-3.5 w-3.5" />Email contact</a>}
                   </div>
                 </div>
-                <button onClick={() => removeApplication(application.id)} aria-label={`Delete ${application.company} ${application.role}`} className="text-gray-600 transition hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                <div className="flex flex-col gap-3">
+                  <button onClick={() => updateApplication(application.id, { archived: !application.archived })} aria-label={application.archived ? `Restore ${application.company}` : `Archive ${application.company}`} className="text-gray-600 transition hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeApplication(application.id)} aria-label={`Delete ${application.company} ${application.role}`} className="text-gray-600 transition hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
             </article>
           ))}
