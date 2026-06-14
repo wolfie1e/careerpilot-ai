@@ -111,13 +111,14 @@ export default function ApplicationsPage() {
         <p className="mt-1 text-sm text-gray-400">Track every opportunity, conversation, and follow-up in one place.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Active", applicationActiveCount(applications)],
           ["This month", applicationsThisMonth(applications)],
           ["Response rate", `${applicationResponseRate(applications)}%`],
           ["Interview rate", `${applicationInterviewRate(applications)}%`],
           ["High priority", highPriorityApplicationCount(applications)],
+          ["Follow-ups due", followUpCount],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>

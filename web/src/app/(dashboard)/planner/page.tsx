@@ -108,11 +108,13 @@ export default function PlannerPage() {
         <p className="mt-1 text-sm text-gray-400">Keep the next important career actions visible and moving.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Actions", tasks.length],
           ["Completed", `${completionRate}%`],
           ["Due soon", dueSoonCount],
+          ["Overdue", overdueCount],
+          ["Done this week", completedThisWeek],
           ["Open effort", `${Math.floor(openMinutes / 60)}h ${openMinutes % 60}m`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
