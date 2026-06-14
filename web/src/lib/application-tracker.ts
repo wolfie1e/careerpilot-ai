@@ -99,3 +99,8 @@ export function applicationInterviewRate(applications: JobApplication[]): number
   const interviews = submitted.filter((application) => ["interview", "offer"].includes(application.stage));
   return Math.round((interviews.length / submitted.length) * 100);
 }
+
+export function applicationsThisMonth(applications: JobApplication[], today = new Date()): number {
+  const month = today.toISOString().slice(0, 7);
+  return applications.filter((application) => application.appliedAt.startsWith(month)).length;
+}
