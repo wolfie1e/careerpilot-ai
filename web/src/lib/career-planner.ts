@@ -47,3 +47,16 @@ export function plannerCompletionRate(tasks: PlannerTask[]): number {
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
+
+export function sortPlannerTasks(tasks: PlannerTask[]): PlannerTask[] {
+  return [...tasks].sort((a, b) => {
+    if (a.status === "done" && b.status !== "done") return 1;
+    if (b.status === "done" && a.status !== "done") return -1;
+    const priorityDifference = plannerPriorityWeight(b.priority) - plannerPriorityWeight(a.priority);
+    if (priorityDifference) return priorityDifference;
+    if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
+}
