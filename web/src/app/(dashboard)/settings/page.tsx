@@ -168,6 +168,10 @@ export default function SettingsPage() {
         total_actions: plannerTasks.length,
         completed_actions: plannerTasks.filter((task) => task.status === "done").length,
       },
+      applications: {
+        total: jobApplications.length,
+        active: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
+      },
     });
   }
 
