@@ -38,3 +38,8 @@ export function isPlannerTaskOverdue(task: PlannerTask, today = new Date()): boo
   if (!task.dueDate || task.status === "done") return false;
   return task.dueDate < today.toISOString().slice(0, 10);
 }
+
+export function plannerCompletionRate(tasks: PlannerTask[]): number {
+  if (!tasks.length) return 0;
+  return Math.round((tasks.filter((task) => task.status === "done").length / tasks.length) * 100);
+}
