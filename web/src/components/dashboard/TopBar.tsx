@@ -10,7 +10,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
   "/dashboard": { title: "Overview", subtitle: "Your career progress at a glance", actionHref: "/resume", actionLabel: "Add Resume", actionIcon: Plus },
   "/resume": { title: "Resume", subtitle: "Upload, analyze, and improve your resume", actionHref: "/reports", actionLabel: "Reports", actionIcon: Download },
   "/interview": { title: "Interview", subtitle: "Practice and track your sessions", actionHref: "/interview/setup", actionLabel: "New Interview", actionIcon: MessageSquare },
-  "/planner": { title: "Career Planner", subtitle: "Turn career insights into focused actions", actionHref: "/resume", actionLabel: "Resume", actionIcon: ListChecks },
+  "/planner": { title: "Career Planner", subtitle: "Turn career insights into focused actions", actionHref: "/applications", actionLabel: "Applications", actionIcon: ListChecks },
   "/applications": { title: "Applications", subtitle: "Track opportunities and follow-ups", actionHref: "/planner", actionLabel: "Planner", actionIcon: BriefcaseBusiness },
   "/analytics": { title: "Analytics", subtitle: "Score trends and skill progress", actionHref: "/dashboard", actionLabel: "Overview", actionIcon: LayoutDashboard },
   "/reports": { title: "Reports", subtitle: "Download your analysis reports", actionHref: "/resume", actionLabel: "Resume", actionIcon: FileText },
