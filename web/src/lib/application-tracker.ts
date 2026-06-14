@@ -12,6 +12,7 @@ export interface JobApplication {
   employmentType: string;
   priority: "low" | "medium" | "high";
   favorite: boolean;
+  archived: boolean;
   contactName: string;
   contactEmail: string;
   notes: string;
@@ -35,6 +36,7 @@ export function createJobApplication(company: string, role: string): JobApplicat
     employmentType: "",
     priority: "medium",
     favorite: false,
+    archived: false,
     contactName: "",
     contactEmail: "",
     notes: "",
