@@ -147,6 +147,13 @@ export default function ApplicationsPage() {
                     <input type="date" aria-label={`Application date for ${application.company}`} value={application.appliedAt} onChange={(event) => updateApplication(application.id, { appliedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                   </div>
                   <div className="grid gap-2 md:grid-cols-3">
+                    <input value={application.source || ""} maxLength={120} onChange={(event) => updateApplication(application.id, { source: event.target.value })} placeholder="Source (referral, board...)" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                    <input value={application.employmentType || ""} maxLength={80} onChange={(event) => updateApplication(application.id, { employmentType: event.target.value })} placeholder="Employment type" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                    <select aria-label={`Priority for ${application.company}`} value={application.priority || "medium"} onChange={(event) => updateApplication(application.id, { priority: event.target.value as JobApplication["priority"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
+                      <option value="high">High priority</option><option value="medium">Medium priority</option><option value="low">Low priority</option>
+                    </select>
+                  </div>
+                  <div className="grid gap-2 md:grid-cols-3">
                     <input value={application.contactName} maxLength={120} onChange={(event) => updateApplication(application.id, { contactName: event.target.value })} placeholder="Contact name" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                     <input type="email" value={application.contactEmail} maxLength={254} onChange={(event) => updateApplication(application.id, { contactEmail: event.target.value })} placeholder="Contact email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                     <label className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-500">
