@@ -69,6 +69,11 @@ export default function ApplicationsPage() {
     setApplications((current) => current.filter((application) => application.id !== id));
   }
 
+  function duplicateApplication(application: JobApplication) {
+    setApplications((current) => [{ ...createJobApplication(application.company, application.role), location: application.location, url: application.url, salary: application.salary, source: application.source || "", employmentType: application.employmentType || "", notes: application.notes }, ...current]);
+    toast.success("Opportunity duplicated");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -173,6 +178,7 @@ export default function ApplicationsPage() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">
+                  <button onClick={() => duplicateApplication(application)} aria-label={`Duplicate ${application.company}`} className="text-gray-600 transition hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
                   <button onClick={() => updateApplication(application.id, { archived: !application.archived })} aria-label={application.archived ? `Restore ${application.company}` : `Archive ${application.company}`} className="text-gray-600 transition hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeApplication(application.id)} aria-label={`Delete ${application.company} ${application.role}`} className="text-gray-600 transition hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
