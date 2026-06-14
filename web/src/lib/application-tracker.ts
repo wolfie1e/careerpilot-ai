@@ -36,3 +36,13 @@ export function createJobApplication(company: string, role: string): JobApplicat
     updatedAt: now,
   };
 }
+
+export const APPLICATION_STAGES: Array<{ value: ApplicationStage; label: string }> = [
+  { value: "saved", label: "Saved" },
+  { value: "applied", label: "Applied" },
+  { value: "screening", label: "Screening" },
+  { value: "interview", label: "Interview" },
+  { value: "offer", label: "Offer" },
+  { value: "rejected", label: "Rejected" },
+  { value: "withdrawn", label: "Withdrawn" },
+];
