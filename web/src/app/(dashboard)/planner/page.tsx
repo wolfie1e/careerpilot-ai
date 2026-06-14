@@ -165,6 +165,9 @@ export default function PlannerPage() {
                       <option value="medium">Medium priority</option>
                       <option value="low">Low priority</option>
                     </select>
+                    <select aria-label={`Category for ${task.title}`} value={task.category || "other"} onChange={(event) => updateTask(task.id, { category: event.target.value as PlannerCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs capitalize text-gray-300">
+                      {["resume", "interview", "networking", "learning", "application", "other"].map((category) => <option key={category} value={category}>{category}</option>)}
+                    </select>
                     <label className="inline-flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs text-gray-400">
                       <CalendarDays className="h-3.5 w-3.5" />
                       <input type="date" aria-label={`Due date for ${task.title}`} value={task.dueDate} onChange={(event) => updateTask(task.id, { dueDate: event.target.value })} className="bg-transparent text-gray-300 outline-none" />
