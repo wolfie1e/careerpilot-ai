@@ -47,6 +47,7 @@ const ONBOARDING_STEPS = [
   { key: "match", label: "Match with a job description", href: "/resume", done: false },
   { key: "interview", label: "Complete a mock interview", href: "/interview/setup", done: false },
   { key: "plan", label: "Add a career action", href: "/planner", done: false },
+  { key: "application", label: "Track a job opportunity", href: "/applications", done: false },
 ];
 
 const quickActions = [
@@ -164,6 +165,7 @@ export default function DashboardPage() {
     (analytics?.ats_trend?.length ?? 0) > 0,
     sessions.length > 0,
     plannerTasks.length > 0,
+    jobApplications.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < 4;
