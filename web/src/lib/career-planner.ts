@@ -16,6 +16,7 @@ export interface PlannerTask {
   dueDate: string;
   createdAt: string;
   completedAt: string | null;
+  archived: boolean;
 }
 
 export function createPlannerTask(title: string): PlannerTask {
@@ -31,6 +32,7 @@ export function createPlannerTask(title: string): PlannerTask {
     dueDate: "",
     createdAt: new Date().toISOString(),
     completedAt: null,
+    archived: false,
   };
 }
 
