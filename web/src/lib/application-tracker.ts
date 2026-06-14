@@ -88,3 +88,7 @@ export function applicationSummary(application: JobApplication): string {
   const details = [application.stage, application.location, application.salary].filter(Boolean);
   return `${application.company} — ${application.role}${details.length ? ` (${details.join(", ")})` : ""}`;
 }
+
+export function applicationActiveCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !["offer", "rejected", "withdrawn"].includes(application.stage)).length;
+}
