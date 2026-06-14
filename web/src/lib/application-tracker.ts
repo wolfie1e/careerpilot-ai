@@ -115,3 +115,7 @@ export function companyApplicationCounts(applications: JobApplication[]): Record
     return counts;
   }, {});
 }
+
+export function applicationPipelineText(applications: JobApplication[]): string {
+  return sortApplications(applications).map(applicationSummary).join("\n");
+}
