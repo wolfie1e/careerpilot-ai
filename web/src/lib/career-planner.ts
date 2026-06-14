@@ -59,6 +59,12 @@ export function plannerCompletionRate(tasks: PlannerTask[]): number {
   return Math.round((tasks.filter((task) => task.status === "done").length / tasks.length) * 100);
 }
 
+export function plannerOpenMinutes(tasks: PlannerTask[]): number {
+  return tasks
+    .filter((task) => task.status !== "done")
+    .reduce((total, task) => total + (task.estimateMinutes || 0), 0);
+}
+
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
