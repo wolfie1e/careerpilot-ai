@@ -65,6 +65,12 @@ export function plannerOpenMinutes(tasks: PlannerTask[]): number {
     .reduce((total, task) => total + (task.estimateMinutes || 0), 0);
 }
 
+export function plannerCompletedThisWeek(tasks: PlannerTask[], today = new Date()): number {
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - 7);
+  return tasks.filter((task) => task.completedAt && new Date(task.completedAt) >= cutoff).length;
+}
+
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
