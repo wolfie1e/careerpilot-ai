@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen } from "lucide-react";
+import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks } from "lucide-react";
 
 const features = [
   {
@@ -51,6 +51,12 @@ const features = [
     color: "teal",
     title: "Progress Analytics",
     description: "Track your ATS score trend, interview score improvement, and skill gap closure over time with interactive charts and readiness metrics.",
+  },
+  {
+    icon: ListChecks,
+    color: "blue",
+    title: "Career Action Planner",
+    description: "Turn insights into prioritized, recurring actions with deadlines, effort estimates, tags, and portable plans.",
   },
 ];
 
