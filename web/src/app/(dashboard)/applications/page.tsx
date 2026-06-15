@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ChangeEvent } from "react";
-import { Archive, BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2 } from "lucide-react";
+import { Archive, BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -172,6 +172,7 @@ export default function ApplicationsPage() {
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search company, role, location, or notes" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
         </label>
         <CopyButton value={applicationPipelineText(visibleApplications) || "No applications yet"} label="Copy pipeline" className="rounded-xl px-3" />
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import JSON<input type="file" accept="application/json,.json" onChange={importApplications} className="sr-only" /></label>
         <button onClick={() => downloadJson("careerpilot-applications.json", { exported_at: new Date().toISOString(), applications })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-applications.csv", visibleApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, location: application.location, salary: application.salary, applied_at: application.appliedAt, follow_up_at: application.followUpAt, contact: application.contactName, contact_email: application.contactEmail, url: application.url, notes: application.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
         <button onClick={() => downloadCsv("careerpilot-application-follow-ups.csv", followUpApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, follow_up_at: application.followUpAt, contact: application.contactName, email: application.contactEmail })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><CalendarClock className="h-4 w-4" />Follow-ups</button>
