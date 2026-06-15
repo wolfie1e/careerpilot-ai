@@ -50,3 +50,8 @@ export function weeklyReviewSummary(review: WeeklyReview): string {
 export function sortWeeklyReviews(reviews: WeeklyReview[]): WeeklyReview[] {
   return [...reviews].sort((a, b) => b.weekOf.localeCompare(a.weekOf));
 }
+
+export function averageReviewConfidence(reviews: WeeklyReview[]): number {
+  if (!reviews.length) return 0;
+  return Math.round((reviews.reduce((sum, review) => sum + review.confidence, 0) / reviews.length) * 10) / 10;
+}
