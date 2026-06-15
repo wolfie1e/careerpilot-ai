@@ -96,6 +96,13 @@ export function plannerCategoryCounts(tasks: PlannerTask[]): Record<PlannerCateg
   return counts;
 }
 
+export function plannerTagCounts(tasks: PlannerTask[]): Record<string, number> {
+  return tasks.flatMap((task) => task.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
+
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
