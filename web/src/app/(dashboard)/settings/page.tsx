@@ -167,6 +167,7 @@ export default function SettingsPage() {
       planner: {
         total_actions: plannerTasks.length,
         completed_actions: plannerTasks.filter((task) => task.status === "done").length,
+        recurring_actions: plannerTasks.filter((task) => task.recurrence && task.recurrence !== "none").length,
       },
       applications: {
         total: jobApplications.length,
