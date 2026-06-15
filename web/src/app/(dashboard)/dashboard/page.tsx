@@ -349,6 +349,10 @@ export default function DashboardPage() {
           <div className="text-xs text-gray-500">Open planner actions</div>
           <div className="mt-1 text-2xl font-bold text-white">{plannerTasks.filter((task) => task.status !== "done" && !task.archived).length}</div>
         </Link>
+        <Link href="/applications" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-emerald-700/60">
+          <div className="text-xs text-gray-500">Active applications</div>
+          <div className="mt-1 text-2xl font-bold text-white">{jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length}</div>
+        </Link>
       </div>
 
       {!loading && (
