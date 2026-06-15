@@ -18,6 +18,7 @@ export interface PlannerTask {
   completedAt: string | null;
   archived: boolean;
   tags: string[];
+  recurrence: "none" | "weekly" | "monthly";
 }
 
 export function createPlannerTask(title: string): PlannerTask {
@@ -35,6 +36,7 @@ export function createPlannerTask(title: string): PlannerTask {
     completedAt: null,
     archived: false,
     tags: [],
+    recurrence: "none",
   };
 }
 
