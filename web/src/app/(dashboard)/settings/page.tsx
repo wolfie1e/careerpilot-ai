@@ -172,6 +172,7 @@ export default function SettingsPage() {
       applications: {
         total: jobApplications.length,
         active: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
+        scheduled_interviews: jobApplications.filter((application) => application.interviewAt).length,
       },
     });
   }
