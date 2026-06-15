@@ -49,6 +49,7 @@ const ONBOARDING_STEPS = [
   { key: "interview", label: "Complete a mock interview", href: "/interview/setup", done: false },
   { key: "plan", label: "Add a career action", href: "/planner", done: false },
   { key: "application", label: "Track a job opportunity", href: "/applications", done: false },
+  { key: "review", label: "Complete a weekly review", href: "/review", done: false },
 ];
 
 const quickActions = [
@@ -169,6 +170,7 @@ export default function DashboardPage() {
     sessions.length > 0,
     plannerTasks.length > 0,
     jobApplications.length > 0,
+    weeklyReviews.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;

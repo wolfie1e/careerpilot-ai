@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import { CheckCircle2, Download, NotebookPen, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
