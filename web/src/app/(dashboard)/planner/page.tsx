@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { Archive, CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -8,6 +8,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   createPlannerTask,
+  mergePlannerTasks,
   isPlannerTaskDueSoon,
   isPlannerTaskOverdue,
   plannerCompletionRate,
@@ -99,6 +100,20 @@ export default function PlannerPage() {
 
   function duplicateTask(task: PlannerTask) {
     setTasks((current) => [{ ...task, id: crypto.randomUUID(), title: `${task.title} copy`, createdAt: new Date().toISOString(), completedAt: null, status: "todo" }, ...current]);
+  }
+
+  async function importPlanner(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { tasks?: PlannerTask[] } | PlannerTask[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.tasks || [];
+      setTasks((current) => mergePlannerTasks(current, incoming));
+      toast.success(`${incoming.length} planner actions imported`);
+    } catch {
+      toast.error("Could not import planner actions");
+    }
   }
 
   return (
