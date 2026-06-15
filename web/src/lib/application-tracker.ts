@@ -91,6 +91,13 @@ export function isApplicationFollowUpDue(application: JobApplication, today = ne
   return application.followUpAt <= today.toISOString().slice(0, 10);
 }
 
+export function isApplicationInterviewUpcoming(application: JobApplication, today = new Date()): boolean {
+  if (!application.interviewAt) return false;
+  const interview = new Date(application.interviewAt);
+  const hours = (interview.getTime() - today.getTime()) / 3_600_000;
+  return hours >= 0 && hours <= 168;
+}
+
 export function sortApplications(applications: JobApplication[]): JobApplication[] {
   return [...applications].sort((a, b) => {
     if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
