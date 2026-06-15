@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { Archive, BriefcaseBusiness, CalendarClock, Download, ExternalLink, Mail, Plus, Search, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -16,6 +16,7 @@ import {
   applicationsThisMonth,
   createJobApplication,
   isApplicationFollowUpDue,
+  mergeJobApplications,
   sortApplications,
   updateApplicationStage,
   type ApplicationStage,
@@ -102,6 +103,20 @@ export default function ApplicationsPage() {
   function clearArchivedApplications() {
     setApplications((current) => current.filter((application) => !application.archived));
     toast.success("Archived applications cleared");
+  }
+
+  async function importApplications(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { applications?: JobApplication[] } | JobApplication[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.applications || [];
+      setApplications((current) => mergeJobApplications(current, incoming));
+      toast.success(`${incoming.length} applications imported`);
+    } catch {
+      toast.error("Could not import applications");
+    }
   }
 
   return (
