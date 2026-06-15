@@ -20,6 +20,7 @@ export interface JobApplication {
   followUpAt: string;
   createdAt: string;
   updatedAt: string;
+  nextAction: string;
 }
 
 export function createJobApplication(company: string, role: string): JobApplication {
@@ -44,6 +45,7 @@ export function createJobApplication(company: string, role: string): JobApplicat
     followUpAt: "",
     createdAt: now,
     updatedAt: now,
+    nextAction: "",
   };
 }
 
