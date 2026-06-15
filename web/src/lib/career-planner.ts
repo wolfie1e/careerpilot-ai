@@ -48,6 +48,14 @@ export function updatePlannerTaskStatus(task: PlannerTask, status: PlannerStatus
   };
 }
 
+export function nextRecurringDueDate(task: PlannerTask): string {
+  if (!task.dueDate || task.recurrence === "none") return "";
+  const date = new Date(`${task.dueDate}T00:00:00`);
+  if (task.recurrence === "weekly") date.setDate(date.getDate() + 7);
+  if (task.recurrence === "monthly") date.setMonth(date.getMonth() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 export function isPlannerTaskOverdue(task: PlannerTask, today = new Date()): boolean {
   if (!task.dueDate || task.status === "done") return false;
   return task.dueDate < today.toISOString().slice(0, 10);
