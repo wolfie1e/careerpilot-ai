@@ -149,6 +149,10 @@ export function upcomingInterviewCount(applications: JobApplication[]): number {
   return applications.filter((application) => isApplicationInterviewUpcoming(application)).length;
 }
 
+export function applicationNextActionCount(applications: JobApplication[]): number {
+  return applications.filter((application) => application.nextAction && !application.archived).length;
+}
+
 export function applicationsWithFollowUps(applications: JobApplication[]): JobApplication[] {
   return sortApplications(applications.filter((application) => application.followUpAt && !application.archived));
 }
