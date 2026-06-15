@@ -41,15 +41,18 @@ export default function PlannerPage() {
   const [priorityFilter, setPriorityFilter] = useState<PlannerPriority | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<PlannerCategory | "all">("all");
   const [showArchived, setShowArchived] = useState(false);
+  const [tagFilter, setTagFilter] = useState("");
 
   const visibleTasks = useMemo(() => sortPlannerTasks(tasks).filter((task) => {
     if (statusFilter !== "all" && task.status !== statusFilter) return false;
     if (priorityFilter !== "all" && task.priority !== priorityFilter) return false;
     if (categoryFilter !== "all" && (task.category || "other") !== categoryFilter) return false;
     if (!showArchived && task.archived) return false;
+    if (tagFilter && !(task.tags || []).includes(tagFilter)) return false;
     const query = search.trim().toLowerCase();
     return !query || `${task.title} ${task.notes}`.toLowerCase().includes(query);
-  }), [categoryFilter, priorityFilter, search, showArchived, statusFilter, tasks]);
+  }), [categoryFilter, priorityFilter, search, showArchived, statusFilter, tagFilter, tasks]);
+  const availableTags = [...new Set(tasks.flatMap((task) => task.tags || []))].sort();
 
   const completionRate = plannerCompletionRate(tasks);
   const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
@@ -196,6 +199,7 @@ export default function PlannerPage() {
           <option value="all">All categories</option>
           {["resume", "interview", "networking", "learning", "application", "other"].map((category) => <option key={category} value={category}>{category}</option>)}
         </select>
+        <select aria-label="Filter planner by tag" value={tagFilter} onChange={(event) => setTagFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-white"><option value="">All tags</option>{availableTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select>
         <CopyButton value={summary || "No career actions yet"} label="Copy plan" className="rounded-xl px-3" />
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import JSON<input type="file" accept="application/json,.json" onChange={importPlanner} className="sr-only" /></label>
         <button onClick={() => downloadJson("careerpilot-action-plan.json", { exported_at: new Date().toISOString(), tasks })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
