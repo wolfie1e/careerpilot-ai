@@ -46,3 +46,7 @@ export function weeklyReviewSummary(review: WeeklyReview): string {
     `Next focus: ${review.nextFocus || "Not added"}`,
   ].join("\n");
 }
+
+export function sortWeeklyReviews(reviews: WeeklyReview[]): WeeklyReview[] {
+  return [...reviews].sort((a, b) => b.weekOf.localeCompare(a.weekOf));
+}
