@@ -22,6 +22,7 @@ export interface JobApplication {
   updatedAt: string;
   nextAction: string;
   interviewAt: string;
+  tags: string[];
 }
 
 export function createJobApplication(company: string, role: string): JobApplication {
@@ -48,6 +49,7 @@ export function createJobApplication(company: string, role: string): JobApplicat
     updatedAt: now,
     nextAction: "",
     interviewAt: "",
+    tags: [],
   };
 }
 
