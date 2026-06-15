@@ -55,3 +55,7 @@ export function averageReviewConfidence(reviews: WeeklyReview[]): number {
   if (!reviews.length) return 0;
   return Math.round((reviews.reduce((sum, review) => sum + review.confidence, 0) / reviews.length) * 10) / 10;
 }
+
+export function normalizeWeeklyReview(review: Partial<WeeklyReview>): WeeklyReview {
+  return { ...createWeeklyReview(new Date(`${review.weekOf || weekStart()}T00:00:00`)), ...review };
+}
