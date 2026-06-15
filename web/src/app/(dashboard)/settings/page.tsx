@@ -176,6 +176,10 @@ export default function SettingsPage() {
         active: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
         scheduled_interviews: jobApplications.filter((application) => application.interviewAt).length,
       },
+      weekly_reviews: {
+        total: weeklyReviews.length,
+        latest_week: weeklyReviews.map((review) => review.weekOf).sort().at(-1) || null,
+      },
     });
   }
 
