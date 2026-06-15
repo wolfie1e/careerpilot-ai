@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks } from "lucide-react";
+import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness } from "lucide-react";
 
 const features = [
   {
@@ -57,6 +57,12 @@ const features = [
     color: "blue",
     title: "Career Action Planner",
     description: "Turn insights into prioritized, recurring actions with deadlines, effort estimates, tags, and portable plans.",
+  },
+  {
+    icon: BriefcaseBusiness,
+    color: "emerald",
+    title: "Application Pipeline",
+    description: "Track opportunities, contacts, follow-ups, upcoming interviews, next actions, and response rates in one focused workspace.",
   },
 ];
 
