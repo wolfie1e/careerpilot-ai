@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ChangeEvent } from "react";
-import { Archive, CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2 } from "lucide-react";
+import { Archive, CalendarDays, CheckCircle2, Circle, Clock3, Download, ExternalLink, ListChecks, Plus, Search, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -191,6 +191,7 @@ export default function PlannerPage() {
           {["resume", "interview", "networking", "learning", "application", "other"].map((category) => <option key={category} value={category}>{category}</option>)}
         </select>
         <CopyButton value={summary || "No career actions yet"} label="Copy plan" className="rounded-xl px-3" />
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import JSON<input type="file" accept="application/json,.json" onChange={importPlanner} className="sr-only" /></label>
         <button onClick={() => downloadJson("careerpilot-action-plan.json", { exported_at: new Date().toISOString(), tasks })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
           <Download className="h-4 w-4" /> JSON
         </button>
