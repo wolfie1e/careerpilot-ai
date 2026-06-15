@@ -163,3 +163,8 @@ export function companyApplicationCounts(applications: JobApplication[]): Record
 export function applicationPipelineText(applications: JobApplication[]): string {
   return sortApplications(applications).map(applicationSummary).join("\n");
 }
+
+export function normalizeJobApplication(application: Partial<JobApplication>): JobApplication {
+  const base = createJobApplication(application.company || "Unknown company", application.role || "Untitled role");
+  return { ...base, ...application, tags: application.tags || [], nextAction: application.nextAction || "", interviewAt: application.interviewAt || "" };
+}
