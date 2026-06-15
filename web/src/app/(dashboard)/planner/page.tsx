@@ -137,6 +137,14 @@ export default function PlannerPage() {
     toast.success("Visible actions prioritized");
   }
 
+  function postponeOverdueTasks() {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    const dueDate = date.toISOString().slice(0, 10);
+    setTasks((current) => current.map((task) => isPlannerTaskOverdue(task) ? { ...task, dueDate } : task));
+    toast.success("Overdue actions moved one week");
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -195,6 +203,7 @@ export default function PlannerPage() {
         <button onClick={archiveCompletedTasks} disabled={!tasks.some((task) => task.status === "done" && !task.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive completed</button>
         <button onClick={completeVisibleTasks} disabled={!visibleTasks.some((task) => task.status !== "done")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Complete visible</button>
         <button onClick={prioritizeVisibleTasks} disabled={!visibleTasks.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Prioritize visible</button>
+        <button onClick={postponeOverdueTasks} disabled={!overdueCount} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Postpone overdue</button>
         <label className="relative min-w-56 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search actions" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
