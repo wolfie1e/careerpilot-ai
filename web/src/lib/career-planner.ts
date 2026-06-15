@@ -56,6 +56,11 @@ export function nextRecurringDueDate(task: PlannerTask): string {
   return date.toISOString().slice(0, 10);
 }
 
+export function createRecurringPlannerTask(task: PlannerTask): PlannerTask | null {
+  const dueDate = nextRecurringDueDate(task);
+  return dueDate ? { ...task, id: crypto.randomUUID(), status: "todo", dueDate, completedAt: null, createdAt: new Date().toISOString() } : null;
+}
+
 export function isPlannerTaskOverdue(task: PlannerTask, today = new Date()): boolean {
   if (!task.dueDate || task.status === "done") return false;
   return task.dueDate < today.toISOString().slice(0, 10);
