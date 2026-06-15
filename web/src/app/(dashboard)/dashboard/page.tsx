@@ -344,6 +344,13 @@ export default function DashboardPage() {
         )}
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Link href="/planner" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-blue-700/60">
+          <div className="text-xs text-gray-500">Open planner actions</div>
+          <div className="mt-1 text-2xl font-bold text-white">{plannerTasks.filter((task) => task.status !== "done" && !task.archived).length}</div>
+        </Link>
+      </div>
+
       {!loading && (
         <div className="flex items-center gap-2">
         <Link
