@@ -131,6 +131,12 @@ export default function PlannerPage() {
     toast.success("Visible actions completed");
   }
 
+  function prioritizeVisibleTasks() {
+    const visibleIds = new Set(visibleTasks.map((task) => task.id));
+    setTasks((current) => current.map((task) => visibleIds.has(task.id) ? { ...task, priority: "high" } : task));
+    toast.success("Visible actions prioritized");
+  }
+
   return (
     <div className="max-w-5xl space-y-6">
       <div>
@@ -188,6 +194,7 @@ export default function PlannerPage() {
         <button onClick={clearCompletedTasks} disabled={!tasks.some((task) => task.status === "done")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear completed</button>
         <button onClick={archiveCompletedTasks} disabled={!tasks.some((task) => task.status === "done" && !task.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive completed</button>
         <button onClick={completeVisibleTasks} disabled={!visibleTasks.some((task) => task.status !== "done")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Complete visible</button>
+        <button onClick={prioritizeVisibleTasks} disabled={!visibleTasks.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Prioritize visible</button>
         <label className="relative min-w-56 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search actions" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
