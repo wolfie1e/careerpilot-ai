@@ -168,3 +168,9 @@ export function normalizeJobApplication(application: Partial<JobApplication>): J
   const base = createJobApplication(application.company || "Unknown company", application.role || "Untitled role");
   return { ...base, ...application, tags: application.tags || [], nextAction: application.nextAction || "", interviewAt: application.interviewAt || "" };
 }
+
+export function mergeJobApplications(current: JobApplication[], incoming: JobApplication[]): JobApplication[] {
+  const byId = new Map(current.map((application) => [application.id, application]));
+  incoming.map(normalizeJobApplication).forEach((application) => byId.set(application.id, application));
+  return sortApplications([...byId.values()]);
+}
