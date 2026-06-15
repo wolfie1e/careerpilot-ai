@@ -214,6 +214,10 @@ export default function ApplicationsPage() {
                       <option value="high">High priority</option><option value="medium">Medium priority</option><option value="low">Low priority</option>
                     </select>
                   </div>
+                  <label className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-500">
+                    <CalendarClock className="h-3.5 w-3.5" />
+                    <input type="datetime-local" aria-label={`Interview time for ${application.company}`} value={application.interviewAt || ""} onChange={(event) => updateApplication(application.id, { interviewAt: event.target.value })} className="min-w-0 flex-1 bg-transparent text-gray-300 outline-none" />
+                  </label>
                   <div className="grid gap-2 md:grid-cols-3">
                     <input value={application.contactName} maxLength={120} onChange={(event) => updateApplication(application.id, { contactName: event.target.value })} placeholder="Contact name" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                     <input type="email" value={application.contactEmail} maxLength={254} onChange={(event) => updateApplication(application.id, { contactEmail: event.target.value })} placeholder="Contact email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
