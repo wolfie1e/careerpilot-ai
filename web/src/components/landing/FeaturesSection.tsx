@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness } from "lucide-react";
+import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen } from "lucide-react";
 
 const features = [
   {
@@ -63,6 +63,12 @@ const features = [
     color: "emerald",
     title: "Application Pipeline",
     description: "Track opportunities, contacts, follow-ups, upcoming interviews, next actions, and response rates in one focused workspace.",
+  },
+  {
+    icon: NotebookPen,
+    color: "violet",
+    title: "Weekly Career Review",
+    description: "Capture wins, blockers, lessons, confidence, and next week's focus while reviewing your real activity.",
   },
 ];
 
