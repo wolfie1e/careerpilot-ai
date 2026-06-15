@@ -135,6 +135,11 @@ export default function ApplicationsPage() {
     toast.success("Visible applications favorited");
   }
 
+  function clearCompletedFollowUps() {
+    setApplications((current) => current.map((application) => isApplicationFollowUpDue(application) ? { ...application, followUpAt: "" } : application));
+    toast.success("Due follow-ups cleared");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -183,6 +188,7 @@ export default function ApplicationsPage() {
         <button onClick={clearArchivedApplications} disabled={!applications.some((application) => application.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <button onClick={archiveClosedApplications} disabled={!applications.some((application) => ["rejected", "withdrawn"].includes(application.stage) && !application.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive closed</button>
         <button onClick={favoriteVisibleApplications} disabled={!visibleApplications.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Favorite visible</button>
+        <button onClick={clearCompletedFollowUps} disabled={!followUpCount} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear due follow-ups</button>
         <button onClick={() => setFavoritesOnly((value) => !value)} aria-pressed={favoritesOnly} className={cn("inline-flex items-center gap-2 rounded-xl border px-3 text-sm font-medium", favoritesOnly ? "border-amber-500/50 bg-amber-500/10 text-amber-300" : "border-gray-700 text-gray-300")}><Star className="h-4 w-4" />Favorites</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className={cn("rounded-xl border px-3 text-sm font-medium", showArchived ? "border-blue-500/50 bg-blue-500/10 text-blue-300" : "border-gray-700 text-gray-300")}>Archived</button>
         <select aria-label="Filter applications by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as JobApplication["priority"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All priorities</option><option value="high">High priority</option><option value="medium">Medium priority</option><option value="low">Low priority</option></select>
