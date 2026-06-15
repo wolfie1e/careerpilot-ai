@@ -59,3 +59,9 @@ export function averageReviewConfidence(reviews: WeeklyReview[]): number {
 export function normalizeWeeklyReview(review: Partial<WeeklyReview>): WeeklyReview {
   return { ...createWeeklyReview(new Date(`${review.weekOf || weekStart()}T00:00:00`)), ...review };
 }
+
+export function mergeWeeklyReviews(current: WeeklyReview[], incoming: WeeklyReview[]): WeeklyReview[] {
+  const byWeek = new Map(current.map((review) => [review.weekOf, review]));
+  incoming.map(normalizeWeeklyReview).forEach((review) => byWeek.set(review.weekOf, review));
+  return sortWeeklyReviews([...byWeek.values()]);
+}
