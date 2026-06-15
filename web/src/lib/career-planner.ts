@@ -133,3 +133,8 @@ export const PLANNER_TEMPLATES = [
   "Research target companies",
   "Complete one portfolio improvement",
 ] as const;
+
+export function normalizePlannerTask(task: Partial<PlannerTask>): PlannerTask {
+  const base = createPlannerTask(task.title || "Untitled action");
+  return { ...base, ...task, tags: task.tags || [], recurrence: task.recurrence || "none" };
+}
