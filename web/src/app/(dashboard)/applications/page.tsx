@@ -223,6 +223,7 @@ export default function ApplicationsPage() {
                     </label>
                   </div>
                   <input type="url" value={application.url} maxLength={2048} onChange={(event) => updateApplication(application.id, { url: event.target.value })} placeholder="Job posting URL" className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <input value={application.nextAction || ""} maxLength={240} onChange={(event) => updateApplication(application.id, { nextAction: event.target.value })} placeholder="Next action" className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                   <textarea value={application.notes} maxLength={2000} onChange={(event) => updateApplication(application.id, { notes: event.target.value })} rows={2} placeholder="Notes, interview details, or next step" className="w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                   <div className="flex flex-wrap gap-3 text-xs">
                     {isApplicationFollowUpDue(application) && <span className="font-semibold text-amber-300">Follow-up due</span>}
