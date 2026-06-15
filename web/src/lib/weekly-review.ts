@@ -36,3 +36,13 @@ export function weeklyReviewCompletion(review: WeeklyReview): number {
   const fields = [review.wins, review.challenges, review.lessons, review.nextFocus];
   return Math.round((fields.filter((field) => field.trim()).length / fields.length) * 100);
 }
+
+export function weeklyReviewSummary(review: WeeklyReview): string {
+  return [
+    `Week of ${review.weekOf} · Confidence ${review.confidence}/10`,
+    `Wins: ${review.wins || "Not added"}`,
+    `Challenges: ${review.challenges || "Not added"}`,
+    `Lessons: ${review.lessons || "Not added"}`,
+    `Next focus: ${review.nextFocus || "Not added"}`,
+  ].join("\n");
+}
