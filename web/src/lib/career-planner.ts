@@ -138,3 +138,9 @@ export function normalizePlannerTask(task: Partial<PlannerTask>): PlannerTask {
   const base = createPlannerTask(task.title || "Untitled action");
   return { ...base, ...task, tags: task.tags || [], recurrence: task.recurrence || "none" };
 }
+
+export function mergePlannerTasks(current: PlannerTask[], incoming: PlannerTask[]): PlannerTask[] {
+  const byId = new Map(current.map((task) => [task.id, task]));
+  incoming.map(normalizePlannerTask).forEach((task) => byId.set(task.id, task));
+  return sortPlannerTasks([...byId.values()]);
+}
