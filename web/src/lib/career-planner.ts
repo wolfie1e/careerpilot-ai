@@ -103,6 +103,10 @@ export function plannerTagCounts(tasks: PlannerTask[]): Record<string, number> {
   }, {});
 }
 
+export function recurringPlannerTaskCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => task.recurrence && task.recurrence !== "none" && !task.archived).length;
+}
+
 export function plannerPriorityWeight(priority: PlannerPriority): number {
   return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
 }
