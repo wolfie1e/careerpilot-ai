@@ -31,3 +31,8 @@ export function createWeeklyReview(date = new Date()): WeeklyReview {
     updatedAt: now,
   };
 }
+
+export function weeklyReviewCompletion(review: WeeklyReview): number {
+  const fields = [review.wins, review.challenges, review.lessons, review.nextFocus];
+  return Math.round((fields.filter((field) => field.trim()).length / fields.length) * 100);
+}
