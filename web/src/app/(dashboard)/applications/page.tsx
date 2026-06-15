@@ -55,6 +55,7 @@ export default function ApplicationsPage() {
   const followUpApplications = applications.filter((application) => application.followUpAt);
   const contactApplications = applications.filter((application) => application.contactName || application.contactEmail);
   const favoriteApplications = applications.filter((application) => application.favorite);
+  const interviewApplications = applications.filter((application) => application.interviewAt);
   const followUpText = followUpApplications.map((application) => `${application.followUpAt}: ${application.company} — ${application.role}`).join("\n");
 
   function addApplication() {
@@ -205,6 +206,7 @@ export default function ApplicationsPage() {
         <CopyButton value={followUpText || "No follow-ups scheduled"} label="Copy follow-ups" className="rounded-xl px-3" />
         <button onClick={() => downloadCsv("careerpilot-application-contacts.csv", contactApplications.map((application) => ({ company: application.company, role: application.role, contact: application.contactName, email: application.contactEmail, stage: application.stage })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Mail className="h-4 w-4" />Contacts</button>
         <button onClick={() => downloadJson("careerpilot-favorite-applications.json", favoriteApplications)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Star className="h-4 w-4" />Favorite export</button>
+        <button onClick={() => downloadCsv("careerpilot-application-interviews.csv", interviewApplications.map((application) => ({ company: application.company, role: application.role, interview_at: application.interviewAt, contact: application.contactName, notes: application.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><CalendarClock className="h-4 w-4" />Interviews</button>
       </div>
 
       {visibleApplications.length === 0 ? (
