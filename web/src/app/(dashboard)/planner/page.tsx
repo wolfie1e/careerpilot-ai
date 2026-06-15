@@ -8,6 +8,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   createPlannerTask,
+  createRecurringPlannerTask,
   mergePlannerTasks,
   isPlannerTaskDueSoon,
   isPlannerTaskOverdue,
@@ -69,7 +70,12 @@ export default function PlannerPage() {
   }
 
   function setTaskStatus(id: string, status: PlannerStatus) {
-    setTasks((current) => current.map((task) => task.id === id ? updatePlannerTaskStatus(task, status) : task));
+    setTasks((current) => {
+      const task = current.find((item) => item.id === id);
+      const recurring = task && status === "done" ? createRecurringPlannerTask(task) : null;
+      const updated = current.map((item) => item.id === id ? updatePlannerTaskStatus(item, status) : item);
+      return recurring ? [recurring, ...updated] : updated;
+    });
   }
 
   function removeTask(id: string) {
