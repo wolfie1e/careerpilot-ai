@@ -17,6 +17,7 @@ export interface PlannerTask {
   createdAt: string;
   completedAt: string | null;
   archived: boolean;
+  tags: string[];
 }
 
 export function createPlannerTask(title: string): PlannerTask {
@@ -33,6 +34,7 @@ export function createPlannerTask(title: string): PlannerTask {
     createdAt: new Date().toISOString(),
     completedAt: null,
     archived: false,
+    tags: [],
   };
 }
 
