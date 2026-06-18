@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -60,6 +60,7 @@ const quickActions = [
   { href: "/planner", icon: ListChecks, label: "Open Career Planner", desc: "Focus your next actions", color: "text-blue-400" },
   { href: "/applications", icon: BriefcaseBusiness, label: "Track Applications", desc: "Manage your opportunity pipeline", color: "text-emerald-400" },
   { href: "/review", icon: NotebookPen, label: "Complete Weekly Review", desc: "Reflect and choose the next focus", color: "text-violet-400" },
+  { href: "/networking", icon: UsersRound, label: "Manage Network", desc: "Track contacts and warm follow-ups", color: "text-cyan-400" },
 ];
 
 function getGreeting() {
