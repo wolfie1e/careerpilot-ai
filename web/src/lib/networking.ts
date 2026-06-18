@@ -84,3 +84,8 @@ export function networkingTagCounts(contacts: NetworkingContact[]): Record<strin
     return counts;
   }, {});
 }
+
+export function normalizeNetworkingContact(contact: Partial<NetworkingContact>): NetworkingContact {
+  const base = createNetworkingContact(contact.name || "Unnamed contact");
+  return { ...base, ...contact, tags: contact.tags || [] };
+}
