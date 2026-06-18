@@ -227,6 +227,10 @@ export default function DashboardPage() {
       exported_at: new Date().toISOString(),
       recent_resumes: resumes.slice(0, 5),
       recent_interviews: sessions.slice(0, 5),
+      recent_networking_contacts: networkingContacts
+        .filter((contact) => !contact.archived)
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
     });
   }
 
