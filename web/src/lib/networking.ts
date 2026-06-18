@@ -64,3 +64,7 @@ export function sortNetworkingContacts(contacts: NetworkingContact[]): Networkin
 export function networkingFollowUpCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => isNetworkingFollowUpDue(contact)).length;
 }
+
+export function networkingActiveCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => !contact.archived).length;
+}
