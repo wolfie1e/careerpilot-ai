@@ -101,3 +101,8 @@ export function scheduleNetworkingFollowUp(contact: NetworkingContact, days = 14
   date.setDate(date.getDate() + days);
   return { ...contact, nextFollowUpAt: date.toISOString().slice(0, 10), updatedAt: new Date().toISOString() };
 }
+
+export function markNetworkingContacted(contact: NetworkingContact): NetworkingContact {
+  const today = new Date().toISOString().slice(0, 10);
+  return { ...contact, lastContactedAt: today, updatedAt: new Date().toISOString() };
+}
