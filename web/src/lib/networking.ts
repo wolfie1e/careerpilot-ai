@@ -40,3 +40,8 @@ export function createNetworkingContact(name: string): NetworkingContact {
     archived: false,
   };
 }
+
+export function isNetworkingFollowUpDue(contact: NetworkingContact, today = new Date()): boolean {
+  if (!contact.nextFollowUpAt || contact.archived) return false;
+  return contact.nextFollowUpAt <= today.toISOString().slice(0, 10);
+}
