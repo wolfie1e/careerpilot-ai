@@ -77,3 +77,10 @@ export function networkingContactSummary(contact: NetworkingContact): string {
 export function networkingPipelineText(contacts: NetworkingContact[]): string {
   return sortNetworkingContacts(contacts).map(networkingContactSummary).join("\n\n");
 }
+
+export function networkingTagCounts(contacts: NetworkingContact[]): Record<string, number> {
+  return contacts.flatMap((contact) => contact.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
