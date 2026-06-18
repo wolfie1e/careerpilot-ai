@@ -182,6 +182,10 @@ export default function SettingsPage() {
         total: weeklyReviews.length,
         latest_week: weeklyReviews.map((review) => review.weekOf).sort().at(-1) || null,
       },
+      networking: {
+        total_contacts: networkingContacts.length,
+        active_contacts: networkingContacts.filter((contact) => !contact.archived).length,
+      },
     });
   }
 
