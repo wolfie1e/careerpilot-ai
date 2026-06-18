@@ -39,6 +39,8 @@ export default function NetworkingPage() {
   const [showArchived, setShowArchived] = useState(false);
 
   const availableTags = [...new Set(contacts.flatMap((contact) => contact.tags || []))].sort();
+  const followUpContacts = contacts.filter((contact) => contact.nextFollowUpAt && !contact.archived);
+  const followUpText = followUpContacts.map((contact) => `${contact.nextFollowUpAt}: ${contact.name}${contact.company ? ` at ${contact.company}` : ""}`).join("\n");
   const visibleContacts = useMemo(() => sortNetworkingContacts(contacts).filter((contact) => {
     if (!showArchived && contact.archived) return false;
     if (strengthFilter !== "all" && contact.strength !== strengthFilter) return false;
@@ -165,6 +167,7 @@ export default function NetworkingPage() {
         <select aria-label="Filter networking by tag" value={tagFilter} onChange={(event) => setTagFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="">All tags</option>{availableTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search contacts" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         <CopyButton value={networkingPipelineText(visibleContacts) || "No networking contacts yet"} label="Copy contacts" className="rounded-xl px-3" />
+        <CopyButton value={followUpText || "No networking follow-ups scheduled"} label="Copy follow-ups" className="rounded-xl px-3" />
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importContacts} className="sr-only" /></label>
         <button onClick={() => downloadJson("careerpilot-networking-contacts.json", { contacts })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-networking-contacts.csv", visibleContacts.map((contact) => ({ name: contact.name, role: contact.role, company: contact.company, strength: contact.strength, email: contact.email, linkedin: contact.linkedin, next_follow_up: contact.nextFollowUpAt, tags: contact.tags.join(", "), notes: contact.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
