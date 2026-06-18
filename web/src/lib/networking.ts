@@ -95,3 +95,9 @@ export function mergeNetworkingContacts(current: NetworkingContact[], incoming: 
   incoming.map(normalizeNetworkingContact).forEach((contact) => byId.set(contact.id, contact));
   return sortNetworkingContacts([...byId.values()]);
 }
+
+export function scheduleNetworkingFollowUp(contact: NetworkingContact, days = 14): NetworkingContact {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return { ...contact, nextFollowUpAt: date.toISOString().slice(0, 10), updatedAt: new Date().toISOString() };
+}
