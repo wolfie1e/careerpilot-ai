@@ -68,3 +68,8 @@ export function networkingFollowUpCount(contacts: NetworkingContact[]): number {
 export function networkingActiveCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => !contact.archived).length;
 }
+
+export function networkingContactSummary(contact: NetworkingContact): string {
+  const details = [contact.role, contact.company, contact.strength].filter(Boolean);
+  return `${contact.name}${details.length ? ` (${details.join(", ")})` : ""}${contact.nextFollowUpAt ? `\nFollow up: ${contact.nextFollowUpAt}` : ""}`;
+}
