@@ -16,6 +16,7 @@ import {
   networkingActiveCount,
   networkingFollowUpCount,
   networkingPipelineText,
+  networkingTagCounts,
   scheduleNetworkingFollowUp,
   sortNetworkingContacts,
   type ContactStrength,
@@ -57,6 +58,7 @@ export default function NetworkingPage() {
   }), [companyFilter, contacts, search, showArchived, sourceFilter, strengthFilter, tagFilter]);
   const emailContacts = visibleContacts.filter((contact) => contact.email);
   const strongContacts = contacts.filter((contact) => contact.strength === "strong" && !contact.archived);
+  const tagRows = Object.entries(networkingTagCounts(visibleContacts)).map(([tag, count]) => ({ tag, count }));
   const emailListText = emailContacts.map((contact) => `${contact.name} <${contact.email}>`).join(", ");
 
   function addContact() {
@@ -210,6 +212,7 @@ export default function NetworkingPage() {
         <button onClick={() => downloadCsv("careerpilot-networking-follow-ups.csv", followUpContacts.map((contact) => ({ name: contact.name, company: contact.company, next_follow_up: contact.nextFollowUpAt, email: contact.email, linkedin: contact.linkedin })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />Follow-ups</button>
         <button onClick={() => downloadCsv("careerpilot-networking-emails.csv", emailContacts.map((contact) => ({ name: contact.name, email: contact.email, company: contact.company, role: contact.role, strength: contact.strength })))} disabled={!emailContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Emails</button>
         <button onClick={() => downloadCsv("careerpilot-networking-strong-contacts.csv", strongContacts.map((contact) => ({ name: contact.name, company: contact.company, role: contact.role, email: contact.email, linkedin: contact.linkedin, tags: contact.tags.join(", ") })))} disabled={!strongContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Strong</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
       {visibleContacts.length === 0 ? (
