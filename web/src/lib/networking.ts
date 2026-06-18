@@ -60,3 +60,7 @@ export function sortNetworkingContacts(contacts: NetworkingContact[]): Networkin
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function networkingFollowUpCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => isNetworkingFollowUpDue(contact)).length;
+}
