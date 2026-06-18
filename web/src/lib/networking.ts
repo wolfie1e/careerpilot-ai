@@ -73,3 +73,7 @@ export function networkingContactSummary(contact: NetworkingContact): string {
   const details = [contact.role, contact.company, contact.strength].filter(Boolean);
   return `${contact.name}${details.length ? ` (${details.join(", ")})` : ""}${contact.nextFollowUpAt ? `\nFollow up: ${contact.nextFollowUpAt}` : ""}`;
 }
+
+export function networkingPipelineText(contacts: NetworkingContact[]): string {
+  return sortNetworkingContacts(contacts).map(networkingContactSummary).join("\n\n");
+}
