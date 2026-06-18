@@ -24,6 +24,7 @@ export default function Footer() {
             <Link href="/applications" className="hover:text-gray-300 transition-colors">Applications</Link>
             <Link href="/dashboard" className="hover:text-gray-300 transition-colors">Dashboard</Link>
             <Link href="/review" className="hover:text-gray-300 transition-colors">Weekly Review</Link>
+            <Link href="/networking" className="hover:text-gray-300 transition-colors">Networking</Link>
             <a href="#top" className="hover:text-gray-300 transition-colors">Back to top</a>
           </div>
 
