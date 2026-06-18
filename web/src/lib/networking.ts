@@ -89,3 +89,9 @@ export function normalizeNetworkingContact(contact: Partial<NetworkingContact>):
   const base = createNetworkingContact(contact.name || "Unnamed contact");
   return { ...base, ...contact, tags: contact.tags || [] };
 }
+
+export function mergeNetworkingContacts(current: NetworkingContact[], incoming: NetworkingContact[]): NetworkingContact[] {
+  const byId = new Map(current.map((contact) => [contact.id, contact]));
+  incoming.map(normalizeNetworkingContact).forEach((contact) => byId.set(contact.id, contact));
+  return sortNetworkingContacts([...byId.values()]);
+}
