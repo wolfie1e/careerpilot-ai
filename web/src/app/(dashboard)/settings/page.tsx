@@ -13,6 +13,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import type { PlannerTask } from "@/lib/career-planner";
 import type { JobApplication } from "@/lib/application-tracker";
 import type { WeeklyReview } from "@/lib/weekly-review";
+import type { NetworkingContact } from "@/lib/networking";
 
 type FieldErrors = Record<string, string>;
 
@@ -29,6 +30,7 @@ export default function SettingsPage() {
   const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [jobApplications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
   const [weeklyReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
+  const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
