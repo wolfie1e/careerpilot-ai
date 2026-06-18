@@ -119,6 +119,12 @@ export default function NetworkingPage() {
     toast.success("Visible follow-ups scheduled");
   }
 
+  function warmVisibleContacts() {
+    const visibleIds = new Set(visibleContacts.map((contact) => contact.id));
+    setContacts((current) => current.map((contact) => visibleIds.has(contact.id) ? { ...contact, strength: "warm" } : contact));
+    toast.success("Visible contacts marked warm");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -149,6 +155,7 @@ export default function NetworkingPage() {
         <button onClick={archiveVisibleContacts} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={clearArchivedContacts} disabled={!contacts.some((contact) => contact.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <button onClick={scheduleVisibleFollowUps} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Schedule visible</button>
+        <button onClick={warmVisibleContacts} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Warm visible</button>
         <select aria-label="Filter by relationship strength" value={strengthFilter} onChange={(event) => setStrengthFilter(event.target.value as ContactStrength | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All strengths</option>{STRENGTH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter networking by tag" value={tagFilter} onChange={(event) => setTagFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="">All tags</option>{availableTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search contacts" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
