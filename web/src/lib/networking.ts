@@ -45,3 +45,7 @@ export function isNetworkingFollowUpDue(contact: NetworkingContact, today = new 
   if (!contact.nextFollowUpAt || contact.archived) return false;
   return contact.nextFollowUpAt <= today.toISOString().slice(0, 10);
 }
+
+export function networkingStrengthWeight(strength: ContactStrength): number {
+  return strength === "strong" ? 3 : strength === "warm" ? 2 : 1;
+}
