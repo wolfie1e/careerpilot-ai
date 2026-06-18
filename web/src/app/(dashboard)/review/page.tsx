@@ -19,17 +19,20 @@ import {
   weeklyReviewSummary,
   type WeeklyReview,
 } from "@/lib/weekly-review";
+import { isNetworkingFollowUpDue, type NetworkingContact } from "@/lib/networking";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
   const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [applications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
+  const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
   const completedActions = plannerTasks.filter((task) => task.completedAt && new Date(task.completedAt) >= new Date(`${currentWeek}T00:00:00`)).length;
   const appliedThisWeek = applications.filter((application) => application.appliedAt >= currentWeek).length;
   const upcomingInterviews = applications.filter((application) => application.interviewAt && new Date(application.interviewAt) >= new Date()).length;
+  const networkingFollowUpsDue = networkingContacts.filter(isNetworkingFollowUpDue).length;
   const completion = weeklyReviewCompletion(currentReview);
 
   function saveReview(patch: Partial<WeeklyReview>) {
@@ -69,12 +72,13 @@ export default function WeeklyReviewPage() {
         <p className="mt-1 text-sm text-gray-400">Review the week of {currentWeek} and choose what matters next.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
           ["Applications sent", appliedThisWeek],
           ["Upcoming interviews", upcomingInterviews],
+          ["Networking due", networkingFollowUpsDue],
           ["Avg confidence", `${averageReviewConfidence(reviews)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
