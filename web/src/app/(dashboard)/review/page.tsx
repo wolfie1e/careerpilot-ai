@@ -32,7 +32,7 @@ export default function WeeklyReviewPage() {
   const completedActions = plannerTasks.filter((task) => task.completedAt && new Date(task.completedAt) >= new Date(`${currentWeek}T00:00:00`)).length;
   const appliedThisWeek = applications.filter((application) => application.appliedAt >= currentWeek).length;
   const upcomingInterviews = applications.filter((application) => application.interviewAt && new Date(application.interviewAt) >= new Date()).length;
-  const networkingFollowUpsDue = networkingContacts.filter(isNetworkingFollowUpDue).length;
+  const networkingFollowUpsDue = networkingContacts.filter((contact) => isNetworkingFollowUpDue(contact)).length;
   const completion = weeklyReviewCompletion(currentReview);
   const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}`;
 

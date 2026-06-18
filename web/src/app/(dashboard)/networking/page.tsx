@@ -45,7 +45,7 @@ export default function NetworkingPage() {
   const availableSources = [...new Set(contacts.map((contact) => contact.source).filter(Boolean))].sort();
   const availableCompanies = [...new Set(contacts.map((contact) => contact.company).filter(Boolean))].sort();
   const followUpContacts = contacts.filter((contact) => contact.nextFollowUpAt && !contact.archived);
-  const dueFollowUpContacts = contacts.filter(isNetworkingFollowUpDue);
+  const dueFollowUpContacts = contacts.filter((contact) => isNetworkingFollowUpDue(contact));
   const followUpText = followUpContacts.map((contact) => `${contact.nextFollowUpAt}: ${contact.name}${contact.company ? ` at ${contact.company}` : ""}`).join("\n");
   const visibleContacts = useMemo(() => sortNetworkingContacts(contacts).filter((contact) => {
     if (!showArchived && contact.archived) return false;

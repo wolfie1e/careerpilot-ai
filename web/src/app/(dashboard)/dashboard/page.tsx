@@ -196,6 +196,7 @@ export default function DashboardPage() {
   const focusPlanText = focusItems.map((item, index) => `${index + 1}. ${item.label} - ${item.desc}`).join("\n");
   const readinessScore = analytics?.readiness_score ?? 0;
   const readinessLabel = readinessScore >= 85 ? "Application ready" : readinessScore >= 70 ? "Nearly ready" : readinessScore >= 50 ? "Needs polish" : "Build the basics";
+  const networkingFollowUpsDue = networkingContacts.filter((contact) => contact.nextFollowUpAt && contact.nextFollowUpAt <= new Date().toISOString().slice(0, 10) && !contact.archived).length;
 
   function dismissOnboarding() {
     setOnboardingDismissed(true);
@@ -217,6 +218,7 @@ export default function DashboardPage() {
       active_job_applications: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
       weekly_reviews_completed: weeklyReviews.length,
       networking_contacts: networkingContacts.filter((contact) => !contact.archived).length,
+      networking_follow_ups_due: networkingFollowUpsDue,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
@@ -374,7 +376,7 @@ export default function DashboardPage() {
         <Link href="/networking" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-cyan-700/60">
           <div className="text-xs text-gray-500">Networking contacts</div>
           <div className="mt-1 text-2xl font-bold text-white">{networkingContacts.filter((contact) => !contact.archived).length}</div>
-          <div className="mt-1 text-xs text-gray-500">{networkingContacts.filter((contact) => contact.nextFollowUpAt && contact.nextFollowUpAt <= new Date().toISOString().slice(0, 10) && !contact.archived).length} follow-ups due</div>
+          <div className="mt-1 text-xs text-gray-500">{networkingFollowUpsDue} follow-ups due</div>
         </Link>
       </div>
 
