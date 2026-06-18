@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen } from "lucide-react";
+import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound } from "lucide-react";
 
 const features = [
   {
@@ -69,6 +69,12 @@ const features = [
     color: "violet",
     title: "Weekly Career Review",
     description: "Capture wins, blockers, lessons, confidence, and next week's focus while reviewing your real activity.",
+  },
+  {
+    icon: UsersRound,
+    color: "cyan",
+    title: "Networking Follow-ups",
+    description: "Manage contacts, relationship strength, warm follow-ups, tags, LinkedIn links, and planner-ready outreach tasks.",
   },
 ];
 
