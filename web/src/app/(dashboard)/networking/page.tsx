@@ -49,6 +49,7 @@ export default function NetworkingPage() {
     const query = search.trim().toLowerCase();
     return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.notes} ${contact.tags?.join(" ")}`.toLowerCase().includes(query);
   }), [contacts, search, showArchived, strengthFilter, tagFilter]);
+  const emailContacts = visibleContacts.filter((contact) => contact.email);
 
   function addContact() {
     if (!name.trim()) return;
@@ -194,6 +195,7 @@ export default function NetworkingPage() {
         <button onClick={() => downloadJson("careerpilot-networking-contacts.json", { contacts })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-networking-contacts.csv", visibleContacts.map((contact) => ({ name: contact.name, role: contact.role, company: contact.company, strength: contact.strength, email: contact.email, linkedin: contact.linkedin, next_follow_up: contact.nextFollowUpAt, tags: contact.tags.join(", "), notes: contact.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
         <button onClick={() => downloadCsv("careerpilot-networking-follow-ups.csv", followUpContacts.map((contact) => ({ name: contact.name, company: contact.company, next_follow_up: contact.nextFollowUpAt, email: contact.email, linkedin: contact.linkedin })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />Follow-ups</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-emails.csv", emailContacts.map((contact) => ({ name: contact.name, email: contact.email, company: contact.company, role: contact.role, strength: contact.strength })))} disabled={!emailContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Emails</button>
       </div>
 
       {visibleContacts.length === 0 ? (
