@@ -49,3 +49,14 @@ export function isNetworkingFollowUpDue(contact: NetworkingContact, today = new 
 export function networkingStrengthWeight(strength: ContactStrength): number {
   return strength === "strong" ? 3 : strength === "warm" ? 2 : 1;
 }
+
+export function sortNetworkingContacts(contacts: NetworkingContact[]): NetworkingContact[] {
+  return [...contacts].sort((a, b) => {
+    const dueA = isNetworkingFollowUpDue(a);
+    const dueB = isNetworkingFollowUpDue(b);
+    if (dueA !== dueB) return dueA ? -1 : 1;
+    const strength = networkingStrengthWeight(b.strength) - networkingStrengthWeight(a.strength);
+    if (strength) return strength;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
