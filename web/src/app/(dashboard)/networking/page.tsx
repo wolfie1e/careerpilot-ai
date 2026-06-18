@@ -67,6 +67,11 @@ export default function NetworkingPage() {
     toast.success("Contact marked and follow-up scheduled");
   }
 
+  function duplicateContact(contact: NetworkingContact) {
+    setContacts((current) => [{ ...contact, id: crypto.randomUUID(), name: `${contact.name} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Contact duplicated");
+  }
+
   function addFollowUpTask(contact: NetworkingContact) {
     const task: PlannerTask = {
       id: crypto.randomUUID(),
@@ -199,6 +204,7 @@ export default function NetworkingPage() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">
+                  <button onClick={() => duplicateContact(contact)} aria-label={`Duplicate ${contact.name}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
                   <button onClick={() => updateContact(contact.id, { archived: !contact.archived })} aria-label={contact.archived ? `Restore ${contact.name}` : `Archive ${contact.name}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeContact(contact.id)} aria-label={`Delete ${contact.name}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
