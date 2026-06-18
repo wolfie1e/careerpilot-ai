@@ -37,10 +37,12 @@ export default function NetworkingPage() {
   const [strengthFilter, setStrengthFilter] = useState<ContactStrength | "all">("all");
   const [tagFilter, setTagFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
+  const [companyFilter, setCompanyFilter] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
   const availableTags = [...new Set(contacts.flatMap((contact) => contact.tags || []))].sort();
   const availableSources = [...new Set(contacts.map((contact) => contact.source).filter(Boolean))].sort();
+  const availableCompanies = [...new Set(contacts.map((contact) => contact.company).filter(Boolean))].sort();
   const followUpContacts = contacts.filter((contact) => contact.nextFollowUpAt && !contact.archived);
   const dueFollowUpContacts = contacts.filter(isNetworkingFollowUpDue);
   const followUpText = followUpContacts.map((contact) => `${contact.nextFollowUpAt}: ${contact.name}${contact.company ? ` at ${contact.company}` : ""}`).join("\n");
@@ -49,9 +51,10 @@ export default function NetworkingPage() {
     if (strengthFilter !== "all" && contact.strength !== strengthFilter) return false;
     if (tagFilter && !(contact.tags || []).includes(tagFilter)) return false;
     if (sourceFilter && contact.source !== sourceFilter) return false;
+    if (companyFilter && contact.company !== companyFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.notes} ${contact.tags?.join(" ")}`.toLowerCase().includes(query);
-  }), [contacts, search, showArchived, sourceFilter, strengthFilter, tagFilter]);
+  }), [companyFilter, contacts, search, showArchived, sourceFilter, strengthFilter, tagFilter]);
   const emailContacts = visibleContacts.filter((contact) => contact.email);
   const emailListText = emailContacts.map((contact) => `${contact.name} <${contact.email}>`).join(", ");
 
@@ -181,7 +184,7 @@ export default function NetworkingPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button onClick={() => { setSearch(""); setStrengthFilter("all"); setTagFilter(""); setSourceFilter(""); setShowArchived(false); }} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Clear filters</button>
+        <button onClick={() => { setSearch(""); setStrengthFilter("all"); setTagFilter(""); setSourceFilter(""); setCompanyFilter(""); setShowArchived(false); }} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Clear filters</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className={cn("rounded-xl border px-3 text-sm font-medium", showArchived ? "border-blue-500/50 bg-blue-500/10 text-blue-300" : "border-gray-700 text-gray-300")}>Archived</button>
         <button onClick={archiveVisibleContacts} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={clearArchivedContacts} disabled={!contacts.some((contact) => contact.archived)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
@@ -193,6 +196,7 @@ export default function NetworkingPage() {
         <select aria-label="Filter by relationship strength" value={strengthFilter} onChange={(event) => setStrengthFilter(event.target.value as ContactStrength | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All strengths</option>{STRENGTH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter networking by tag" value={tagFilter} onChange={(event) => setTagFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="">All tags</option>{availableTags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}</select>
         <select aria-label="Filter networking by source" value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="">All sources</option>{availableSources.map((source) => <option key={source} value={source}>{source}</option>)}</select>
+        <select aria-label="Filter networking by company" value={companyFilter} onChange={(event) => setCompanyFilter(event.target.value)} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="">All companies</option>{availableCompanies.map((company) => <option key={company} value={company}>{company}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search contacts" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         <CopyButton value={networkingPipelineText(visibleContacts) || "No networking contacts yet"} label="Copy contacts" className="rounded-xl px-3" />
         <CopyButton value={followUpText || "No networking follow-ups scheduled"} label="Copy follow-ups" className="rounded-xl px-3" />
