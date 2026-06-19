@@ -135,3 +135,10 @@ export function careerGoalCategoryCounts(goals: CareerGoal[]): Record<CareerGoal
   goals.forEach((goal) => { counts[goal.category || "other"] += 1; });
   return counts;
 }
+
+export function careerGoalTagCounts(goals: CareerGoal[]): Record<string, number> {
+  return goals.flatMap((goal) => goal.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
