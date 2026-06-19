@@ -58,3 +58,20 @@ export function createCareerGoal(title: string): CareerGoal {
     tags: [],
   };
 }
+
+export function careerGoalProgress(goal: CareerGoal): number {
+  if (goal.targetValue > 0) {
+    return Math.min(100, Math.max(0, Math.round((goal.currentValue / goal.targetValue) * 100)));
+  }
+  return Math.min(100, Math.max(0, Math.round(goal.progress || 0)));
+}
+
+export function updateCareerGoalStatus(goal: CareerGoal, status: CareerGoalStatus): CareerGoal {
+  return {
+    ...goal,
+    status,
+    progress: status === "completed" ? 100 : goal.progress,
+    completedAt: status === "completed" ? new Date().toISOString() : null,
+    updatedAt: new Date().toISOString(),
+  };
+}
