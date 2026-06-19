@@ -76,13 +76,14 @@ export default function WeeklyReviewPage() {
         <p className="mt-1 text-sm text-gray-400">Review the week of {currentWeek} and choose what matters next.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">
         {[
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
           ["Applications sent", appliedThisWeek],
           ["Upcoming interviews", upcomingInterviews],
           ["Networking due", networkingFollowUpsDue],
+          ["Active goals", activeGoalCount],
           ["Avg confidence", `${averageReviewConfidence(reviews)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
