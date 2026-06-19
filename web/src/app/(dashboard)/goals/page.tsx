@@ -83,6 +83,11 @@ export default function GoalsPage() {
     toast.success("Archived goals cleared");
   }
 
+  function duplicateGoal(goal: CareerGoal) {
+    setGoals((current) => [{ ...goal, id: crypto.randomUUID(), title: `${goal.title} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), completedAt: null }, ...current]);
+    toast.success("Goal duplicated");
+  }
+
   async function importGoals(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -151,6 +156,7 @@ export default function GoalsPage() {
                   <select value={goal.horizon} onChange={(event) => updateGoal(goal.id, { horizon: event.target.value as CareerGoal["horizon"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_HORIZONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 </div>
                 <div className="flex gap-3">
+                  <button onClick={() => duplicateGoal(goal)} aria-label={`Duplicate ${goal.title}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
                   <button onClick={() => updateGoal(goal.id, { status: "archived" })} aria-label={`Archive ${goal.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeGoal(goal.id)} aria-label={`Delete ${goal.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
