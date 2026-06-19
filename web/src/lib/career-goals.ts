@@ -22,6 +22,20 @@ export interface CareerGoal {
   tags: string[];
 }
 
+export const CAREER_GOAL_STATUSES: Array<{ value: CareerGoalStatus; label: string }> = [
+  { value: "active", label: "Active" },
+  { value: "paused", label: "Paused" },
+  { value: "completed", label: "Completed" },
+  { value: "archived", label: "Archived" },
+];
+
+export const CAREER_GOAL_HORIZONS: Array<{ value: CareerGoalHorizon; label: string }> = [
+  { value: "30_days", label: "30 days" },
+  { value: "90_days", label: "90 days" },
+  { value: "six_months", label: "6 months" },
+  { value: "year", label: "1 year" },
+];
+
 export function createCareerGoal(title: string): CareerGoal {
   const now = new Date().toISOString();
   return {
