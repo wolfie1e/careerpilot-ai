@@ -142,3 +142,15 @@ export function careerGoalTagCounts(goals: CareerGoal[]): Record<string, number>
     return counts;
   }, {});
 }
+
+export function normalizeCareerGoal(goal: Partial<CareerGoal>): CareerGoal {
+  const base = createCareerGoal(goal.title || "Untitled goal");
+  return {
+    ...base,
+    ...goal,
+    progress: Math.min(100, Math.max(0, Number(goal.progress ?? base.progress))),
+    currentValue: Number(goal.currentValue ?? base.currentValue),
+    targetValue: Math.max(1, Number(goal.targetValue ?? base.targetValue)),
+    tags: goal.tags || [],
+  };
+}
