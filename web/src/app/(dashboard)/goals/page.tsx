@@ -15,6 +15,7 @@ import {
   careerGoalProgress,
   careerGoalPipelineText,
   createCareerGoal,
+  careerGoalTagCounts,
   mergeCareerGoals,
   sortCareerGoals,
   type CareerGoal,
@@ -40,6 +41,7 @@ export default function GoalsPage() {
 
   const categoryOptions: Array<CareerGoal["category"]> = ["resume", "interview", "networking", "applications", "learning", "portfolio", "other"];
   const categoryRows = Object.entries(careerGoalCategoryCounts(visibleGoals)).map(([category, count]) => ({ category, count }));
+  const tagRows = Object.entries(careerGoalTagCounts(visibleGoals)).map(([tag, count]) => ({ tag, count }));
 
   function addGoal() {
     if (!title.trim()) return;
@@ -104,6 +106,7 @@ export default function GoalsPage() {
         <button onClick={() => downloadJson("careerpilot-career-goals.json", { goals })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-career-goals.csv", visibleGoals.map((goal) => ({ title: goal.title, status: goal.status, category: goal.category, priority: goal.priority, target_date: goal.targetDate, progress: careerGoalProgress(goal), tags: goal.tags.join(", ") })))} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
         <button onClick={() => downloadCsv("careerpilot-career-goal-categories.csv", categoryRows)} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Categories</button>
+        <button onClick={() => downloadCsv("careerpilot-career-goal-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
       {visibleGoals.length === 0 ? (
