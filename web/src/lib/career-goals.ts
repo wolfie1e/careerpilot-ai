@@ -87,3 +87,15 @@ export function isCareerGoalDueSoon(goal: CareerGoal, today = new Date()): boole
   const days = Math.ceil((target.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 14;
 }
+
+export function activeCareerGoalCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status === "active").length;
+}
+
+export function completedCareerGoalCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status === "completed").length;
+}
+
+export function overdueCareerGoalCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => isCareerGoalOverdue(goal)).length;
+}
