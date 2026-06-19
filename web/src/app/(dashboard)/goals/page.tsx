@@ -20,7 +20,9 @@ import {
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [title, setTitle] = useState("");
-  const visibleGoals = sortCareerGoals(goals).filter((goal) => goal.status !== "archived");
+const visibleGoals = sortCareerGoals(goals).filter((goal) => goal.status !== "archived");
+
+  const categoryOptions: Array<CareerGoal["category"]> = ["resume", "interview", "networking", "applications", "learning", "portfolio", "other"];
 
   function addGoal() {
     if (!title.trim()) return;
@@ -66,6 +68,12 @@ export default function GoalsPage() {
                 <input value={goal.title} maxLength={140} onChange={(event) => updateGoal(goal.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
                 <select value={goal.status} onChange={(event) => updateGoal(goal.id, { status: event.target.value as CareerGoalStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 <select value={goal.horizon} onChange={(event) => updateGoal(goal.id, { horizon: event.target.value as CareerGoal["horizon"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_HORIZONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <select value={goal.category} onChange={(event) => updateGoal(goal.id, { category: event.target.value as CareerGoal["category"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
+                <select value={goal.priority} onChange={(event) => updateGoal(goal.id, { priority: event.target.value as CareerGoal["priority"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300"><option value="low">low</option><option value="medium">medium</option><option value="high">high</option></select>
+                <input type="date" value={goal.targetDate} onChange={(event) => updateGoal(goal.id, { targetDate: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={goal.metricLabel} maxLength={80} onChange={(event) => updateGoal(goal.id, { metricLabel: event.target.value })} placeholder="Metric label" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${careerGoalProgress(goal)}%` }} /></div>
             </article>
