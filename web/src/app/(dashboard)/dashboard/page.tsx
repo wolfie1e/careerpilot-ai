@@ -224,6 +224,8 @@ export default function DashboardPage() {
       weekly_reviews_completed: weeklyReviews.length,
       networking_contacts: networkingContacts.filter((contact) => !contact.archived).length,
       networking_follow_ups_due: networkingFollowUpsDue,
+      career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
+      completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
