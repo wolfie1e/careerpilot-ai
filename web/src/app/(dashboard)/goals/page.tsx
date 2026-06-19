@@ -78,6 +78,11 @@ export default function GoalsPage() {
     toast.success("Visible goals archived");
   }
 
+  function clearArchivedGoals() {
+    setGoals((current) => current.filter((goal) => goal.status !== "archived"));
+    toast.success("Archived goals cleared");
+  }
+
   async function importGoals(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -120,6 +125,7 @@ export default function GoalsPage() {
         <button onClick={pauseVisibleGoals} disabled={!visibleGoals.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Pause visible</button>
         <button onClick={archiveVisibleGoals} disabled={!visibleGoals.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
+        <button onClick={clearArchivedGoals} disabled={!goals.some((goal) => goal.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <select aria-label="Filter career goals by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as CareerGoalStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{CAREER_GOAL_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter career goals by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CareerGoal["category"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
         <select aria-label="Filter career goals by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CareerGoal["priority"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All priorities</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option></select>
