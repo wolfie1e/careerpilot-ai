@@ -53,6 +53,7 @@ const ONBOARDING_STEPS = [
   { key: "application", label: "Track a job opportunity", href: "/applications", done: false },
   { key: "review", label: "Complete a weekly review", href: "/review", done: false },
   { key: "networking", label: "Add a networking contact", href: "/networking", done: false },
+  { key: "goal", label: "Create a career goal", href: "/goals", done: false },
 ];
 
 const quickActions = [
@@ -178,6 +179,7 @@ export default function DashboardPage() {
     jobApplications.length > 0,
     weeklyReviews.length > 0,
     networkingContacts.length > 0,
+    careerGoals.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
