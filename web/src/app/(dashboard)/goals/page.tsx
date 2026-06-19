@@ -30,8 +30,9 @@ export default function GoalsPage() {
   const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<CareerGoal["category"] | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<CareerGoal["priority"] | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const visibleGoals = sortCareerGoals(goals).filter((goal) => {
-    if (goal.status === "archived") return false;
+    if (!showArchived && goal.status === "archived") return false;
     if (statusFilter !== "all" && goal.status !== statusFilter) return false;
     if (categoryFilter !== "all" && goal.category !== categoryFilter) return false;
     if (priorityFilter !== "all" && goal.priority !== priorityFilter) return false;
@@ -118,6 +119,7 @@ export default function GoalsPage() {
         <button onClick={completeVisibleGoals} disabled={!visibleGoals.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Complete visible</button>
         <button onClick={pauseVisibleGoals} disabled={!visibleGoals.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Pause visible</button>
         <button onClick={archiveVisibleGoals} disabled={!visibleGoals.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <select aria-label="Filter career goals by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as CareerGoalStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{CAREER_GOAL_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter career goals by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CareerGoal["category"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
         <select aria-label="Filter career goals by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CareerGoal["priority"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All priorities</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option></select>
