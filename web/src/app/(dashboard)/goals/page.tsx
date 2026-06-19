@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Target } from "lucide-react";
+import { Archive, Plus, Target, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -35,6 +35,11 @@ export default function GoalsPage() {
     setGoals((current) => current.map((goal) => goal.id === id ? { ...goal, ...patch, updatedAt: new Date().toISOString() } : goal));
   }
 
+  function removeGoal(id: string) {
+    setGoals((current) => current.filter((goal) => goal.id !== id));
+    toast.success("Goal deleted");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -64,10 +69,16 @@ export default function GoalsPage() {
         <div className="space-y-3">
           {visibleGoals.map((goal) => (
             <article key={goal.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-3">
-                <input value={goal.title} maxLength={140} onChange={(event) => updateGoal(goal.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <select value={goal.status} onChange={(event) => updateGoal(goal.id, { status: event.target.value as CareerGoalStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                <select value={goal.horizon} onChange={(event) => updateGoal(goal.id, { horizon: event.target.value as CareerGoal["horizon"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_HORIZONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-3">
+                  <input value={goal.title} maxLength={140} onChange={(event) => updateGoal(goal.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <select value={goal.status} onChange={(event) => updateGoal(goal.id, { status: event.target.value as CareerGoalStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  <select value={goal.horizon} onChange={(event) => updateGoal(goal.id, { horizon: event.target.value as CareerGoal["horizon"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{CAREER_GOAL_HORIZONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => updateGoal(goal.id, { status: "archived" })} aria-label={`Archive ${goal.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeGoal(goal.id)} aria-label={`Delete ${goal.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 grid gap-2 md:grid-cols-4">
                 <select value={goal.category} onChange={(event) => updateGoal(goal.id, { category: event.target.value as CareerGoal["category"] })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
