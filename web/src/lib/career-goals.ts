@@ -129,3 +129,9 @@ export function careerGoalSummary(goal: CareerGoal): string {
 export function careerGoalPipelineText(goals: CareerGoal[]): string {
   return sortCareerGoals(goals).map(careerGoalSummary).join("\n\n");
 }
+
+export function careerGoalCategoryCounts(goals: CareerGoal[]): Record<CareerGoal["category"], number> {
+  const counts: Record<CareerGoal["category"], number> = { resume: 0, interview: 0, networking: 0, applications: 0, learning: 0, portfolio: 0, other: 0 };
+  goals.forEach((goal) => { counts[goal.category || "other"] += 1; });
+  return counts;
+}
