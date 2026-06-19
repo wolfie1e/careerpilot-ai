@@ -37,7 +37,7 @@ export default function WeeklyReviewPage() {
   const networkingFollowUpsDue = networkingContacts.filter((contact) => isNetworkingFollowUpDue(contact)).length;
   const activeGoalCount = careerGoals.filter((goal) => goal.status === "active").length;
   const completion = weeklyReviewCompletion(currentReview);
-  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}`;
+  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}`;
 
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
@@ -93,8 +93,8 @@ export default function WeeklyReviewPage() {
           <h3 className="font-semibold text-white">Current reflection</h3>
           <div className="flex flex-wrap gap-2">
             <CopyButton value={reviewCopyText} label="Copy review" />
-            <button onClick={() => downloadJson("careerpilot-weekly-reviews.json", { reviews, networking: { contacts: networkingContacts.length, follow_ups_due: networkingFollowUpsDue } })} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />JSON</button>
-            <button onClick={() => downloadCsv("careerpilot-weekly-reviews.csv", orderedReviews.map((review) => ({ week_of: review.weekOf, confidence: review.confidence, wins: review.wins, challenges: review.challenges, lessons: review.lessons, next_focus: review.nextFocus, networking_contacts: networkingContacts.length, networking_follow_ups_due: networkingFollowUpsDue })))} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />CSV</button>
+            <button onClick={() => downloadJson("careerpilot-weekly-reviews.json", { reviews, networking: { contacts: networkingContacts.length, follow_ups_due: networkingFollowUpsDue }, goals: { active: activeGoalCount, total: careerGoals.length } })} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />JSON</button>
+            <button onClick={() => downloadCsv("careerpilot-weekly-reviews.csv", orderedReviews.map((review) => ({ week_of: review.weekOf, confidence: review.confidence, wins: review.wins, challenges: review.challenges, lessons: review.lessons, next_focus: review.nextFocus, networking_contacts: networkingContacts.length, networking_follow_ups_due: networkingFollowUpsDue, active_career_goals: activeGoalCount })))} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />CSV</button>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Upload className="h-3.5 w-3.5" />Import<input type="file" accept=".json,application/json" onChange={importReviews} className="sr-only" /></label>
           </div>
         </div>
