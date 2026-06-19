@@ -21,8 +21,10 @@ export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
   const visibleGoals = sortCareerGoals(goals).filter((goal) => {
     if (goal.status === "archived") return false;
+    if (statusFilter !== "all" && goal.status !== statusFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${goal.title} ${goal.description} ${goal.category} ${goal.tags.join(" ")}`.toLowerCase().includes(query);
   });
@@ -68,7 +70,10 @@ export default function GoalsPage() {
         </div>
       </div>
 
-      <label className="relative block"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+      <div className="flex flex-wrap gap-2">
+        <select aria-label="Filter career goals by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as CareerGoalStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{CAREER_GOAL_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+        <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+      </div>
 
       {visibleGoals.length === 0 ? (
         <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center"><Target className="mx-auto mb-3 h-9 w-9 text-gray-600" /><p className="text-sm text-gray-400">Add your first goal to start tracking outcomes.</p></div>
