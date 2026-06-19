@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Archive, Plus, Search, Target, Trash2 } from "lucide-react";
+import { useState, type ChangeEvent } from "react";
+import { Archive, Download, Plus, Search, Target, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -12,10 +12,12 @@ import {
   averageCareerGoalProgress,
   careerGoalProgress,
   createCareerGoal,
+  mergeCareerGoals,
   sortCareerGoals,
   type CareerGoal,
   type CareerGoalStatus,
 } from "@/lib/career-goals";
+import { downloadJson } from "@/lib/export-utils";
 
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
@@ -51,6 +53,20 @@ export default function GoalsPage() {
     toast.success("Goal deleted");
   }
 
+  async function importGoals(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { goals?: CareerGoal[] } | CareerGoal[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.goals || [];
+      setGoals((current) => mergeCareerGoals(current, incoming));
+      toast.success(`${incoming.length} goals imported`);
+    } catch {
+      toast.error("Could not import goals");
+    }
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -79,6 +95,8 @@ export default function GoalsPage() {
         <select aria-label="Filter career goals by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CareerGoal["category"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
         <select aria-label="Filter career goals by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CareerGoal["priority"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All priorities</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importGoals} className="sr-only" /></label>
+        <button onClick={() => downloadJson("careerpilot-career-goals.json", { goals })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
       </div>
 
       {visibleGoals.length === 0 ? (
