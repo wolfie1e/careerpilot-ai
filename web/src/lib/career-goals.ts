@@ -166,3 +166,7 @@ export function averageCareerGoalProgress(goals: CareerGoal[]): number {
   if (!visibleGoals.length) return 0;
   return Math.round(visibleGoals.reduce((total, goal) => total + careerGoalProgress(goal), 0) / visibleGoals.length);
 }
+
+export function nextCareerGoalFocus(goals: CareerGoal[]): CareerGoal | null {
+  return sortCareerGoals(goals).find((goal) => goal.status === "active" && careerGoalProgress(goal) < 100) || null;
+}
