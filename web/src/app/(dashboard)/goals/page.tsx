@@ -20,7 +20,7 @@ import {
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [title, setTitle] = useState("");
-const visibleGoals = sortCareerGoals(goals).filter((goal) => goal.status !== "archived");
+  const visibleGoals = sortCareerGoals(goals).filter((goal) => goal.status !== "archived");
 
   const categoryOptions: Array<CareerGoal["category"]> = ["resume", "interview", "networking", "applications", "learning", "portfolio", "other"];
 
@@ -76,6 +76,11 @@ const visibleGoals = sortCareerGoals(goals).filter((goal) => goal.status !== "ar
                 <input value={goal.metricLabel} maxLength={80} onChange={(event) => updateGoal(goal.id, { metricLabel: event.target.value })} placeholder="Metric label" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${careerGoalProgress(goal)}%` }} /></div>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <label className="text-xs text-gray-500">Current<input type="number" value={goal.currentValue} onChange={(event) => updateGoal(goal.id, { currentValue: Number(event.target.value) })} className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" /></label>
+                <label className="text-xs text-gray-500">Target<input type="number" min={1} value={goal.targetValue} onChange={(event) => updateGoal(goal.id, { targetValue: Math.max(1, Number(event.target.value)) })} className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" /></label>
+                <label className="text-xs text-gray-500">Manual progress<input type="range" min={0} max={100} value={goal.progress} onChange={(event) => updateGoal(goal.id, { progress: Number(event.target.value) })} className="mt-3 w-full accent-blue-500" /></label>
+              </div>
             </article>
           ))}
         </div>
