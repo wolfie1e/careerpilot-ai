@@ -160,3 +160,9 @@ export function mergeCareerGoals(current: CareerGoal[], incoming: CareerGoal[]):
   incoming.map(normalizeCareerGoal).forEach((goal) => byId.set(goal.id, goal));
   return sortCareerGoals([...byId.values()]);
 }
+
+export function averageCareerGoalProgress(goals: CareerGoal[]): number {
+  const visibleGoals = goals.filter((goal) => goal.status !== "archived");
+  if (!visibleGoals.length) return 0;
+  return Math.round(visibleGoals.reduce((total, goal) => total + careerGoalProgress(goal), 0) / visibleGoals.length);
+}
