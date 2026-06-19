@@ -188,6 +188,11 @@ export default function SettingsPage() {
         total_contacts: networkingContacts.length,
         active_contacts: networkingContacts.filter((contact) => !contact.archived).length,
       },
+      goals: {
+        total: careerGoals.length,
+        active: careerGoals.filter((goal) => goal.status === "active").length,
+        completed: careerGoals.filter((goal) => goal.status === "completed").length,
+      },
     });
   }
 
