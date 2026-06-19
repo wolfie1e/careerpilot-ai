@@ -154,3 +154,9 @@ export function normalizeCareerGoal(goal: Partial<CareerGoal>): CareerGoal {
     tags: goal.tags || [],
   };
 }
+
+export function mergeCareerGoals(current: CareerGoal[], incoming: CareerGoal[]): CareerGoal[] {
+  const byId = new Map(current.map((goal) => [goal.id, goal]));
+  incoming.map(normalizeCareerGoal).forEach((goal) => byId.set(goal.id, goal));
+  return sortCareerGoals([...byId.values()]);
+}
