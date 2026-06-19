@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent } from "react";
 import { Archive, Download, Plus, Search, Target, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
@@ -11,13 +12,14 @@ import {
   activeCareerGoalCount,
   averageCareerGoalProgress,
   careerGoalProgress,
+  careerGoalPipelineText,
   createCareerGoal,
   mergeCareerGoals,
   sortCareerGoals,
   type CareerGoal,
   type CareerGoalStatus,
 } from "@/lib/career-goals";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
@@ -96,7 +98,9 @@ export default function GoalsPage() {
         <select aria-label="Filter career goals by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CareerGoal["priority"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All priorities</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importGoals} className="sr-only" /></label>
+        <CopyButton value={careerGoalPipelineText(visibleGoals) || "No career goals yet"} label="Copy goals" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-career-goals.json", { goals })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
+        <button onClick={() => downloadCsv("careerpilot-career-goals.csv", visibleGoals.map((goal) => ({ title: goal.title, status: goal.status, category: goal.category, priority: goal.priority, target_date: goal.targetDate, progress: careerGoalProgress(goal), tags: goal.tags.join(", ") })))} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
       </div>
 
       {visibleGoals.length === 0 ? (
