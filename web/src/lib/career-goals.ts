@@ -99,3 +99,23 @@ export function completedCareerGoalCount(goals: CareerGoal[]): number {
 export function overdueCareerGoalCount(goals: CareerGoal[]): number {
   return goals.filter((goal) => isCareerGoalOverdue(goal)).length;
 }
+
+export function careerGoalPriorityWeight(priority: CareerGoal["priority"]): number {
+  return priority === "high" ? 3 : priority === "medium" ? 2 : 1;
+}
+
+export function sortCareerGoals(goals: CareerGoal[]): CareerGoal[] {
+  return [...goals].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    const aOverdue = isCareerGoalOverdue(a);
+    const bOverdue = isCareerGoalOverdue(b);
+    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1;
+    const priorityDifference = careerGoalPriorityWeight(b.priority) - careerGoalPriorityWeight(a.priority);
+    if (priorityDifference) return priorityDifference;
+    if (a.targetDate && b.targetDate) return a.targetDate.localeCompare(b.targetDate);
+    if (a.targetDate) return -1;
+    if (b.targetDate) return 1;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
