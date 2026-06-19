@@ -22,9 +22,11 @@ export default function GoalsPage() {
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
+  const [categoryFilter, setCategoryFilter] = useState<CareerGoal["category"] | "all">("all");
   const visibleGoals = sortCareerGoals(goals).filter((goal) => {
     if (goal.status === "archived") return false;
     if (statusFilter !== "all" && goal.status !== statusFilter) return false;
+    if (categoryFilter !== "all" && goal.category !== categoryFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${goal.title} ${goal.description} ${goal.category} ${goal.tags.join(" ")}`.toLowerCase().includes(query);
   });
@@ -72,6 +74,7 @@ export default function GoalsPage() {
 
       <div className="flex flex-wrap gap-2">
         <select aria-label="Filter career goals by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as CareerGoalStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{CAREER_GOAL_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+        <select aria-label="Filter career goals by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CareerGoal["category"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{categoryOptions.map((category) => <option key={category} value={category}>{category}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search goals" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
       </div>
 
