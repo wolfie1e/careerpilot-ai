@@ -81,6 +81,8 @@ export default function GoalsPage() {
                 <label className="text-xs text-gray-500">Target<input type="number" min={1} value={goal.targetValue} onChange={(event) => updateGoal(goal.id, { targetValue: Math.max(1, Number(event.target.value)) })} className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" /></label>
                 <label className="text-xs text-gray-500">Manual progress<input type="range" min={0} max={100} value={goal.progress} onChange={(event) => updateGoal(goal.id, { progress: Number(event.target.value) })} className="mt-3 w-full accent-blue-500" /></label>
               </div>
+              <textarea value={goal.description} maxLength={1200} onChange={(event) => updateGoal(goal.id, { description: event.target.value })} rows={2} placeholder="What will be true when this goal is done?" className="mt-3 w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              <input value={(goal.tags || []).join(", ")} onChange={(event) => updateGoal(goal.id, { tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="Tags, comma separated" className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
             </article>
           ))}
         </div>
