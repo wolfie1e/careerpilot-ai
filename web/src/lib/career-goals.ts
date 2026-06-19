@@ -75,3 +75,15 @@ export function updateCareerGoalStatus(goal: CareerGoal, status: CareerGoalStatu
     updatedAt: new Date().toISOString(),
   };
 }
+
+export function isCareerGoalOverdue(goal: CareerGoal, today = new Date()): boolean {
+  if (!goal.targetDate || goal.status === "completed" || goal.status === "archived") return false;
+  return goal.targetDate < today.toISOString().slice(0, 10);
+}
+
+export function isCareerGoalDueSoon(goal: CareerGoal, today = new Date()): boolean {
+  if (!goal.targetDate || goal.status === "completed" || goal.status === "archived") return false;
+  const target = new Date(`${goal.targetDate}T00:00:00`);
+  const days = Math.ceil((target.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 14;
+}
