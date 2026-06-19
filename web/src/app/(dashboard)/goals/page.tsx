@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import type { PlannerTask } from "@/lib/career-planner";
 import {
   CAREER_GOAL_HORIZONS,
   CAREER_GOAL_STATUSES,
@@ -25,6 +26,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
+  const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
@@ -86,6 +88,27 @@ export default function GoalsPage() {
   function duplicateGoal(goal: CareerGoal) {
     setGoals((current) => [{ ...goal, id: crypto.randomUUID(), title: `${goal.title} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), completedAt: null }, ...current]);
     toast.success("Goal duplicated");
+  }
+
+  function addGoalToPlanner(goal: CareerGoal) {
+    const task: PlannerTask = {
+      id: crypto.randomUUID(),
+      title: goal.title,
+      notes: goal.description || goal.notes,
+      priority: goal.priority,
+      category: goal.category === "applications" ? "application" : goal.category === "portfolio" ? "other" : goal.category,
+      estimateMinutes: 45,
+      resourceUrl: "",
+      status: "todo",
+      dueDate: goal.targetDate,
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      archived: false,
+      tags: ["goal", ...goal.tags],
+      recurrence: "none",
+    };
+    window.localStorage.setItem(LOCAL_STORAGE_KEYS.plannerTasks, JSON.stringify([task, ...plannerTasks]));
+    toast.success("Goal added to planner");
   }
 
   async function importGoals(event: ChangeEvent<HTMLInputElement>) {
@@ -157,6 +180,7 @@ export default function GoalsPage() {
                 </div>
                 <div className="flex gap-3">
                   <button onClick={() => duplicateGoal(goal)} aria-label={`Duplicate ${goal.title}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => addGoalToPlanner(goal)} aria-label={`Add ${goal.title} to planner`} className="text-gray-600 hover:text-violet-400"><Target className="h-4 w-4" /></button>
                   <button onClick={() => updateGoal(goal.id, { status: "archived" })} aria-label={`Archive ${goal.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeGoal(goal.id)} aria-label={`Delete ${goal.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
