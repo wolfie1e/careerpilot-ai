@@ -119,3 +119,13 @@ export function sortCareerGoals(goals: CareerGoal[]): CareerGoal[] {
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function careerGoalSummary(goal: CareerGoal): string {
+  const details = [goal.status, goal.priority, `${careerGoalProgress(goal)}%`];
+  if (goal.targetDate) details.push(`target ${goal.targetDate}`);
+  return `${goal.title} (${details.join(", ")})${goal.description ? `\n${goal.description}` : ""}`;
+}
+
+export function careerGoalPipelineText(goals: CareerGoal[]): string {
+  return sortCareerGoals(goals).map(careerGoalSummary).join("\n\n");
+}
