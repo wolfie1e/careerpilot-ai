@@ -17,6 +17,8 @@ import {
   careerGoalPipelineText,
   createCareerGoal,
   careerGoalTagCounts,
+  isCareerGoalDueSoon,
+  isCareerGoalOverdue,
   mergeCareerGoals,
   sortCareerGoals,
   type CareerGoal,
@@ -171,7 +173,7 @@ export default function GoalsPage() {
       ) : (
         <div className="space-y-3">
           {visibleGoals.map((goal) => (
-            <article key={goal.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <article key={goal.id} className={`rounded-2xl border bg-gray-900 p-5 ${isCareerGoalOverdue(goal) ? "border-rose-500/50" : isCareerGoalDueSoon(goal) ? "border-amber-500/50" : "border-gray-800"}`}>
               <div className="flex items-start gap-3">
                 <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-3">
                   <input value={goal.title} maxLength={140} onChange={(event) => updateGoal(goal.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
@@ -192,6 +194,11 @@ export default function GoalsPage() {
                 <input value={goal.metricLabel} maxLength={80} onChange={(event) => updateGoal(goal.id, { metricLabel: event.target.value })} placeholder="Metric label" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${careerGoalProgress(goal)}%` }} /></div>
+              <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                {isCareerGoalOverdue(goal) && <span className="font-semibold text-rose-300">Overdue</span>}
+                {isCareerGoalDueSoon(goal) && !isCareerGoalOverdue(goal) && <span className="font-semibold text-amber-300">Due soon</span>}
+                <span className="text-gray-500">{careerGoalProgress(goal)}% complete</span>
+              </div>
               <div className="mt-3 grid gap-2 md:grid-cols-3">
                 <label className="text-xs text-gray-500">Current<input type="number" value={goal.currentValue} onChange={(event) => updateGoal(goal.id, { currentValue: Number(event.target.value) })} className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" /></label>
                 <label className="text-xs text-gray-500">Target<input type="number" min={1} value={goal.targetValue} onChange={(event) => updateGoal(goal.id, { targetValue: Math.max(1, Number(event.target.value)) })} className="mt-1 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" /></label>
