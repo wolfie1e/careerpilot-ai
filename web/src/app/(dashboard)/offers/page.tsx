@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BriefcaseBusiness, Plus, Search } from "lucide-react";
+import { Archive, BriefcaseBusiness, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -43,6 +43,11 @@ export default function OffersPage() {
     setOffers((current) => current.map((offer) => offer.id === id ? { ...offer, ...patch, updatedAt: new Date().toISOString() } : offer));
   }
 
+  function removeOffer(id: string) {
+    setOffers((current) => current.filter((offer) => offer.id !== id));
+    toast.success("Offer deleted");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -78,10 +83,16 @@ export default function OffersPage() {
         <div className="space-y-3">
           {visibleOffers.map((offer) => (
             <article key={offer.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-3">
-                <input value={offer.company} maxLength={120} onChange={(event) => updateOffer(offer.id, { company: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <input value={offer.role} maxLength={120} onChange={(event) => updateOffer(offer.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
-                <select value={offer.status} onChange={(event) => updateOffer(offer.id, { status: event.target.value as OfferStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{OFFER_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-3">
+                  <input value={offer.company} maxLength={120} onChange={(event) => updateOffer(offer.id, { company: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <input value={offer.role} maxLength={120} onChange={(event) => updateOffer(offer.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <select value={offer.status} onChange={(event) => updateOffer(offer.id, { status: event.target.value as OfferStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{OFFER_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => updateOffer(offer.id, { status: "archived" })} aria-label={`Archive ${offer.company}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeOffer(offer.id)} aria-label={`Delete ${offer.company}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 grid gap-2 md:grid-cols-4">
                 <input type="number" value={offer.baseSalary} onChange={(event) => updateOffer(offer.id, { baseSalary: Number(event.target.value) })} placeholder="Base salary" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
