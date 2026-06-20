@@ -86,6 +86,11 @@ export default function OffersPage() {
                 <input type="number" value={offer.commuteMinutes} onChange={(event) => updateOffer(offer.id, { commuteMinutes: Number(event.target.value) })} placeholder="Commute minutes" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input value={(offer.tags || []).join(", ")} onChange={(event) => updateOffer(offer.id, { tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="Tags" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-3 md:grid-cols-4">
+                {(["growthScore", "cultureScore", "learningScore", "stabilityScore"] as const).map((field) => (
+                  <label key={field} className="text-xs text-gray-500">{field.replace("Score", "")}: {offer[field]}/10<input type="range" min={1} max={10} value={offer[field]} onChange={(event) => updateOffer(offer.id, { [field]: Number(event.target.value) })} className="mt-2 w-full accent-blue-500" /></label>
+                ))}
+              </div>
               <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}</div>
             </article>
           ))}
