@@ -251,6 +251,10 @@ export default function DashboardPage() {
         .filter((goal) => goal.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_offers: offerComparisons
+        .filter((offer) => offer.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
     });
   }
 
