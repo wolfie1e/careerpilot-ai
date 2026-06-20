@@ -92,3 +92,11 @@ export function isOfferDeadlineOverdue(offer: OfferComparison, today = new Date(
   if (!offer.decisionDeadline || ["accepted", "declined", "archived"].includes(offer.status)) return false;
   return offer.decisionDeadline < today.toISOString().slice(0, 10);
 }
+
+export function activeOfferCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length;
+}
+
+export function negotiatingOfferCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status === "negotiating").length;
+}
