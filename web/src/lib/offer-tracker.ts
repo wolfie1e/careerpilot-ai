@@ -64,3 +64,7 @@ export function createOfferComparison(company: string, role = ""): OfferComparis
     tags: [],
   };
 }
+
+export function offerTotalCompensation(offer: OfferComparison): number {
+  return (offer.baseSalary || 0) + (offer.bonus || 0) + (offer.equity || 0) + (offer.benefitsValue || 0) + (offer.signingBonus || 0);
+}
