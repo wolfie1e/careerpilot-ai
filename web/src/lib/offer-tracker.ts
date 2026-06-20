@@ -80,3 +80,10 @@ export function offerDecisionScore(offer: OfferComparison): number {
   const commutePenalty = Math.min(20, Math.round((offer.commuteMinutes || 0) / 6));
   return Math.max(0, Math.round((compensationScore * 0.45) + (offerQualityScore(offer) * 0.55) - commutePenalty));
 }
+
+export function isOfferDeadlineSoon(offer: OfferComparison, today = new Date()): boolean {
+  if (!offer.decisionDeadline || ["accepted", "declined", "archived"].includes(offer.status)) return false;
+  const deadline = new Date(`${offer.decisionDeadline}T00:00:00`);
+  const days = Math.ceil((deadline.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
