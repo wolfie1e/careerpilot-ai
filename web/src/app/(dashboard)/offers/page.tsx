@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Archive, BriefcaseBusiness, Plus, Search, Trash2 } from "lucide-react";
+import { useState, type ChangeEvent } from "react";
+import { Archive, BriefcaseBusiness, Download, Plus, Search, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -16,6 +16,7 @@ import {
   type OfferComparison,
   type OfferStatus,
 } from "@/lib/offer-tracker";
+import { downloadJson } from "@/lib/export-utils";
 
 export default function OffersPage() {
   const [offers, setOffers] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
@@ -53,6 +54,20 @@ export default function OffersPage() {
     toast.success("Offer duplicated");
   }
 
+  async function importOffers(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { offers?: OfferComparison[] } | OfferComparison[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.offers || [];
+      setOffers((current) => mergeOfferComparisons(current, incoming));
+      toast.success(`${incoming.length} offers imported`);
+    } catch {
+      toast.error("Could not import offers");
+    }
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -80,6 +95,8 @@ export default function OffersPage() {
         <select aria-label="Filter offers by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as OfferStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{OFFER_STATUSES.filter((status) => status.value !== "archived").map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}</select>
         <select aria-label="Filter offers by work mode" value={workModeFilter} onChange={(event) => setWorkModeFilter(event.target.value as OfferComparison["workMode"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All modes</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">Onsite</option><option value="">Unset mode</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search offers" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importOffers} className="sr-only" /></label>
+        <button onClick={() => downloadJson("careerpilot-offers.json", { offers })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
       </div>
 
       {visibleOffers.length === 0 ? (
@@ -135,3 +152,4 @@ export default function OffersPage() {
     </div>
   );
 }
+  mergeOfferComparisons,
