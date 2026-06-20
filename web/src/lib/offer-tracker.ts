@@ -87,3 +87,8 @@ export function isOfferDeadlineSoon(offer: OfferComparison, today = new Date()):
   const days = Math.ceil((deadline.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 7;
 }
+
+export function isOfferDeadlineOverdue(offer: OfferComparison, today = new Date()): boolean {
+  if (!offer.decisionDeadline || ["accepted", "declined", "archived"].includes(offer.status)) return false;
+  return offer.decisionDeadline < today.toISOString().slice(0, 10);
+}
