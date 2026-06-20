@@ -74,3 +74,9 @@ export function offerQualityScore(offer: OfferComparison): number {
     .reduce((total, value) => total + Math.min(10, Math.max(0, value || 0)), 0);
   return Math.round((score / 40) * 100);
 }
+
+export function offerDecisionScore(offer: OfferComparison): number {
+  const compensationScore = Math.min(100, Math.round(offerTotalCompensation(offer) / 2_500));
+  const commutePenalty = Math.min(20, Math.round((offer.commuteMinutes || 0) / 6));
+  return Math.max(0, Math.round((compensationScore * 0.45) + (offerQualityScore(offer) * 0.55) - commutePenalty));
+}
