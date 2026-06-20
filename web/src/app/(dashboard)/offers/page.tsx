@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BriefcaseBusiness, Plus } from "lucide-react";
+import { BriefcaseBusiness, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -20,7 +20,12 @@ import {
 export default function OffersPage() {
   const [offers, setOffers] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [company, setCompany] = useState("");
-  const visibleOffers = sortOffers(offers).filter((offer) => offer.status !== "archived");
+  const [search, setSearch] = useState("");
+  const visibleOffers = sortOffers(offers).filter((offer) => {
+    if (offer.status === "archived") return false;
+    const query = search.trim().toLowerCase();
+    return !query || `${offer.company} ${offer.role} ${offer.location} ${offer.notes} ${offer.tags.join(" ")}`.toLowerCase().includes(query);
+  });
   const topOffer = bestOffer(offers);
 
   function addOffer() {
@@ -56,6 +61,8 @@ export default function OffersPage() {
           <button onClick={addOffer} disabled={!company.trim()} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"><Plus className="h-4 w-4" />Add offer</button>
         </div>
       </div>
+
+      <label className="relative block"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search offers" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
 
       {visibleOffers.length === 0 ? (
         <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center"><BriefcaseBusiness className="mx-auto mb-3 h-9 w-9 text-gray-600" /><p className="text-sm text-gray-400">Add your first offer to compare compensation and tradeoffs.</p></div>
