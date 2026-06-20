@@ -13,6 +13,7 @@ import {
   createOfferComparison,
   offerDecisionScore,
   offerPipelineText,
+  offerTagCounts,
   offerTotalCompensation,
   sortOffers,
   type OfferComparison,
@@ -34,6 +35,7 @@ export default function OffersPage() {
     return !query || `${offer.company} ${offer.role} ${offer.location} ${offer.notes} ${offer.tags.join(" ")}`.toLowerCase().includes(query);
   });
   const topOffer = bestOffer(offers);
+  const tagRows = Object.entries(offerTagCounts(visibleOffers)).map(([tag, count]) => ({ tag, count }));
 
   function addOffer() {
     if (!company.trim()) return;
@@ -101,6 +103,7 @@ export default function OffersPage() {
         <CopyButton value={offerPipelineText(visibleOffers) || "No offers yet"} label="Copy offers" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-offers.json", { offers })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
         <button onClick={() => downloadCsv("careerpilot-offers.csv", visibleOffers.map((offer) => ({ company: offer.company, role: offer.role, status: offer.status, total_compensation: offerTotalCompensation(offer), decision_score: offerDecisionScore(offer), deadline: offer.decisionDeadline, work_mode: offer.workMode, tags: offer.tags.join(", ") })))} disabled={!visibleOffers.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-offer-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
       {visibleOffers.length === 0 ? (
