@@ -68,6 +68,12 @@ export default function OffersPage() {
                 <input value={offer.role} maxLength={120} onChange={(event) => updateOffer(offer.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <select value={offer.status} onChange={(event) => updateOffer(offer.id, { status: event.target.value as OfferStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{OFFER_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <input type="number" value={offer.baseSalary} onChange={(event) => updateOffer(offer.id, { baseSalary: Number(event.target.value) })} placeholder="Base salary" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" value={offer.bonus} onChange={(event) => updateOffer(offer.id, { bonus: Number(event.target.value) })} placeholder="Bonus" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" value={offer.equity} onChange={(event) => updateOffer(offer.id, { equity: Number(event.target.value) })} placeholder="Equity value" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" value={offer.signingBonus} onChange={(event) => updateOffer(offer.id, { signingBonus: Number(event.target.value) })} placeholder="Signing bonus" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
               <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}</div>
             </article>
           ))}
