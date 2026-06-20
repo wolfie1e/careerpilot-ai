@@ -141,3 +141,9 @@ export function normalizeOfferComparison(offer: Partial<OfferComparison>): Offer
     tags: offer.tags || [],
   };
 }
+
+export function mergeOfferComparisons(current: OfferComparison[], incoming: OfferComparison[]): OfferComparison[] {
+  const byId = new Map(current.map((offer) => [offer.id, offer]));
+  incoming.map(normalizeOfferComparison).forEach((offer) => byId.set(offer.id, offer));
+  return sortOffers([...byId.values()]);
+}
