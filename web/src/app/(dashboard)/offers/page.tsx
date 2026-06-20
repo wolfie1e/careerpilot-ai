@@ -48,6 +48,11 @@ export default function OffersPage() {
     toast.success("Offer deleted");
   }
 
+  function duplicateOffer(offer: OfferComparison) {
+    setOffers((current) => [{ ...offer, id: crypto.randomUUID(), company: `${offer.company} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Offer duplicated");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -90,6 +95,7 @@ export default function OffersPage() {
                   <select value={offer.status} onChange={(event) => updateOffer(offer.id, { status: event.target.value as OfferStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{OFFER_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 </div>
                 <div className="flex gap-3">
+                  <button onClick={() => duplicateOffer(offer)} aria-label={`Duplicate ${offer.company}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
                   <button onClick={() => updateOffer(offer.id, { status: "archived" })} aria-label={`Archive ${offer.company}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeOffer(offer.id)} aria-label={`Delete ${offer.company}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
