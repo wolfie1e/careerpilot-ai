@@ -11,6 +11,7 @@ import {
   activeOfferCount,
   bestOffer,
   createOfferComparison,
+  isOfferDeadlineOverdue,
   offerDecisionScore,
   offerPipelineText,
   offerTagCounts,
@@ -111,7 +112,7 @@ export default function OffersPage() {
       ) : (
         <div className="space-y-3">
           {visibleOffers.map((offer) => (
-            <article key={offer.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <article key={offer.id} className={`rounded-2xl border bg-gray-900 p-5 ${isOfferDeadlineOverdue(offer) ? "border-rose-500/50" : "border-gray-800"}`}>
               <div className="flex items-start gap-3">
                 <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-3">
                   <input value={offer.company} maxLength={120} onChange={(event) => updateOffer(offer.id, { company: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
@@ -151,7 +152,7 @@ export default function OffersPage() {
                 <textarea value={offer.notes} maxLength={1600} onChange={(event) => updateOffer(offer.id, { notes: event.target.value })} rows={2} placeholder="Decision notes" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                 <textarea value={offer.negotiationNotes} maxLength={1600} onChange={(event) => updateOffer(offer.id, { negotiationNotes: event.target.value })} rows={2} placeholder="Negotiation notes" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
               </div>
-              <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}</div>
+              <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}{isOfferDeadlineOverdue(offer) ? " · deadline overdue" : ""}</div>
             </article>
           ))}
         </div>
