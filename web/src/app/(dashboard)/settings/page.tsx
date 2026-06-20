@@ -195,6 +195,11 @@ export default function SettingsPage() {
         active: careerGoals.filter((goal) => goal.status === "active").length,
         completed: careerGoals.filter((goal) => goal.status === "completed").length,
       },
+      offers: {
+        total: offerComparisons.length,
+        active: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
+        accepted: offerComparisons.filter((offer) => offer.status === "accepted").length,
+      },
     });
   }
 
