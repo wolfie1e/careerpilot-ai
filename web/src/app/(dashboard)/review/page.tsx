@@ -21,6 +21,7 @@ import {
 } from "@/lib/weekly-review";
 import { isNetworkingFollowUpDue, type NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
+import type { OfferComparison } from "@/lib/offer-tracker";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
@@ -28,6 +29,7 @@ export default function WeeklyReviewPage() {
   const [applications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
   const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const [careerGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
+  const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
@@ -36,6 +38,7 @@ export default function WeeklyReviewPage() {
   const upcomingInterviews = applications.filter((application) => application.interviewAt && new Date(application.interviewAt) >= new Date()).length;
   const networkingFollowUpsDue = networkingContacts.filter((contact) => isNetworkingFollowUpDue(contact)).length;
   const activeGoalCount = careerGoals.filter((goal) => goal.status === "active").length;
+  const activeOfferCount = offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length;
   const completion = weeklyReviewCompletion(currentReview);
   const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}`;
 
@@ -76,7 +79,7 @@ export default function WeeklyReviewPage() {
         <p className="mt-1 text-sm text-gray-400">Review the week of {currentWeek} and choose what matters next.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
@@ -84,6 +87,7 @@ export default function WeeklyReviewPage() {
           ["Upcoming interviews", upcomingInterviews],
           ["Networking due", networkingFollowUpsDue],
           ["Active goals", activeGoalCount],
+          ["Active offers", activeOfferCount],
           ["Avg confidence", `${averageReviewConfidence(reviews)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
