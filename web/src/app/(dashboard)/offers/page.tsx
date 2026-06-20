@@ -18,7 +18,7 @@ import {
   type OfferComparison,
   type OfferStatus,
 } from "@/lib/offer-tracker";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 export default function OffersPage() {
   const [offers, setOffers] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
@@ -100,6 +100,7 @@ export default function OffersPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importOffers} className="sr-only" /></label>
         <CopyButton value={offerPipelineText(visibleOffers) || "No offers yet"} label="Copy offers" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-offers.json", { offers })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
+        <button onClick={() => downloadCsv("careerpilot-offers.csv", visibleOffers.map((offer) => ({ company: offer.company, role: offer.role, status: offer.status, total_compensation: offerTotalCompensation(offer), decision_score: offerDecisionScore(offer), deadline: offer.decisionDeadline, work_mode: offer.workMode, tags: offer.tags.join(", ") })))} disabled={!visibleOffers.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
       </div>
 
       {visibleOffers.length === 0 ? (
