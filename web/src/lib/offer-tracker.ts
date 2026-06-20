@@ -27,6 +27,14 @@ export interface OfferComparison {
   tags: string[];
 }
 
+export const OFFER_STATUSES: Array<{ value: OfferStatus; label: string }> = [
+  { value: "draft", label: "Draft" },
+  { value: "negotiating", label: "Negotiating" },
+  { value: "accepted", label: "Accepted" },
+  { value: "declined", label: "Declined" },
+  { value: "archived", label: "Archived" },
+];
+
 export function createOfferComparison(company: string, role = ""): OfferComparison {
   const now = new Date().toISOString();
   return {
