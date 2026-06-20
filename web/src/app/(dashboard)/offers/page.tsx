@@ -22,9 +22,11 @@ export default function OffersPage() {
   const [company, setCompany] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<OfferStatus | "all">("all");
+  const [workModeFilter, setWorkModeFilter] = useState<OfferComparison["workMode"] | "all">("all");
   const visibleOffers = sortOffers(offers).filter((offer) => {
     if (offer.status === "archived") return false;
     if (statusFilter !== "all" && offer.status !== statusFilter) return false;
+    if (workModeFilter !== "all" && offer.workMode !== workModeFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${offer.company} ${offer.role} ${offer.location} ${offer.notes} ${offer.tags.join(" ")}`.toLowerCase().includes(query);
   });
@@ -66,6 +68,7 @@ export default function OffersPage() {
 
       <div className="flex flex-wrap gap-2">
         <select aria-label="Filter offers by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as OfferStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{OFFER_STATUSES.filter((status) => status.value !== "archived").map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}</select>
+        <select aria-label="Filter offers by work mode" value={workModeFilter} onChange={(event) => setWorkModeFilter(event.target.value as OfferComparison["workMode"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All modes</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">Onsite</option><option value="">Unset mode</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search offers" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
       </div>
 
