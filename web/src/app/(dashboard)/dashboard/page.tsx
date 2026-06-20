@@ -68,6 +68,7 @@ const quickActions = [
   { href: "/review", icon: NotebookPen, label: "Complete Weekly Review", desc: "Reflect and choose the next focus", color: "text-violet-400" },
   { href: "/networking", icon: UsersRound, label: "Manage Network", desc: "Track contacts and warm follow-ups", color: "text-cyan-400" },
   { href: "/goals", icon: Target, label: "Set Career Goals", desc: "Track outcomes and deadlines", color: "text-rose-400" },
+  { href: "/offers", icon: BriefcaseBusiness, label: "Compare Offers", desc: "Evaluate compensation tradeoffs", color: "text-amber-400" },
 ];
 
 function getGreeting() {
