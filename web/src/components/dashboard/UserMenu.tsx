@@ -79,6 +79,12 @@ export default function UserMenu() {
             </Link>
           </DropdownMenu.Item>
           <DropdownMenu.Item asChild>
+            <Link href="/offers" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
+              <BriefcaseBusiness className="w-3.5 h-3.5" />
+              Offers
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item asChild>
             <Link href="/review" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
               <NotebookPen className="w-3.5 h-3.5" />
               Weekly Review

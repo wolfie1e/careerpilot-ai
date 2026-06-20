@@ -13,6 +13,7 @@ import {
   createOfferComparison,
   isOfferDeadlineSoon,
   isOfferDeadlineOverdue,
+  mergeOfferComparisons,
   offerDecisionScore,
   offerPipelineText,
   offerTagCounts,
@@ -190,4 +191,3 @@ export default function OffersPage() {
     </div>
   );
 }
-  mergeOfferComparisons,
