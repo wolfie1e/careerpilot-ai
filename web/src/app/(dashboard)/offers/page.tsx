@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent } from "react";
 import { Archive, BriefcaseBusiness, Download, Plus, Search, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
@@ -11,6 +12,7 @@ import {
   bestOffer,
   createOfferComparison,
   offerDecisionScore,
+  offerPipelineText,
   offerTotalCompensation,
   sortOffers,
   type OfferComparison,
@@ -96,6 +98,7 @@ export default function OffersPage() {
         <select aria-label="Filter offers by work mode" value={workModeFilter} onChange={(event) => setWorkModeFilter(event.target.value as OfferComparison["workMode"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All modes</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">Onsite</option><option value="">Unset mode</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search offers" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importOffers} className="sr-only" /></label>
+        <CopyButton value={offerPipelineText(visibleOffers) || "No offers yet"} label="Copy offers" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-offers.json", { offers })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
       </div>
 
