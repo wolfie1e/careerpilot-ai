@@ -106,3 +106,14 @@ export function bestOffer(offers: OfferComparison[]): OfferComparison | null {
     .filter((offer) => offer.status !== "archived")
     .sort((a, b) => offerDecisionScore(b) - offerDecisionScore(a))[0] || null;
 }
+
+export function sortOffers(offers: OfferComparison[]): OfferComparison[] {
+  return [...offers].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    const aOverdue = isOfferDeadlineOverdue(a);
+    const bOverdue = isOfferDeadlineOverdue(b);
+    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1;
+    return offerDecisionScore(b) - offerDecisionScore(a) || b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
