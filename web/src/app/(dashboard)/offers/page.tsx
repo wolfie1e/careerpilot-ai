@@ -91,6 +91,10 @@ export default function OffersPage() {
                   <label key={field} className="text-xs text-gray-500">{field.replace("Score", "")}: {offer[field]}/10<input type="range" min={1} max={10} value={offer[field]} onChange={(event) => updateOffer(offer.id, { [field]: Number(event.target.value) })} className="mt-2 w-full accent-blue-500" /></label>
                 ))}
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                <textarea value={offer.notes} maxLength={1600} onChange={(event) => updateOffer(offer.id, { notes: event.target.value })} rows={2} placeholder="Decision notes" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+                <textarea value={offer.negotiationNotes} maxLength={1600} onChange={(event) => updateOffer(offer.id, { negotiationNotes: event.target.value })} rows={2} placeholder="Negotiation notes" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              </div>
               <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}</div>
             </article>
           ))}
