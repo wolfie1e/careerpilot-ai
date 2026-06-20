@@ -231,6 +231,8 @@ export default function DashboardPage() {
       networking_follow_ups_due: networkingFollowUpsDue,
       career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
       completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
+      active_offers: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
+      negotiating_offers: offerComparisons.filter((offer) => offer.status === "negotiating").length,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
