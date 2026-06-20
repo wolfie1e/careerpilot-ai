@@ -100,3 +100,9 @@ export function activeOfferCount(offers: OfferComparison[]): number {
 export function negotiatingOfferCount(offers: OfferComparison[]): number {
   return offers.filter((offer) => offer.status === "negotiating").length;
 }
+
+export function bestOffer(offers: OfferComparison[]): OfferComparison | null {
+  return offers
+    .filter((offer) => offer.status !== "archived")
+    .sort((a, b) => offerDecisionScore(b) - offerDecisionScore(a))[0] || null;
+}
