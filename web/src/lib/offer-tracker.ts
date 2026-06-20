@@ -117,3 +117,13 @@ export function sortOffers(offers: OfferComparison[]): OfferComparison[] {
     return offerDecisionScore(b) - offerDecisionScore(a) || b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function offerSummary(offer: OfferComparison): string {
+  const details = [offer.status, `${offer.currency} ${offerTotalCompensation(offer).toLocaleString()}`, `score ${offerDecisionScore(offer)}`];
+  if (offer.decisionDeadline) details.push(`deadline ${offer.decisionDeadline}`);
+  return `${offer.company} — ${offer.role || "Offer"} (${details.join(", ")})`;
+}
+
+export function offerPipelineText(offers: OfferComparison[]): string {
+  return sortOffers(offers).map(offerSummary).join("\n");
+}
