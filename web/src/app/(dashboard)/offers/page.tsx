@@ -74,6 +74,12 @@ export default function OffersPage() {
     }
   }
 
+  function acceptVisibleOffers() {
+    const visibleIds = new Set(visibleOffers.map((offer) => offer.id));
+    setOffers((current) => current.map((offer) => visibleIds.has(offer.id) ? { ...offer, status: "accepted", updatedAt: new Date().toISOString() } : offer));
+    toast.success("Visible offers accepted");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -98,6 +104,7 @@ export default function OffersPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={acceptVisibleOffers} disabled={!visibleOffers.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Accept visible</button>
         <select aria-label="Filter offers by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as OfferStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{OFFER_STATUSES.filter((status) => status.value !== "archived").map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}</select>
         <select aria-label="Filter offers by work mode" value={workModeFilter} onChange={(event) => setWorkModeFilter(event.target.value as OfferComparison["workMode"] | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All modes</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">Onsite</option><option value="">Unset mode</option></select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search offers" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
