@@ -127,3 +127,17 @@ export function offerSummary(offer: OfferComparison): string {
 export function offerPipelineText(offers: OfferComparison[]): string {
   return sortOffers(offers).map(offerSummary).join("\n");
 }
+
+export function normalizeOfferComparison(offer: Partial<OfferComparison>): OfferComparison {
+  const base = createOfferComparison(offer.company || "Unknown company", offer.role || "");
+  return {
+    ...base,
+    ...offer,
+    baseSalary: Number(offer.baseSalary ?? base.baseSalary),
+    bonus: Number(offer.bonus ?? base.bonus),
+    equity: Number(offer.equity ?? base.equity),
+    benefitsValue: Number(offer.benefitsValue ?? base.benefitsValue),
+    signingBonus: Number(offer.signingBonus ?? base.signingBonus),
+    tags: offer.tags || [],
+  };
+}
