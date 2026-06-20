@@ -401,6 +401,11 @@ export default function DashboardPage() {
           <div className="mt-1 text-2xl font-bold text-white">{careerGoals.filter((goal) => goal.status === "active").length}</div>
           <div className="mt-1 text-xs text-gray-500">{careerGoals.filter((goal) => goal.status === "completed").length} completed</div>
         </Link>
+        <Link href="/offers" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-amber-700/60">
+          <div className="text-xs text-gray-500">Active offers</div>
+          <div className="mt-1 text-2xl font-bold text-white">{offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length}</div>
+          <div className="mt-1 text-xs text-gray-500">{offerComparisons.filter((offer) => offer.status === "negotiating").length} negotiating</div>
+        </Link>
       </div>
 
       {!loading && (
