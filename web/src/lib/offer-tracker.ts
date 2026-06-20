@@ -68,3 +68,9 @@ export function createOfferComparison(company: string, role = ""): OfferComparis
 export function offerTotalCompensation(offer: OfferComparison): number {
   return (offer.baseSalary || 0) + (offer.bonus || 0) + (offer.equity || 0) + (offer.benefitsValue || 0) + (offer.signingBonus || 0);
 }
+
+export function offerQualityScore(offer: OfferComparison): number {
+  const score = [offer.growthScore, offer.cultureScore, offer.learningScore, offer.stabilityScore]
+    .reduce((total, value) => total + Math.min(10, Math.max(0, value || 0)), 0);
+  return Math.round((score / 40) * 100);
+}
