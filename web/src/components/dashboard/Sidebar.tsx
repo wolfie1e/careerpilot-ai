@@ -19,6 +19,7 @@ const navItems = [
   { href: "/planner", icon: ListChecks, label: "Planner" },
   { href: "/goals", icon: Target, label: "Goals" },
   { href: "/applications", icon: BriefcaseBusiness, label: "Applications" },
+  { href: "/offers", icon: BriefcaseBusiness, label: "Offers" },
   { href: "/review", icon: NotebookPen, label: "Weekly Review" },
   { href: "/networking", icon: UsersRound, label: "Networking" },
   { href: "/analytics", icon: BarChart2, label: "Analytics" },
