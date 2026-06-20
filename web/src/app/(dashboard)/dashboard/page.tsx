@@ -55,6 +55,7 @@ const ONBOARDING_STEPS = [
   { key: "review", label: "Complete a weekly review", href: "/review", done: false },
   { key: "networking", label: "Add a networking contact", href: "/networking", done: false },
   { key: "goal", label: "Create a career goal", href: "/goals", done: false },
+  { key: "offer", label: "Compare an offer", href: "/offers", done: false },
 ];
 
 const quickActions = [
@@ -183,6 +184,7 @@ export default function DashboardPage() {
     weeklyReviews.length > 0,
     networkingContacts.length > 0,
     careerGoals.length > 0,
+    offerComparisons.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
