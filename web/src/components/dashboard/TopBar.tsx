@@ -13,6 +13,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
   "/planner": { title: "Career Planner", subtitle: "Turn career insights into focused actions", actionHref: "/applications", actionLabel: "Applications", actionIcon: ListChecks },
   "/goals": { title: "Career Goals", subtitle: "Track outcomes, progress, and deadlines", actionHref: "/planner", actionLabel: "Planner", actionIcon: Target },
   "/applications": { title: "Applications", subtitle: "Track opportunities and follow-ups", actionHref: "/planner", actionLabel: "Planner", actionIcon: BriefcaseBusiness },
+  "/offers": { title: "Offer Tracker", subtitle: "Compare compensation and decision tradeoffs", actionHref: "/applications", actionLabel: "Applications", actionIcon: BriefcaseBusiness },
   "/review": { title: "Weekly Review", subtitle: "Reflect, learn, and choose the next focus", actionHref: "/planner", actionLabel: "Planner", actionIcon: NotebookPen },
   "/networking": { title: "Networking", subtitle: "Manage relationships and follow-ups", actionHref: "/planner", actionLabel: "Planner", actionIcon: UsersRound },
   "/analytics": { title: "Analytics", subtitle: "Score trends and skill progress", actionHref: "/dashboard", actionLabel: "Overview", actionIcon: LayoutDashboard },
