@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound } from "lucide-react";
+import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -71,6 +71,7 @@ const quickActions = [
   { href: "/networking", icon: UsersRound, label: "Manage Network", desc: "Track contacts and warm follow-ups", color: "text-cyan-400" },
   { href: "/goals", icon: Target, label: "Set Career Goals", desc: "Track outcomes and deadlines", color: "text-rose-400" },
   { href: "/offers", icon: BriefcaseBusiness, label: "Compare Offers", desc: "Evaluate compensation tradeoffs", color: "text-amber-400" },
+  { href: "/achievements", icon: Medal, label: "Capture Achievements", desc: "Build reusable STAR stories", color: "text-fuchsia-400" },
 ];
 
 function getGreeting() {
