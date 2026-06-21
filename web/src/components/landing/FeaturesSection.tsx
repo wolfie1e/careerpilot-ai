@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound } from "lucide-react";
+import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
 
 const features = [
   {
@@ -75,6 +75,12 @@ const features = [
     color: "cyan",
     title: "Networking Follow-ups",
     description: "Manage contacts, relationship strength, warm follow-ups, tags, LinkedIn links, and planner-ready outreach tasks.",
+  },
+  {
+    icon: Medal,
+    color: "rose",
+    title: "Achievement Vault",
+    description: "Capture reusable STAR stories with metrics, tags, confidence, and export-ready interview examples.",
   },
 ];
 
