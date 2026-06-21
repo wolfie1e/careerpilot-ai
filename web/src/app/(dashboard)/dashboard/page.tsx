@@ -19,6 +19,7 @@ import type { WeeklyReview } from "@/lib/weekly-review";
 import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
+import type { AchievementStory } from "@/lib/achievement-vault";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -151,6 +152,7 @@ export default function DashboardPage() {
   const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const [careerGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
+  const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
 
   useEffect(() => {
     fetchDashboardData()
