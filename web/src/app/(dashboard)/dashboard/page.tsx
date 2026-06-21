@@ -238,6 +238,8 @@ export default function DashboardPage() {
       completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
       active_offers: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
       negotiating_offers: offerComparisons.filter((offer) => offer.status === "negotiating").length,
+      achievement_stories: achievementStories.filter((story) => story.status !== "archived").length,
+      ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
