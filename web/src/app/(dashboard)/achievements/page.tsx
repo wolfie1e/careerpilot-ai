@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Medal, Plus } from "lucide-react";
+import { Medal, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -21,7 +21,12 @@ import {
 export default function AchievementsPage() {
   const [stories, setStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [title, setTitle] = useState("");
-  const visibleStories = sortAchievementStories(stories).filter((story) => story.status !== "archived");
+  const [search, setSearch] = useState("");
+  const visibleStories = sortAchievementStories(stories).filter((story) => {
+    if (story.status === "archived") return false;
+    const query = search.trim().toLowerCase();
+    return !query || `${story.title} ${story.situation} ${story.action} ${story.result} ${story.metric} ${story.tags.join(" ")}`.toLowerCase().includes(query);
+  });
 
   function addStory() {
     if (!title.trim()) return;
@@ -56,6 +61,8 @@ export default function AchievementsPage() {
           <button onClick={addStory} disabled={!title.trim()} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"><Plus className="h-4 w-4" />Add story</button>
         </div>
       </div>
+
+      <label className="relative block"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search achievement stories" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
 
       {visibleStories.length === 0 ? (
         <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center"><Medal className="mx-auto mb-3 h-9 w-9 text-gray-600" /><p className="text-sm text-gray-400">Add your first achievement to build a reusable story bank.</p></div>
