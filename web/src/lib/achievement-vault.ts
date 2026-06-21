@@ -120,3 +120,19 @@ export function achievementTagCounts(stories: AchievementStory[]): Record<string
     return counts;
   }, {});
 }
+
+export function normalizeAchievementStory(story: Partial<AchievementStory>): AchievementStory {
+  const base = createAchievementStory(story.title || "Untitled achievement");
+  return {
+    ...base,
+    ...story,
+    confidence: Math.min(10, Math.max(1, Number(story.confidence ?? base.confidence))),
+    tags: story.tags || [],
+  };
+}
+
+export function mergeAchievementStories(current: AchievementStory[], incoming: AchievementStory[]): AchievementStory[] {
+  const byId = new Map(current.map((story) => [story.id, story]));
+  incoming.map(normalizeAchievementStory).forEach((story) => byId.set(story.id, story));
+  return sortAchievementStories([...byId.values()]);
+}
