@@ -22,8 +22,10 @@ export default function AchievementsPage() {
   const [stories, setStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | "all">("all");
   const visibleStories = sortAchievementStories(stories).filter((story) => {
     if (story.status === "archived") return false;
+    if (categoryFilter !== "all" && story.category !== categoryFilter) return false;
     const query = search.trim().toLowerCase();
     return !query || `${story.title} ${story.situation} ${story.action} ${story.result} ${story.metric} ${story.tags.join(" ")}`.toLowerCase().includes(query);
   });
@@ -62,7 +64,10 @@ export default function AchievementsPage() {
         </div>
       </div>
 
-      <label className="relative block"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search achievement stories" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+      <div className="flex flex-wrap gap-2">
+        <select aria-label="Filter achievements by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AchievementCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+        <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search achievement stories" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
+      </div>
 
       {visibleStories.length === 0 ? (
         <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center"><Medal className="mx-auto mb-3 h-9 w-9 text-gray-600" /><p className="text-sm text-gray-400">Add your first achievement to build a reusable story bank.</p></div>
