@@ -87,6 +87,11 @@ export default function AchievementsPage() {
     toast.success("Archived stories cleared");
   }
 
+  function duplicateStory(story: AchievementStory) {
+    setStories((current) => [{ ...story, id: crypto.randomUUID(), title: `${story.title} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Story duplicated");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -139,6 +144,7 @@ export default function AchievementsPage() {
                   <select value={story.status} onChange={(event) => updateStory(story.id, { status: event.target.value as AchievementStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 </div>
                 <div className="flex gap-3">
+                  <button onClick={() => duplicateStory(story)} aria-label={`Duplicate ${story.title}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
                   <button onClick={() => updateStory(story.id, { favorite: !story.favorite })} aria-label={`Favorite ${story.title}`} className={story.favorite ? "text-amber-300" : "text-gray-600 hover:text-amber-300"}><Star className="h-4 w-4" /></button>
                   <button onClick={() => updateStory(story.id, { status: "archived" })} aria-label={`Archive ${story.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
                   <button onClick={() => removeStory(story.id)} aria-label={`Delete ${story.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
