@@ -29,8 +29,9 @@ export default function AchievementsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | "all">("all");
   const [statusFilter, setStatusFilter] = useState<AchievementStatus | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const visibleStories = sortAchievementStories(stories).filter((story) => {
-    if (story.status === "archived") return false;
+    if (!showArchived && story.status === "archived") return false;
     if (categoryFilter !== "all" && story.category !== categoryFilter) return false;
     if (statusFilter !== "all" && story.status !== statusFilter) return false;
     const query = search.trim().toLowerCase();
@@ -69,6 +70,12 @@ export default function AchievementsPage() {
     }
   }
 
+  function markVisibleReady() {
+    const visibleIds = new Set(visibleStories.map((story) => story.id));
+    setStories((current) => current.map((story) => visibleIds.has(story.id) ? { ...story, status: "ready", updatedAt: new Date().toISOString() } : story));
+    toast.success("Visible stories marked ready");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -93,6 +100,8 @@ export default function AchievementsPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={markVisibleReady} disabled={!visibleStories.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Ready visible</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <select aria-label="Filter achievements by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AchievementCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter achievements by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AchievementStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{ACHIEVEMENT_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search achievement stories" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
