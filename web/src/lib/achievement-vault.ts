@@ -68,3 +68,13 @@ export function achievementCompletion(story: AchievementStory): number {
 export function isAchievementReady(story: AchievementStory): boolean {
   return story.status === "ready" || achievementCompletion(story) >= 85;
 }
+
+export function achievementStarText(story: AchievementStory): string {
+  return [
+    `Situation: ${story.situation || "Not captured"}`,
+    `Task: ${story.task || "Not captured"}`,
+    `Action: ${story.action || "Not captured"}`,
+    `Result: ${story.result || "Not captured"}`,
+    story.metric ? `Metric: ${story.metric}` : "",
+  ].filter(Boolean).join("\n");
+}
