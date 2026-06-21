@@ -57,6 +57,7 @@ const ONBOARDING_STEPS = [
   { key: "networking", label: "Add a networking contact", href: "/networking", done: false },
   { key: "goal", label: "Create a career goal", href: "/goals", done: false },
   { key: "offer", label: "Compare an offer", href: "/offers", done: false },
+  { key: "achievement", label: "Capture an achievement", href: "/achievements", done: false },
 ];
 
 const quickActions = [
@@ -188,6 +189,7 @@ export default function DashboardPage() {
     networkingContacts.length > 0,
     careerGoals.length > 0,
     offerComparisons.length > 0,
+    achievementStories.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
