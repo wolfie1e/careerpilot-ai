@@ -99,3 +99,11 @@ export function achievementSummary(story: AchievementStory): string {
 export function achievementPipelineText(stories: AchievementStory[]): string {
   return sortAchievementStories(stories).map((story) => `${achievementSummary(story)}\n${achievementStarText(story)}`).join("\n\n");
 }
+
+export function readyAchievementCount(stories: AchievementStory[]): number {
+  return stories.filter((story) => isAchievementReady(story) && story.status !== "archived").length;
+}
+
+export function favoriteAchievementCount(stories: AchievementStory[]): number {
+  return stories.filter((story) => story.favorite && story.status !== "archived").length;
+}
