@@ -76,6 +76,12 @@ export default function AchievementsPage() {
     toast.success("Visible stories marked ready");
   }
 
+  function archiveVisibleStories() {
+    const visibleIds = new Set(visibleStories.map((story) => story.id));
+    setStories((current) => current.map((story) => visibleIds.has(story.id) ? { ...story, status: "archived", updatedAt: new Date().toISOString() } : story));
+    toast.success("Visible stories archived");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -101,6 +107,7 @@ export default function AchievementsPage() {
 
       <div className="flex flex-wrap gap-2">
         <button onClick={markVisibleReady} disabled={!visibleStories.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Ready visible</button>
+        <button onClick={archiveVisibleStories} disabled={!visibleStories.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <select aria-label="Filter achievements by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AchievementCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter achievements by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AchievementStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{ACHIEVEMENT_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
