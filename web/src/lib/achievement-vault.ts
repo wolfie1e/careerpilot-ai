@@ -69,6 +69,17 @@ export function isAchievementReady(story: AchievementStory): boolean {
   return story.status === "ready" || achievementCompletion(story) >= 85;
 }
 
+export function sortAchievementStories(stories: AchievementStory[]): AchievementStory[] {
+  return [...stories].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
+    const completionDifference = achievementCompletion(b) - achievementCompletion(a);
+    if (completionDifference) return completionDifference;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
+
 export function achievementStarText(story: AchievementStory): string {
   return [
     `Situation: ${story.situation || "Not captured"}`,
@@ -77,4 +88,14 @@ export function achievementStarText(story: AchievementStory): string {
     `Result: ${story.result || "Not captured"}`,
     story.metric ? `Metric: ${story.metric}` : "",
   ].filter(Boolean).join("\n");
+}
+
+export function achievementSummary(story: AchievementStory): string {
+  const details = [story.category, story.status, `${achievementCompletion(story)}%`];
+  if (story.metric) details.push(story.metric);
+  return `${story.title} (${details.join(", ")})`;
+}
+
+export function achievementPipelineText(stories: AchievementStory[]): string {
+  return sortAchievementStories(stories).map((story) => `${achievementSummary(story)}\n${achievementStarText(story)}`).join("\n\n");
 }
