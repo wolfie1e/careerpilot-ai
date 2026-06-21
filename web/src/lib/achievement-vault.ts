@@ -22,6 +22,21 @@ export interface AchievementStory {
   tags: string[];
 }
 
+export const ACHIEVEMENT_CATEGORIES: Array<{ value: AchievementCategory; label: string }> = [
+  { value: "leadership", label: "Leadership" },
+  { value: "technical", label: "Technical" },
+  { value: "impact", label: "Impact" },
+  { value: "collaboration", label: "Collaboration" },
+  { value: "growth", label: "Growth" },
+  { value: "other", label: "Other" },
+];
+
+export const ACHIEVEMENT_STATUSES: Array<{ value: AchievementStatus; label: string }> = [
+  { value: "draft", label: "Draft" },
+  { value: "ready", label: "Ready" },
+  { value: "archived", label: "Archived" },
+];
+
 export function createAchievementStory(title: string): AchievementStory {
   const now = new Date().toISOString();
   return {
