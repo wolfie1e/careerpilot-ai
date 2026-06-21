@@ -77,6 +77,12 @@ export default function AchievementsPage() {
                 <textarea value={story.action} maxLength={1600} onChange={(event) => updateStory(story.id, { action: event.target.value })} rows={2} placeholder="Action" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                 <textarea value={story.result} maxLength={1600} onChange={(event) => updateStory(story.id, { result: event.target.value })} rows={2} placeholder="Result" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <input value={story.metric} maxLength={160} onChange={(event) => updateStory(story.id, { metric: event.target.value })} placeholder="Metric or outcome" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={story.role} maxLength={120} onChange={(event) => updateStory(story.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={story.company} maxLength={120} onChange={(event) => updateStory(story.id, { company: event.target.value })} placeholder="Company" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={story.date} onChange={(event) => updateStory(story.id, { date: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
