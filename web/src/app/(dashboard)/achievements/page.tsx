@@ -82,6 +82,11 @@ export default function AchievementsPage() {
     toast.success("Visible stories archived");
   }
 
+  function clearArchivedStories() {
+    setStories((current) => current.filter((story) => story.status !== "archived"));
+    toast.success("Archived stories cleared");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -109,6 +114,7 @@ export default function AchievementsPage() {
         <button onClick={markVisibleReady} disabled={!visibleStories.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Ready visible</button>
         <button onClick={archiveVisibleStories} disabled={!visibleStories.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
+        <button onClick={clearArchivedStories} disabled={!stories.some((story) => story.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <select aria-label="Filter achievements by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AchievementCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All categories</option>{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <select aria-label="Filter achievements by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AchievementStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 text-sm text-gray-300"><option value="all">All statuses</option>{ACHIEVEMENT_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search achievement stories" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
