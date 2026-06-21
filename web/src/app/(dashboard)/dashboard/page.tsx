@@ -417,6 +417,11 @@ export default function DashboardPage() {
           <div className="mt-1 text-2xl font-bold text-white">{offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length}</div>
           <div className="mt-1 text-xs text-gray-500">{offerComparisons.filter((offer) => offer.status === "negotiating").length} negotiating</div>
         </Link>
+        <Link href="/achievements" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-fuchsia-700/60">
+          <div className="text-xs text-gray-500">Achievement stories</div>
+          <div className="mt-1 text-2xl font-bold text-white">{achievementStories.filter((story) => story.status !== "archived").length}</div>
+          <div className="mt-1 text-xs text-gray-500">{achievementStories.filter((story) => story.status === "ready").length} ready</div>
+        </Link>
       </div>
 
       {!loading && (
