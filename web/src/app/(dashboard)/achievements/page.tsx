@@ -9,8 +9,10 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   ACHIEVEMENT_CATEGORIES,
   ACHIEVEMENT_STATUSES,
+  achievementCategoryCounts,
   achievementCompletion,
   achievementPipelineText,
+  achievementTagCounts,
   createAchievementStory,
   favoriteAchievementCount,
   readyAchievementCount,
@@ -19,7 +21,7 @@ import {
   type AchievementStatus,
   type AchievementStory,
 } from "@/lib/achievement-vault";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 export default function AchievementsPage() {
   const [stories, setStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
@@ -34,6 +36,8 @@ export default function AchievementsPage() {
     const query = search.trim().toLowerCase();
     return !query || `${story.title} ${story.situation} ${story.action} ${story.result} ${story.metric} ${story.tags.join(" ")}`.toLowerCase().includes(query);
   });
+  const categoryRows = Object.entries(achievementCategoryCounts(visibleStories)).map(([category, count]) => ({ category, count }));
+  const tagRows = Object.entries(achievementTagCounts(visibleStories)).map(([tag, count]) => ({ tag, count }));
 
   function addStory() {
     if (!title.trim()) return;
@@ -95,6 +99,9 @@ export default function AchievementsPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importStories} className="sr-only" /></label>
         <CopyButton value={achievementPipelineText(visibleStories) || "No achievement stories yet"} label="Copy stories" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-achievement-stories.json", { stories })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-stories.csv", visibleStories.map((story) => ({ title: story.title, category: story.category, status: story.status, metric: story.metric, confidence: story.confidence, completion: achievementCompletion(story), tags: story.tags.join(", ") })))} disabled={!visibleStories.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-categories.csv", categoryRows)} disabled={!categoryRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Categories</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
       {visibleStories.length === 0 ? (
