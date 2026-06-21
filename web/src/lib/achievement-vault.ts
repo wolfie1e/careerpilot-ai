@@ -59,3 +59,12 @@ export function createAchievementStory(title: string): AchievementStory {
     tags: [],
   };
 }
+
+export function achievementCompletion(story: AchievementStory): number {
+  const fields = [story.title, story.situation, story.task, story.action, story.result, story.metric];
+  return Math.round((fields.filter((field) => field.trim()).length / fields.length) * 100);
+}
+
+export function isAchievementReady(story: AchievementStory): boolean {
+  return story.status === "ready" || achievementCompletion(story) >= 85;
+}
