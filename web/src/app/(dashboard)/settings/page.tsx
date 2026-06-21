@@ -202,6 +202,11 @@ export default function SettingsPage() {
         active: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
         accepted: offerComparisons.filter((offer) => offer.status === "accepted").length,
       },
+      achievements: {
+        total: achievementStories.length,
+        ready: achievementStories.filter((story) => story.status === "ready").length,
+        favorites: achievementStories.filter((story) => story.favorite).length,
+      },
     });
   }
 
