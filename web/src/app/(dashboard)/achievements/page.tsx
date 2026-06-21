@@ -73,6 +73,10 @@ export default function AchievementsPage() {
                 <textarea value={story.situation} maxLength={1200} onChange={(event) => updateStory(story.id, { situation: event.target.value })} rows={2} placeholder="Situation" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
                 <textarea value={story.task} maxLength={1200} onChange={(event) => updateStory(story.id, { task: event.target.value })} rows={2} placeholder="Task" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
               </div>
+              <div className="mt-2 grid gap-2 md:grid-cols-2">
+                <textarea value={story.action} maxLength={1600} onChange={(event) => updateStory(story.id, { action: event.target.value })} rows={2} placeholder="Action" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+                <textarea value={story.result} maxLength={1600} onChange={(event) => updateStory(story.id, { result: event.target.value })} rows={2} placeholder="Result" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              </div>
             </article>
           ))}
         </div>
