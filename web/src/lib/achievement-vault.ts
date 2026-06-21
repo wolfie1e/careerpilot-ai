@@ -107,3 +107,16 @@ export function readyAchievementCount(stories: AchievementStory[]): number {
 export function favoriteAchievementCount(stories: AchievementStory[]): number {
   return stories.filter((story) => story.favorite && story.status !== "archived").length;
 }
+
+export function achievementCategoryCounts(stories: AchievementStory[]): Record<AchievementCategory, number> {
+  const counts: Record<AchievementCategory, number> = { leadership: 0, technical: 0, impact: 0, collaboration: 0, growth: 0, other: 0 };
+  stories.forEach((story) => { counts[story.category || "other"] += 1; });
+  return counts;
+}
+
+export function achievementTagCounts(stories: AchievementStory[]): Record<string, number> {
+  return stories.flatMap((story) => story.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
