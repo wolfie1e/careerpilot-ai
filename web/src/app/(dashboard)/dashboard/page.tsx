@@ -262,6 +262,10 @@ export default function DashboardPage() {
         .filter((offer) => offer.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_achievement_stories: achievementStories
+        .filter((story) => story.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
     });
   }
 
