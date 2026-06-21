@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Medal, Plus, Search } from "lucide-react";
+import { Archive, Medal, Plus, Search, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -43,6 +43,11 @@ export default function AchievementsPage() {
     setStories((current) => current.map((story) => story.id === id ? { ...story, ...patch, updatedAt: new Date().toISOString() } : story));
   }
 
+  function removeStory(id: string) {
+    setStories((current) => current.filter((story) => story.id !== id));
+    toast.success("Achievement deleted");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -78,10 +83,17 @@ export default function AchievementsPage() {
         <div className="space-y-3">
           {visibleStories.map((story) => (
             <article key={story.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-3">
-                <input value={story.title} maxLength={140} onChange={(event) => updateStory(story.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <select value={story.category} onChange={(event) => updateStory(story.id, { category: event.target.value as AchievementCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                <select value={story.status} onChange={(event) => updateStory(story.id, { status: event.target.value as AchievementStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-3">
+                  <input value={story.title} maxLength={140} onChange={(event) => updateStory(story.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <select value={story.category} onChange={(event) => updateStory(story.id, { category: event.target.value as AchievementCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  <select value={story.status} onChange={(event) => updateStory(story.id, { status: event.target.value as AchievementStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => updateStory(story.id, { favorite: !story.favorite })} aria-label={`Favorite ${story.title}`} className={story.favorite ? "text-amber-300" : "text-gray-600 hover:text-amber-300"}><Star className="h-4 w-4" /></button>
+                  <button onClick={() => updateStory(story.id, { status: "archived" })} aria-label={`Archive ${story.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeStory(story.id)} aria-label={`Delete ${story.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${achievementCompletion(story)}%` }} /></div>
               <div className="mt-3 grid gap-2 md:grid-cols-2">
