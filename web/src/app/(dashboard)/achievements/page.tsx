@@ -83,6 +83,10 @@ export default function AchievementsPage() {
                 <input value={story.company} maxLength={120} onChange={(event) => updateStory(story.id, { company: event.target.value })} placeholder="Company" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="date" value={story.date} onChange={(event) => updateStory(story.id, { date: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-[1fr_220px]">
+                <input value={(story.tags || []).join(", ")} onChange={(event) => updateStory(story.id, { tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="Tags, comma separated" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <label className="text-xs text-gray-500">Confidence {story.confidence}/10<input type="range" min={1} max={10} value={story.confidence} onChange={(event) => updateStory(story.id, { confidence: Number(event.target.value) })} className="mt-2 w-full accent-blue-500" /></label>
+              </div>
             </article>
           ))}
         </div>
