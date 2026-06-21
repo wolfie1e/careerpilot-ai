@@ -69,6 +69,10 @@ export default function AchievementsPage() {
                 <select value={story.status} onChange={(event) => updateStory(story.id, { status: event.target.value as AchievementStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{ACHIEVEMENT_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${achievementCompletion(story)}%` }} /></div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                <textarea value={story.situation} maxLength={1200} onChange={(event) => updateStory(story.id, { situation: event.target.value })} rows={2} placeholder="Situation" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+                <textarea value={story.task} maxLength={1200} onChange={(event) => updateStory(story.id, { task: event.target.value })} rows={2} placeholder="Task" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              </div>
             </article>
           ))}
         </div>
