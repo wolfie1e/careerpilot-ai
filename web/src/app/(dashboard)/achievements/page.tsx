@@ -15,6 +15,7 @@ import {
   achievementTagCounts,
   createAchievementStory,
   favoriteAchievementCount,
+  mergeAchievementStories,
   readyAchievementCount,
   sortAchievementStories,
   type AchievementCategory,
@@ -176,4 +177,3 @@ export default function AchievementsPage() {
     </div>
   );
 }
-  mergeAchievementStories,
