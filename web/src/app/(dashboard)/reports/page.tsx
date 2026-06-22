@@ -10,6 +10,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { formatBytes, safeFilename } from "@/lib/utils";
+import type { AchievementStory } from "@/lib/achievement-vault";
 
 interface Resume {
   id: string;
@@ -30,6 +31,7 @@ export default function ReportsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [reportsView, setReportsView] = useLocalStorage<ReportsView>(LOCAL_STORAGE_KEYS.reportsView, { search: "", sort: "newest" });
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
+  const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
@@ -101,6 +103,7 @@ export default function ReportsPage() {
       file_size: resume.file_size,
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId,
+      ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
     })));
   }
   function exportManifestCsv() {
