@@ -104,3 +104,25 @@ export function isCertificationExpiring(record: CertificationRecord, dateKey = t
   renewalStart.setDate(renewalStart.getDate() - record.renewalWindowDays);
   return renewalStart.toISOString().slice(0, 10) <= dateKey;
 }
+
+const CERTIFICATION_STATUS_WEIGHT: Record<CertificationStatus, number> = {
+  studying: 0,
+  planned: 1,
+  earned: 2,
+  expired: 3,
+  archived: 4,
+};
+
+export function sortCertificationRecords(records: CertificationRecord[]): CertificationRecord[] {
+  return [...records].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
+    if (isCertificationExpiring(a) !== isCertificationExpiring(b)) return isCertificationExpiring(a) ? -1 : 1;
+    const statusDifference = CERTIFICATION_STATUS_WEIGHT[a.status] - CERTIFICATION_STATUS_WEIGHT[b.status];
+    if (statusDifference) return statusDifference;
+    const dateA = a.targetDate || a.expiresAt || a.updatedAt;
+    const dateB = b.targetDate || b.expiresAt || b.updatedAt;
+    return dateA.localeCompare(dateB);
+  });
+}
