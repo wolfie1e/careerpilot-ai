@@ -184,6 +184,19 @@ export function certificationTotalCost(records: CertificationRecord[]): number {
     .reduce((total, record) => total + Math.max(0, record.cost || 0), 0);
 }
 
+export function nextCertificationDate(records: CertificationRecord[]): { title: string; date: string; type: "target" | "renewal" } | null {
+  const upcoming = records
+    .filter((record) => record.status !== "archived")
+    .flatMap((record) => [
+      record.targetDate ? { title: record.title, date: record.targetDate, type: "target" as const } : null,
+      record.expiresAt ? { title: record.title, date: record.expiresAt, type: "renewal" as const } : null,
+    ])
+    .filter((item): item is { title: string; date: string; type: "target" | "renewal" } => Boolean(item))
+    .filter((item) => item.date >= todayDateKey())
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return upcoming[0] || null;
+}
+
 export function normalizeCertificationRecord(record: Partial<CertificationRecord>): CertificationRecord {
   const base = createCertificationRecord(record.title || "Untitled certification");
   return {
