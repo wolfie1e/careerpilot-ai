@@ -148,3 +148,26 @@ export function certificationPlanText(records: CertificationRecord[]): string {
     })
     .join("\n\n");
 }
+
+export function certificationCategoryCounts(records: CertificationRecord[]): Record<CertificationCategory, number> {
+  const counts = CERTIFICATION_CATEGORIES.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<CertificationCategory, number>);
+  records.forEach((record) => {
+    counts[record.category || "other"] += 1;
+  });
+  return counts;
+}
+
+export function certificationSkillCounts(records: CertificationRecord[]): Record<string, number> {
+  return records.flatMap((record) => record.skills || []).reduce<Record<string, number>>((counts, skill) => {
+    counts[skill] = (counts[skill] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+export function certificationStatusCounts(records: CertificationRecord[]): Record<CertificationStatus, number> {
+  const counts = CERTIFICATION_STATUSES.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<CertificationStatus, number>);
+  records.forEach((record) => {
+    counts[record.status || "planned"] += 1;
+  });
+  return counts;
+}
