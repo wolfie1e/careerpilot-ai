@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
+import { Award, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
 
 const features = [
   {
@@ -81,6 +81,12 @@ const features = [
     color: "rose",
     title: "Achievement Vault",
     description: "Capture reusable STAR stories with metrics, tags, confidence, and export-ready interview examples.",
+  },
+  {
+    icon: Award,
+    color: "cyan",
+    title: "Certification Tracker",
+    description: "Plan certification attempts, track study progress, store credential proof, and monitor renewal windows.",
   },
 ];
 
