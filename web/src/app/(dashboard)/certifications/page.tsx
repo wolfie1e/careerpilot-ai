@@ -30,8 +30,9 @@ export default function CertificationsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<CertificationCategory | "all">("all");
   const [statusFilter, setStatusFilter] = useState<CertificationStatus | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const visibleRecords = sortCertificationRecords(records).filter((record) => {
-    if (record.status === "archived") return false;
+    if (!showArchived && record.status === "archived") return false;
     if (categoryFilter !== "all" && record.category !== categoryFilter) return false;
     if (statusFilter !== "all" && record.status !== statusFilter) return false;
     const query = search.trim().toLowerCase();
@@ -65,6 +66,17 @@ export default function CertificationsPage() {
 
   function exportRecords() {
     downloadJson("careerpilot-certifications.json", { certifications: records });
+  }
+
+  function updateVisibleStatus(status: CertificationStatus) {
+    const visibleIds = new Set(visibleRecords.map((record) => record.id));
+    setRecords((current) => current.map((record) => visibleIds.has(record.id) ? { ...record, status, updatedAt: new Date().toISOString() } : record));
+    toast.success(`Visible certifications marked ${status}`);
+  }
+
+  function clearArchivedRecords() {
+    setRecords((current) => current.filter((record) => record.status !== "archived"));
+    toast.success("Archived certifications cleared");
   }
 
   return (
@@ -106,6 +118,11 @@ export default function CertificationsPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={() => updateVisibleStatus("studying")} disabled={!visibleRecords.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Studying visible</button>
+        <button onClick={() => updateVisibleStatus("earned")} disabled={!visibleRecords.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Earned visible</button>
+        <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleRecords.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
+        <button onClick={clearArchivedRecords} disabled={!records.some((record) => record.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <select aria-label="Filter certifications by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CertificationCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All categories</option>
           {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
