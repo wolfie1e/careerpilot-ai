@@ -30,8 +30,9 @@ export default function LearningPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<LearningResourceType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<LearningResourceStatus | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const visibleResources = sortLearningResources(resources).filter((resource) => {
-    if (resource.status === "archived") return false;
+    if (!showArchived && resource.status === "archived") return false;
     if (typeFilter !== "all" && resource.type !== typeFilter) return false;
     if (statusFilter !== "all" && resource.status !== statusFilter) return false;
     const query = search.trim().toLowerCase();
@@ -60,6 +61,17 @@ export default function LearningPage() {
     } catch {
       toast.error("Could not import learning resources");
     }
+  }
+
+  function updateVisibleStatus(status: LearningResourceStatus) {
+    const visibleIds = new Set(visibleResources.map((resource) => resource.id));
+    setResources((current) => current.map((resource) => visibleIds.has(resource.id) ? { ...resource, status, updatedAt: new Date().toISOString() } : resource));
+    toast.success(`Visible resources marked ${status.replace("_", " ")}`);
+  }
+
+  function clearArchivedResources() {
+    setResources((current) => current.filter((resource) => resource.status !== "archived"));
+    toast.success("Archived learning resources cleared");
   }
 
   return (
@@ -94,6 +106,11 @@ export default function LearningPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={() => updateVisibleStatus("in_progress")} disabled={!visibleResources.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Start visible</button>
+        <button onClick={() => updateVisibleStatus("completed")} disabled={!visibleResources.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Complete visible</button>
+        <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleResources.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
+        <button onClick={clearArchivedResources} disabled={!resources.some((resource) => resource.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <select aria-label="Filter learning resources by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as LearningResourceType | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All types</option>
           {LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
