@@ -99,3 +99,34 @@ export function isLearningResourceDueSoon(resource: LearningResource, today = ne
   const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 7;
 }
+
+const LEARNING_PRIORITY_WEIGHT: Record<LearningResourcePriority, number> = {
+  high: 3,
+  medium: 2,
+  low: 1,
+};
+
+const LEARNING_STATUS_WEIGHT: Record<LearningResourceStatus, number> = {
+  in_progress: 0,
+  planned: 1,
+  paused: 2,
+  completed: 3,
+  archived: 4,
+};
+
+export function sortLearningResources(resources: LearningResource[]): LearningResource[] {
+  return [...resources].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
+    if (isLearningResourceOverdue(a) !== isLearningResourceOverdue(b)) return isLearningResourceOverdue(a) ? -1 : 1;
+    const priorityDifference = LEARNING_PRIORITY_WEIGHT[b.priority] - LEARNING_PRIORITY_WEIGHT[a.priority];
+    if (priorityDifference) return priorityDifference;
+    const statusDifference = LEARNING_STATUS_WEIGHT[a.status] - LEARNING_STATUS_WEIGHT[b.status];
+    if (statusDifference) return statusDifference;
+    if (a.targetDate && b.targetDate) return a.targetDate.localeCompare(b.targetDate);
+    if (a.targetDate) return -1;
+    if (b.targetDate) return 1;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
