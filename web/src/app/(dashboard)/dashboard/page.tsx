@@ -59,6 +59,7 @@ const ONBOARDING_STEPS = [
   { key: "goal", label: "Create a career goal", href: "/goals", done: false },
   { key: "offer", label: "Compare an offer", href: "/offers", done: false },
   { key: "achievement", label: "Capture an achievement", href: "/achievements", done: false },
+  { key: "certification", label: "Plan a certification", href: "/certifications", done: false },
 ];
 
 const quickActions = [
@@ -193,6 +194,7 @@ export default function DashboardPage() {
     careerGoals.length > 0,
     offerComparisons.length > 0,
     achievementStories.length > 0,
+    certificationRecords.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
