@@ -17,6 +17,7 @@ import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
+import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 
 type FieldErrors = Record<string, string>;
 
@@ -37,6 +38,7 @@ export default function SettingsPage() {
   const [careerGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
+  const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -206,6 +208,12 @@ export default function SettingsPage() {
         total: achievementStories.length,
         ready: achievementStories.filter((story) => story.status === "ready").length,
         favorites: achievementStories.filter((story) => story.favorite).length,
+      },
+      certifications: {
+        total: certificationRecords.length,
+        earned: certificationRecords.filter((record) => record.status === "earned").length,
+        studying: certificationRecords.filter((record) => record.status === "studying").length,
+        renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
       },
     });
   }
