@@ -11,6 +11,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { formatBytes, safeFilename } from "@/lib/utils";
 import type { AchievementStory } from "@/lib/achievement-vault";
+import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 
 interface Resume {
   id: string;
@@ -32,6 +33,7 @@ export default function ReportsPage() {
   const [reportsView, setReportsView] = useLocalStorage<ReportsView>(LOCAL_STORAGE_KEYS.reportsView, { search: "", sort: "newest" });
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
+  const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
@@ -104,6 +106,8 @@ export default function ReportsPage() {
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId,
       ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
+      earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
+      certification_renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
     })));
   }
   function exportManifestCsv() {
