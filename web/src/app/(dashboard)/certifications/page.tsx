@@ -22,6 +22,7 @@ import {
   isCertificationExpired,
   isCertificationExpiring,
   mergeCertificationRecords,
+  nextCertificationDate,
   sortCertificationRecords,
   type CertificationCategory,
   type CertificationRecord,
@@ -48,6 +49,7 @@ export default function CertificationsPage() {
   const categoryRows = Object.entries(certificationCategoryCounts(visibleRecords)).map(([category, count]) => ({ category, count }));
   const skillRows = Object.entries(certificationSkillCounts(visibleRecords)).map(([skill, count]) => ({ skill, count }));
   const certificationBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(certificationTotalCost(records));
+  const nextDate = nextCertificationDate(records);
 
   function addRecord() {
     if (!title.trim()) return;
@@ -142,6 +144,12 @@ export default function CertificationsPage() {
           </div>
         ))}
       </div>
+
+      {nextDate && (
+        <div className="rounded-2xl border border-cyan-800/50 bg-cyan-950/20 p-4 text-sm text-cyan-100">
+          Next certification {nextDate.type === "renewal" ? "renewal" : "target"}: <span className="font-semibold">{nextDate.title}</span> on {nextDate.date}
+        </div>
+      )}
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
