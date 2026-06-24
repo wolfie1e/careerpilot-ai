@@ -7,6 +7,8 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   createCertificationRecord,
+  isCertificationActive,
+  isCertificationExpiring,
   sortCertificationRecords,
   type CertificationRecord,
 } from "@/lib/certification-tracker";
@@ -15,6 +17,8 @@ export default function CertificationsPage() {
   const [records, setRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [title, setTitle] = useState("");
   const visibleRecords = sortCertificationRecords(records).filter((record) => record.status !== "archived");
+  const activeRecords = records.filter((record) => isCertificationActive(record));
+  const expiringRecords = records.filter((record) => isCertificationExpiring(record));
 
   function addRecord() {
     if (!title.trim()) return;
@@ -28,6 +32,20 @@ export default function CertificationsPage() {
       <div>
         <h2 className="text-xl font-semibold text-white">Certification Tracker</h2>
         <p className="mt-1 text-sm text-gray-400">Plan, earn, and renew credentials that support your next role.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          ["Tracked", records.filter((record) => record.status !== "archived").length],
+          ["Studying", records.filter((record) => record.status === "studying").length],
+          ["Active", activeRecords.length],
+          ["Renewals", expiringRecords.length],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+            <div className="text-xs text-gray-500">{label}</div>
+            <div className="mt-1 text-xl font-bold text-white">{value}</div>
+          </div>
+        ))}
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
