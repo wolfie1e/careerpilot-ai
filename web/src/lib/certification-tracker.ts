@@ -126,3 +126,25 @@ export function sortCertificationRecords(records: CertificationRecord[]): Certif
     return dateA.localeCompare(dateB);
   });
 }
+
+export function certificationSummary(record: CertificationRecord): string {
+  const details = [record.provider, record.examCode, record.status, `${certificationProgress(record)}%`].filter(Boolean);
+  if (record.expiresAt) details.push(`expires ${record.expiresAt}`);
+  return `${record.title}${details.length ? ` (${details.join(", ")})` : ""}`;
+}
+
+export function certificationPlanText(records: CertificationRecord[]): string {
+  return sortCertificationRecords(records)
+    .map((record) => {
+      const lines = [
+        certificationSummary(record),
+        record.targetDate ? `Target date: ${record.targetDate}` : "",
+        record.issuedAt ? `Issued: ${record.issuedAt}` : "",
+        record.credentialUrl ? `Credential: ${record.credentialUrl}` : "",
+        record.notes ? `Notes: ${record.notes}` : "",
+        record.skills.length ? `Skills: ${record.skills.join(", ")}` : "",
+      ];
+      return lines.filter(Boolean).join("\n");
+    })
+    .join("\n\n");
+}
