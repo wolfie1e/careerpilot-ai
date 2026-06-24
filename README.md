@@ -27,6 +27,7 @@ Upload your resume, match it with job descriptions, improve your ATS score, and 
 | 📚 Interview History | All sessions with per-question STAR breakdown and model answer hints |
 | 📈 Analytics Dashboard | Score trends (ATS, interview, match), skill radar, interview type donut, readiness score |
 | 📥 Report Export | Download PDF or Markdown reports with score summary and recommendations |
+| 🏅 Certification Tracker | Plan exam attempts, track study progress, store credential proof, and monitor renewal windows |
 | 🔒 Route Protection | JWT auth with httpOnly cookies and server-side middleware |
 | ⚡ Rate Limiting | AI-heavy endpoints limited to 10 req/min per IP |
 
