@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
+import { Award, FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -20,6 +20,7 @@ import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
+import type { CertificationRecord } from "@/lib/certification-tracker";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -155,6 +156,7 @@ export default function DashboardPage() {
   const [careerGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
   const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
+  const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
 
   useEffect(() => {
     fetchDashboardData()
