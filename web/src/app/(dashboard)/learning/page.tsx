@@ -6,13 +6,16 @@ import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   LEARNING_RESOURCE_STATUSES,
   LEARNING_RESOURCE_TYPES,
   createLearningResource,
   isLearningResourceDueSoon,
   isLearningResourceOverdue,
+  learningProgress,
+  learningTagCounts,
+  learningTypeCounts,
   learningPlanText,
   mergeLearningResources,
   sortLearningResources,
@@ -35,6 +38,8 @@ export default function LearningPage() {
     return !query || `${resource.title} ${resource.provider} ${resource.skillArea} ${resource.targetRole} ${resource.notes} ${resource.tags.join(" ")}`.toLowerCase().includes(query);
   });
   const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
+  const typeRows = Object.entries(learningTypeCounts(visibleResources)).map(([type, count]) => ({ type, count }));
+  const tagRows = Object.entries(learningTagCounts(visibleResources)).map(([tag, count]) => ({ tag, count }));
 
   function addResource() {
     if (!title.trim()) return;
@@ -110,6 +115,29 @@ export default function LearningPage() {
         <button onClick={() => downloadJson("careerpilot-learning-resources.json", { resources })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
           <Download className="h-4 w-4" />
           JSON
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-resources.csv", visibleResources.map((resource) => ({
+          title: resource.title,
+          provider: resource.provider,
+          type: resource.type,
+          status: resource.status,
+          priority: resource.priority,
+          progress: learningProgress(resource),
+          skill_area: resource.skillArea,
+          target_role: resource.targetRole,
+          target_date: resource.targetDate,
+          tags: resource.tags.join(", "),
+        })))} disabled={!visibleResources.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          CSV
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-types.csv", typeRows)} disabled={!typeRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Types
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Tags
         </button>
       </div>
 
