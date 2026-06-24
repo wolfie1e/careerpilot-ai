@@ -96,6 +96,18 @@ export default function CertificationsPage() {
     setShowArchived(false);
   }
 
+  function expireStaleRecords() {
+    let changed = 0;
+    setRecords((current) => current.map((record) => {
+      if (record.status === "earned" && isCertificationExpired(record)) {
+        changed += 1;
+        return { ...record, status: "expired", updatedAt: new Date().toISOString() };
+      }
+      return record;
+    }));
+    toast.success(changed ? `${changed} certifications marked expired` : "No stale certifications found");
+  }
+
   function updateRecord(id: string, patch: Partial<CertificationRecord>) {
     setRecords((current) => current.map((record) => record.id === id ? { ...record, ...patch, updatedAt: new Date().toISOString() } : record));
   }
@@ -183,6 +195,7 @@ export default function CertificationsPage() {
         <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleRecords.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <button onClick={clearArchivedRecords} disabled={!records.some((record) => record.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
+        <button onClick={expireStaleRecords} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Expire stale</button>
         <button onClick={resetFilters} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Reset filters</button>
         <select aria-label="Filter certifications by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CertificationCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All categories</option>

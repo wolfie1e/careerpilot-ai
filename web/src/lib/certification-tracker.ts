@@ -95,7 +95,7 @@ export function isCertificationExpired(record: CertificationRecord, dateKey = to
 }
 
 export function isCertificationActive(record: CertificationRecord, dateKey = todayDateKey()): boolean {
-  return record.status === "earned" && !isCertificationExpired(record, dateKey) && record.status !== "archived";
+  return record.status === "earned" && !isCertificationExpired(record, dateKey);
 }
 
 export function isCertificationExpiring(record: CertificationRecord, dateKey = todayDateKey()): boolean {

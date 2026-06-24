@@ -20,7 +20,7 @@ import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
-import { isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import { certificationRemainingStudyHours, certificationTotalCost, isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -248,6 +248,8 @@ export default function DashboardPage() {
       certification_records: certificationRecords.filter((record) => record.status !== "archived").length,
       earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
       expiring_certifications: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
+      certification_study_hours_remaining: certificationRemainingStudyHours(certificationRecords),
+      certification_budget_total: certificationTotalCost(certificationRecords),
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
