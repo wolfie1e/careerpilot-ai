@@ -6,11 +6,14 @@ import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   CERTIFICATION_CATEGORIES,
   CERTIFICATION_STATUSES,
+  certificationCategoryCounts,
   certificationPlanText,
+  certificationProgress,
+  certificationSkillCounts,
   createCertificationRecord,
   isCertificationActive,
   isCertificationExpiring,
@@ -36,6 +39,8 @@ export default function CertificationsPage() {
   });
   const activeRecords = records.filter((record) => isCertificationActive(record));
   const expiringRecords = records.filter((record) => isCertificationExpiring(record));
+  const categoryRows = Object.entries(certificationCategoryCounts(visibleRecords)).map(([category, count]) => ({ category, count }));
+  const skillRows = Object.entries(certificationSkillCounts(visibleRecords)).map(([skill, count]) => ({ skill, count }));
 
   function addRecord() {
     if (!title.trim()) return;
@@ -122,6 +127,28 @@ export default function CertificationsPage() {
         <button onClick={exportRecords} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
           <Download className="h-4 w-4" />
           JSON
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-certifications.csv", visibleRecords.map((record) => ({
+          title: record.title,
+          provider: record.provider,
+          category: record.category,
+          status: record.status,
+          progress: certificationProgress(record),
+          target_date: record.targetDate,
+          issued_at: record.issuedAt,
+          expires_at: record.expiresAt,
+          skills: record.skills.join(", "),
+        })))} disabled={!visibleRecords.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          CSV
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-certification-categories.csv", categoryRows)} disabled={!categoryRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Categories
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-certification-skills.csv", skillRows)} disabled={!skillRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Skills
         </button>
       </div>
 
