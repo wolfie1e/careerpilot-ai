@@ -200,6 +200,12 @@ export default function CertificationsPage() {
                 <input type="number" min={0} value={record.completedHours} onChange={(event) => updateRecord(record.id, { completedHours: Number(event.target.value) })} placeholder="Completed hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2 text-xs text-gray-400">{certificationProgress(record)}% complete</div>
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <input value={record.examCode} maxLength={80} onChange={(event) => updateRecord(record.id, { examCode: event.target.value })} placeholder="Exam code" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={record.targetDate} onChange={(event) => updateRecord(record.id, { targetDate: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={record.issuedAt} onChange={(event) => updateRecord(record.id, { issuedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={record.expiresAt} onChange={(event) => updateRecord(record.id, { expiresAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
