@@ -175,3 +175,22 @@ export function learningTagCounts(resources: LearningResource[]): Record<string,
     return counts;
   }, {});
 }
+
+export function normalizeLearningResource(resource: Partial<LearningResource>): LearningResource {
+  const base = createLearningResource(resource.title || "Untitled learning resource");
+  return {
+    ...base,
+    ...resource,
+    estimatedHours: Math.max(0, Number(resource.estimatedHours ?? base.estimatedHours)),
+    completedHours: Math.max(0, Number(resource.completedHours ?? base.completedHours)),
+    cost: Math.max(0, Number(resource.cost ?? base.cost)),
+    rating: Math.min(5, Math.max(0, Number(resource.rating ?? base.rating))),
+    tags: resource.tags || [],
+  };
+}
+
+export function mergeLearningResources(current: LearningResource[], incoming: LearningResource[]): LearningResource[] {
+  const byId = new Map(current.map((resource) => [resource.id, resource]));
+  incoming.map(normalizeLearningResource).forEach((resource) => byId.set(resource.id, resource));
+  return sortLearningResources([...byId.values()]);
+}
