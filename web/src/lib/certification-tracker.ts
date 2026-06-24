@@ -171,3 +171,22 @@ export function certificationStatusCounts(records: CertificationRecord[]): Recor
   });
   return counts;
 }
+
+export function normalizeCertificationRecord(record: Partial<CertificationRecord>): CertificationRecord {
+  const base = createCertificationRecord(record.title || "Untitled certification");
+  return {
+    ...base,
+    ...record,
+    cost: Math.max(0, Number(record.cost ?? base.cost)),
+    studyHours: Math.max(0, Number(record.studyHours ?? base.studyHours)),
+    completedHours: Math.max(0, Number(record.completedHours ?? base.completedHours)),
+    renewalWindowDays: Math.max(1, Number(record.renewalWindowDays ?? base.renewalWindowDays)),
+    skills: record.skills || [],
+  };
+}
+
+export function mergeCertificationRecords(current: CertificationRecord[], incoming: CertificationRecord[]): CertificationRecord[] {
+  const byId = new Map(current.map((record) => [record.id, record]));
+  incoming.map(normalizeCertificationRecord).forEach((record) => byId.set(record.id, record));
+  return sortCertificationRecords([...byId.values()]);
+}
