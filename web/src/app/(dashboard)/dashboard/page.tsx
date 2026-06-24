@@ -20,7 +20,7 @@ import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
-import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import { isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -437,6 +437,11 @@ export default function DashboardPage() {
           <div className="text-xs text-gray-500">Achievement stories</div>
           <div className="mt-1 text-2xl font-bold text-white">{achievementStories.filter((story) => story.status !== "archived").length}</div>
           <div className="mt-1 text-xs text-gray-500">{achievementStories.filter((story) => story.status === "ready").length} ready</div>
+        </Link>
+        <Link href="/certifications" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-cyan-700/60">
+          <div className="text-xs text-gray-500">Certifications</div>
+          <div className="mt-1 text-2xl font-bold text-white">{certificationRecords.filter((record) => record.status !== "archived").length}</div>
+          <div className="mt-1 text-xs text-gray-500">{certificationRecords.filter((record) => isCertificationActive(record)).length} active · {certificationRecords.filter((record) => isCertificationExpiring(record)).length} renewals</div>
         </Link>
       </div>
 
