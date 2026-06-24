@@ -178,6 +178,12 @@ export function certificationRemainingStudyHours(records: CertificationRecord[])
     .reduce((total, record) => total + Math.max(0, record.studyHours - record.completedHours), 0);
 }
 
+export function certificationTotalCost(records: CertificationRecord[]): number {
+  return records
+    .filter((record) => record.status !== "archived")
+    .reduce((total, record) => total + Math.max(0, record.cost || 0), 0);
+}
+
 export function normalizeCertificationRecord(record: Partial<CertificationRecord>): CertificationRecord {
   const base = createCertificationRecord(record.title || "Untitled certification");
   return {
