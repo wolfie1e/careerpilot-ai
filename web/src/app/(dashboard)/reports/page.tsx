@@ -116,6 +116,8 @@ export default function ReportsPage() {
       file_size: resume.file_size ?? "",
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId ? "yes" : "no",
+      earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
+      certification_renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
     })));
   }
   const manifestText = visibleResumes.map((resume) => `${resume.filename} · ${formatBytes(resume.file_size)} · ${new Date(resume.created_at).toLocaleDateString()}`).join("\n");
