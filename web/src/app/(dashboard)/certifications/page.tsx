@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { Archive, Award, Download, Plus, Search, Star, Trash2, Upload } from "lucide-react";
+import { Archive, Award, Download, ExternalLink, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -264,6 +264,12 @@ export default function CertificationsPage() {
               <button onClick={() => addRecordToPlanner(record)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
               </button>
+              {record.credentialUrl && (
+                <a href={record.credentialUrl} target="_blank" rel="noreferrer" className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Open credential
+                </a>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {isCertificationActive(record) && <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">Active credential</span>}
                 {isCertificationExpiring(record) && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300">Renewal window</span>}
