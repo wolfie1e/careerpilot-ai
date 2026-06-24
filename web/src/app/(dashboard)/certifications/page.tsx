@@ -17,6 +17,7 @@ import {
   certificationSkillCounts,
   createCertificationRecord,
   isCertificationActive,
+  isCertificationExpired,
   isCertificationExpiring,
   mergeCertificationRecords,
   sortCertificationRecords,
@@ -236,6 +237,12 @@ export default function CertificationsPage() {
               <button onClick={() => addRecordToPlanner(record)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
               </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {isCertificationActive(record) && <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">Active credential</span>}
+                {isCertificationExpiring(record) && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300">Renewal window</span>}
+                {isCertificationExpired(record) && <span className="rounded-full bg-rose-500/10 px-2 py-1 text-xs font-medium text-rose-300">Expired</span>}
+                {record.favorite && <span className="rounded-full bg-fuchsia-500/10 px-2 py-1 text-xs font-medium text-fuchsia-300">Priority</span>}
+              </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${certificationProgress(record)}%` }} />
               </div>
