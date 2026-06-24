@@ -192,6 +192,14 @@ export default function CertificationsPage() {
                   {CERTIFICATION_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                 </select>
               </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
+                <div className="h-full rounded-full bg-blue-500" style={{ width: `${certificationProgress(record)}%` }} />
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <input type="number" min={0} value={record.studyHours} onChange={(event) => updateRecord(record.id, { studyHours: Number(event.target.value) })} placeholder="Study hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} value={record.completedHours} onChange={(event) => updateRecord(record.id, { completedHours: Number(event.target.value) })} placeholder="Completed hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2 text-xs text-gray-400">{certificationProgress(record)}% complete</div>
+              </div>
             </article>
           ))}
         </div>
