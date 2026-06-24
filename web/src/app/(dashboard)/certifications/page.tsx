@@ -16,6 +16,7 @@ import {
   certificationProgress,
   certificationRemainingStudyHours,
   certificationSkillCounts,
+  certificationStatusCounts,
   certificationTotalCost,
   createCertificationRecord,
   isCertificationActive,
@@ -48,6 +49,7 @@ export default function CertificationsPage() {
   const expiringRecords = records.filter((record) => isCertificationExpiring(record));
   const categoryRows = Object.entries(certificationCategoryCounts(visibleRecords)).map(([category, count]) => ({ category, count }));
   const skillRows = Object.entries(certificationSkillCounts(visibleRecords)).map(([skill, count]) => ({ skill, count }));
+  const statusRows = Object.entries(certificationStatusCounts(visibleRecords)).map(([status, count]) => ({ status, count }));
   const certificationBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(certificationTotalCost(records));
   const nextDate = nextCertificationDate(records);
 
@@ -225,6 +227,10 @@ export default function CertificationsPage() {
         <button onClick={() => downloadCsv("careerpilot-certification-skills.csv", skillRows)} disabled={!skillRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Skills
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-certification-statuses.csv", statusRows)} disabled={!statusRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Statuses
         </button>
       </div>
 
