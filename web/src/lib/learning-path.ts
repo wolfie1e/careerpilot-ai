@@ -130,3 +130,25 @@ export function sortLearningResources(resources: LearningResource[]): LearningRe
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function learningResourceSummary(resource: LearningResource): string {
+  const details = [resource.provider, resource.type, resource.priority, resource.status, `${learningProgress(resource)}%`].filter(Boolean);
+  if (resource.targetDate) details.push(`target ${resource.targetDate}`);
+  return `${resource.title}${details.length ? ` (${details.join(", ")})` : ""}`;
+}
+
+export function learningPlanText(resources: LearningResource[]): string {
+  return sortLearningResources(resources)
+    .map((resource) => {
+      const lines = [
+        learningResourceSummary(resource),
+        resource.skillArea ? `Skill: ${resource.skillArea}` : "",
+        resource.targetRole ? `Target role: ${resource.targetRole}` : "",
+        resource.url ? `URL: ${resource.url}` : "",
+        resource.notes ? `Notes: ${resource.notes}` : "",
+        resource.tags.length ? `Tags: ${resource.tags.join(", ")}` : "",
+      ];
+      return lines.filter(Boolean).join("\n");
+    })
+    .join("\n\n");
+}
