@@ -274,6 +274,10 @@ export default function DashboardPage() {
         .filter((story) => story.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_certifications: certificationRecords
+        .filter((record) => record.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
     });
   }
 
