@@ -172,6 +172,12 @@ export function certificationStatusCounts(records: CertificationRecord[]): Recor
   return counts;
 }
 
+export function certificationRemainingStudyHours(records: CertificationRecord[]): number {
+  return records
+    .filter((record) => record.status !== "earned" && record.status !== "archived")
+    .reduce((total, record) => total + Math.max(0, record.studyHours - record.completedHours), 0);
+}
+
 export function normalizeCertificationRecord(record: Partial<CertificationRecord>): CertificationRecord {
   const base = createCertificationRecord(record.title || "Untitled certification");
   return {
