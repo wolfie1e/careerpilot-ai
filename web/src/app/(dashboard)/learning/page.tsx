@@ -200,6 +200,10 @@ export default function LearningPage() {
                 <input type="number" min={0} value={resource.cost} onChange={(event) => updateResource(resource.id, { cost: Number(event.target.value) })} placeholder="Cost" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="number" min={0} max={5} value={resource.rating} onChange={(event) => updateResource(resource.id, { rating: Number(event.target.value) })} placeholder="Rating" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-[1fr_1.5fr]">
+                <input value={(resource.tags || []).join(", ")} onChange={(event) => updateResource(resource.id, { tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="Tags, comma separated" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <textarea value={resource.notes} maxLength={1600} onChange={(event) => updateResource(resource.id, { notes: event.target.value })} rows={2} placeholder="Notes, takeaways, or next practice ideas" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              </div>
             </article>
           ))}
         </div>
