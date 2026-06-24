@@ -206,6 +206,12 @@ export default function CertificationsPage() {
                 <input type="date" value={record.issuedAt} onChange={(event) => updateRecord(record.id, { issuedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="date" value={record.expiresAt} onChange={(event) => updateRecord(record.id, { expiresAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <input value={record.credentialUrl} maxLength={2048} onChange={(event) => updateRecord(record.id, { credentialUrl: event.target.value })} placeholder="Credential URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={record.score} maxLength={80} onChange={(event) => updateRecord(record.id, { score: event.target.value })} placeholder="Score or result" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} value={record.cost} onChange={(event) => updateRecord(record.id, { cost: Number(event.target.value) })} placeholder="Cost" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={1} value={record.renewalWindowDays} onChange={(event) => updateRecord(record.id, { renewalWindowDays: Number(event.target.value) })} placeholder="Renewal window days" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
