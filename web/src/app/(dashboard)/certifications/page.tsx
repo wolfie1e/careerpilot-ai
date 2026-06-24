@@ -79,6 +79,10 @@ export default function CertificationsPage() {
     toast.success("Archived certifications cleared");
   }
 
+  function updateRecord(id: string, patch: Partial<CertificationRecord>) {
+    setRecords((current) => current.map((record) => record.id === id ? { ...record, ...patch, updatedAt: new Date().toISOString() } : record));
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -178,8 +182,16 @@ export default function CertificationsPage() {
         <div className="space-y-3">
           {visibleRecords.map((record) => (
             <article key={record.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="font-semibold text-white">{record.title}</div>
-              <div className="mt-1 text-xs text-gray-500">{record.provider || "Provider not set"} · {record.status}</div>
+              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_180px_180px]">
+                <input value={record.title} maxLength={140} onChange={(event) => updateRecord(record.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                <input value={record.provider} maxLength={120} onChange={(event) => updateRecord(record.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <select value={record.category} onChange={(event) => updateRecord(record.id, { category: event.target.value as CertificationCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
+                  {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+                <select value={record.status} onChange={(event) => updateRecord(record.id, { status: event.target.value as CertificationStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
+                  {CERTIFICATION_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </div>
             </article>
           ))}
         </div>
