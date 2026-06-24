@@ -212,6 +212,10 @@ export default function CertificationsPage() {
                 <input type="number" min={0} value={record.cost} onChange={(event) => updateRecord(record.id, { cost: Number(event.target.value) })} placeholder="Cost" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="number" min={1} value={record.renewalWindowDays} onChange={(event) => updateRecord(record.id, { renewalWindowDays: Number(event.target.value) })} placeholder="Renewal window days" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-[1fr_1.5fr]">
+                <input value={(record.skills || []).join(", ")} onChange={(event) => updateRecord(record.id, { skills: event.target.value.split(",").map((skill) => skill.trim()).filter(Boolean) })} placeholder="Skills, comma separated" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <textarea value={record.notes} maxLength={1600} onChange={(event) => updateRecord(record.id, { notes: event.target.value })} rows={2} placeholder="Study notes, renewal requirements, or proof links" className="resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
+              </div>
             </article>
           ))}
         </div>
