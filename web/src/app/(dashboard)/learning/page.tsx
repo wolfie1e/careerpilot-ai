@@ -224,6 +224,12 @@ export default function LearningPage() {
               <button onClick={() => addResourceToPlanner(resource)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
               </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {isLearningResourceOverdue(resource) && <span className="rounded-full bg-rose-500/10 px-2 py-1 text-xs font-medium text-rose-300">Overdue</span>}
+                {isLearningResourceDueSoon(resource) && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300">Due soon</span>}
+                {resource.status === "completed" && <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">Completed</span>}
+                {resource.favorite && <span className="rounded-full bg-fuchsia-500/10 px-2 py-1 text-xs font-medium text-fuchsia-300">Priority</span>}
+              </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${learningProgress(resource)}%` }} />
               </div>
