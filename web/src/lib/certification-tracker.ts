@@ -79,3 +79,9 @@ export function createCertificationRecord(title: string): CertificationRecord {
     updatedAt: now,
   };
 }
+
+export function certificationProgress(record: CertificationRecord): number {
+  if (record.status === "earned") return 100;
+  if (record.studyHours <= 0) return record.completedHours > 0 ? 100 : 0;
+  return Math.min(100, Math.round((record.completedHours / record.studyHours) * 100));
+}
