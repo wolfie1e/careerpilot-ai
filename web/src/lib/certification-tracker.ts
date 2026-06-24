@@ -85,3 +85,22 @@ export function certificationProgress(record: CertificationRecord): number {
   if (record.studyHours <= 0) return record.completedHours > 0 ? 100 : 0;
   return Math.min(100, Math.round((record.completedHours / record.studyHours) * 100));
 }
+
+export function todayDateKey(date = new Date()): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function isCertificationExpired(record: CertificationRecord, dateKey = todayDateKey()): boolean {
+  return Boolean(record.expiresAt && record.expiresAt < dateKey) || record.status === "expired";
+}
+
+export function isCertificationActive(record: CertificationRecord, dateKey = todayDateKey()): boolean {
+  return record.status === "earned" && !isCertificationExpired(record, dateKey) && record.status !== "archived";
+}
+
+export function isCertificationExpiring(record: CertificationRecord, dateKey = todayDateKey()): boolean {
+  if (!record.expiresAt || !isCertificationActive(record, dateKey)) return false;
+  const renewalStart = new Date(`${record.expiresAt}T00:00:00`);
+  renewalStart.setDate(renewalStart.getDate() - record.renewalWindowDays);
+  return renewalStart.toISOString().slice(0, 10) <= dateKey;
+}
