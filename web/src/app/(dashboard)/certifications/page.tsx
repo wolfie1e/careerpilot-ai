@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Award, Plus, Search } from "lucide-react";
+import { useState, type ChangeEvent } from "react";
+import { Award, Download, Plus, Search, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { downloadJson } from "@/lib/export-utils";
 import {
   CERTIFICATION_CATEGORIES,
   CERTIFICATION_STATUSES,
+  certificationPlanText,
   createCertificationRecord,
   isCertificationActive,
   isCertificationExpiring,
+  mergeCertificationRecords,
   sortCertificationRecords,
   type CertificationCategory,
   type CertificationRecord,
@@ -38,6 +42,24 @@ export default function CertificationsPage() {
     setRecords((current) => [createCertificationRecord(title), ...current]);
     setTitle("");
     toast.success("Certification added");
+  }
+
+  async function importRecords(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { certifications?: CertificationRecord[] } | CertificationRecord[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.certifications || [];
+      setRecords((current) => mergeCertificationRecords(current, incoming));
+      toast.success(`${incoming.length} certifications imported`);
+    } catch {
+      toast.error("Could not import certifications");
+    }
+  }
+
+  function exportRecords() {
+    downloadJson("careerpilot-certifications.json", { certifications: records });
   }
 
   return (
@@ -91,6 +113,16 @@ export default function CertificationsPage() {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search certifications" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
         </label>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Upload className="h-4 w-4" />
+          Import
+          <input type="file" accept=".json,application/json" onChange={importRecords} className="sr-only" />
+        </label>
+        <CopyButton value={certificationPlanText(visibleRecords) || "No certifications yet"} label="Copy plan" className="rounded-xl px-3" />
+        <button onClick={exportRecords} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Download className="h-4 w-4" />
+          JSON
+        </button>
       </div>
 
       {visibleRecords.length === 0 ? (
