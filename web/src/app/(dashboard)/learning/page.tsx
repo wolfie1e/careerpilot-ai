@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
+import type { PlannerTask } from "@/lib/career-planner";
 import {
   LEARNING_RESOURCE_STATUSES,
   LEARNING_RESOURCE_PRIORITIES,
@@ -28,6 +29,7 @@ import {
 
 export default function LearningPage() {
   const [resources, setResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
+  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<LearningResourceType | "all">("all");
@@ -88,6 +90,27 @@ export default function LearningPage() {
   function removeResource(id: string) {
     setResources((current) => current.filter((resource) => resource.id !== id));
     toast.success("Learning resource deleted");
+  }
+
+  function addResourceToPlanner(resource: LearningResource) {
+    const task: PlannerTask = {
+      id: crypto.randomUUID(),
+      title: `Study ${resource.title}`,
+      notes: `Created from learning path.${resource.skillArea ? ` Skill: ${resource.skillArea}.` : ""}`,
+      priority: resource.priority,
+      category: "learning",
+      estimateMinutes: Math.max(30, Math.round((resource.estimatedHours - resource.completedHours) * 60)),
+      resourceUrl: resource.url,
+      status: "todo",
+      dueDate: resource.targetDate,
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      archived: false,
+      tags: ["learning", ...resource.tags.slice(0, 5)],
+      recurrence: "none",
+    };
+    setPlannerTasks([task, ...plannerTasks]);
+    toast.success("Learning task added to planner");
   }
 
   return (
@@ -198,6 +221,9 @@ export default function LearningPage() {
                   <button onClick={() => removeResource(resource.id)} aria-label={`Delete ${resource.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
+              <button onClick={() => addResourceToPlanner(resource)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
+                Add planner task
+              </button>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${learningProgress(resource)}%` }} />
               </div>
