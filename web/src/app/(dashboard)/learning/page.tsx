@@ -1,22 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
+  LEARNING_RESOURCE_STATUSES,
+  LEARNING_RESOURCE_TYPES,
   createLearningResource,
   isLearningResourceDueSoon,
   isLearningResourceOverdue,
   sortLearningResources,
   type LearningResource,
+  type LearningResourceStatus,
+  type LearningResourceType,
 } from "@/lib/learning-path";
 
 export default function LearningPage() {
   const [resources, setResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [title, setTitle] = useState("");
-  const visibleResources = sortLearningResources(resources).filter((resource) => resource.status !== "archived");
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<LearningResourceType | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<LearningResourceStatus | "all">("all");
+  const visibleResources = sortLearningResources(resources).filter((resource) => {
+    if (resource.status === "archived") return false;
+    if (typeFilter !== "all" && resource.type !== typeFilter) return false;
+    if (statusFilter !== "all" && resource.status !== statusFilter) return false;
+    const query = search.trim().toLowerCase();
+    return !query || `${resource.title} ${resource.provider} ${resource.skillArea} ${resource.targetRole} ${resource.notes} ${resource.tags.join(" ")}`.toLowerCase().includes(query);
+  });
   const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
 
   function addResource() {
@@ -55,6 +68,21 @@ export default function LearningPage() {
             Add
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <select aria-label="Filter learning resources by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as LearningResourceType | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All types</option>
+          {LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <select aria-label="Filter learning resources by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as LearningResourceStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All statuses</option>
+          {LEARNING_RESOURCE_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <label className="relative min-w-64 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search learning resources" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
+        </label>
       </div>
 
       {visibleResources.length === 0 ? (
