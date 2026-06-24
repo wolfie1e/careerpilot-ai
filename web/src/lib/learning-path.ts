@@ -152,3 +152,26 @@ export function learningPlanText(resources: LearningResource[]): string {
     })
     .join("\n\n");
 }
+
+export function learningTypeCounts(resources: LearningResource[]): Record<LearningResourceType, number> {
+  const counts = LEARNING_RESOURCE_TYPES.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<LearningResourceType, number>);
+  resources.forEach((resource) => {
+    counts[resource.type || "other"] += 1;
+  });
+  return counts;
+}
+
+export function learningStatusCounts(resources: LearningResource[]): Record<LearningResourceStatus, number> {
+  const counts = LEARNING_RESOURCE_STATUSES.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<LearningResourceStatus, number>);
+  resources.forEach((resource) => {
+    counts[resource.status || "planned"] += 1;
+  });
+  return counts;
+}
+
+export function learningTagCounts(resources: LearningResource[]): Record<string, number> {
+  return resources.flatMap((resource) => resource.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
