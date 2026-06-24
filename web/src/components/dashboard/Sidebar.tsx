@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal,
+  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award,
   Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus, Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/planner", icon: ListChecks, label: "Planner" },
   { href: "/goals", icon: Target, label: "Goals" },
   { href: "/achievements", icon: Medal, label: "Achievements" },
+  { href: "/certifications", icon: Award, label: "Certifications" },
   { href: "/applications", icon: BriefcaseBusiness, label: "Applications" },
   { href: "/offers", icon: BriefcaseBusiness, label: "Offers" },
   { href: "/review", icon: NotebookPen, label: "Weekly Review" },
