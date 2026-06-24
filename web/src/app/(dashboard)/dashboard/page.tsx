@@ -74,6 +74,7 @@ const quickActions = [
   { href: "/goals", icon: Target, label: "Set Career Goals", desc: "Track outcomes and deadlines", color: "text-rose-400" },
   { href: "/offers", icon: BriefcaseBusiness, label: "Compare Offers", desc: "Evaluate compensation tradeoffs", color: "text-amber-400" },
   { href: "/achievements", icon: Medal, label: "Capture Achievements", desc: "Build reusable STAR stories", color: "text-fuchsia-400" },
+  { href: "/certifications", icon: Award, label: "Plan Certifications", desc: "Track exams, credentials, and renewals", color: "text-cyan-400" },
 ];
 
 function getGreeting() {
