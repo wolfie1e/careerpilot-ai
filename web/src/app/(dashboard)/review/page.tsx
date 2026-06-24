@@ -86,7 +86,7 @@ export default function WeeklyReviewPage() {
         <p className="mt-1 text-sm text-gray-400">Review the week of {currentWeek} and choose what matters next.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-9">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-11">
         {[
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
@@ -96,6 +96,8 @@ export default function WeeklyReviewPage() {
           ["Active goals", activeGoalCount],
           ["Active offers", activeOfferCount],
           ["Ready stories", readyAchievementCount],
+          ["Active certs", activeCertificationCount],
+          ["Renewals", certificationRenewalsDue],
           ["Avg confidence", `${averageReviewConfidence(reviews)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
