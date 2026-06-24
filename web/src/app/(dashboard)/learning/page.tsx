@@ -193,6 +193,13 @@ export default function LearningPage() {
                 <input type="date" value={resource.targetDate} onChange={(event) => updateResource(resource.id, { targetDate: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="date" value={resource.completedAt} onChange={(event) => updateResource(resource.id, { completedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-5">
+                <input value={resource.url} maxLength={2048} onChange={(event) => updateResource(resource.id, { url: event.target.value })} placeholder="Resource URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={resource.skillArea} maxLength={120} onChange={(event) => updateResource(resource.id, { skillArea: event.target.value })} placeholder="Skill area" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={resource.targetRole} maxLength={120} onChange={(event) => updateResource(resource.id, { targetRole: event.target.value })} placeholder="Target role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} value={resource.cost} onChange={(event) => updateResource(resource.id, { cost: Number(event.target.value) })} placeholder="Cost" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} max={5} value={resource.rating} onChange={(event) => updateResource(resource.id, { rating: Number(event.target.value) })} placeholder="Rating" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
