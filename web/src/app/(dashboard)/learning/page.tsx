@@ -180,6 +180,14 @@ export default function LearningPage() {
                 <select value={resource.status} onChange={(event) => updateResource(resource.id, { status: event.target.value as LearningResourceStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 <select value={resource.priority} onChange={(event) => updateResource(resource.id, { priority: event.target.value as LearningResourcePriority })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_PRIORITIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
               </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
+                <div className="h-full rounded-full bg-blue-500" style={{ width: `${learningProgress(resource)}%` }} />
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <input type="number" min={0} value={resource.estimatedHours} onChange={(event) => updateResource(resource.id, { estimatedHours: Number(event.target.value) })} placeholder="Estimated hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} value={resource.completedHours} onChange={(event) => updateResource(resource.id, { completedHours: Number(event.target.value) })} placeholder="Completed hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2 text-xs text-gray-400">{learningProgress(resource)}% complete</div>
+              </div>
             </article>
           ))}
         </div>
