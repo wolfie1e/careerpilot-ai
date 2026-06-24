@@ -87,6 +87,13 @@ export default function CertificationsPage() {
     toast.success("Archived certifications cleared");
   }
 
+  function resetFilters() {
+    setSearch("");
+    setCategoryFilter("all");
+    setStatusFilter("all");
+    setShowArchived(false);
+  }
+
   function updateRecord(id: string, patch: Partial<CertificationRecord>) {
     setRecords((current) => current.map((record) => record.id === id ? { ...record, ...patch, updatedAt: new Date().toISOString() } : record));
   }
@@ -174,6 +181,7 @@ export default function CertificationsPage() {
         <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleRecords.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <button onClick={clearArchivedRecords} disabled={!records.some((record) => record.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
+        <button onClick={resetFilters} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Reset filters</button>
         <select aria-label="Filter certifications by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CertificationCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All categories</option>
           {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
