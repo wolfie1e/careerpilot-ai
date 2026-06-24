@@ -7,6 +7,8 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   createLearningResource,
+  isLearningResourceDueSoon,
+  isLearningResourceOverdue,
   sortLearningResources,
   type LearningResource,
 } from "@/lib/learning-path";
@@ -15,6 +17,7 @@ export default function LearningPage() {
   const [resources, setResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [title, setTitle] = useState("");
   const visibleResources = sortLearningResources(resources).filter((resource) => resource.status !== "archived");
+  const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
 
   function addResource() {
     if (!title.trim()) return;
@@ -28,6 +31,20 @@ export default function LearningPage() {
       <div>
         <h2 className="text-xl font-semibold text-white">Learning Path</h2>
         <p className="mt-1 text-sm text-gray-400">Plan courses, projects, and practice resources for your next career move.</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          ["Active", activeResources.length],
+          ["In progress", resources.filter((resource) => resource.status === "in_progress").length],
+          ["Completed", resources.filter((resource) => resource.status === "completed").length],
+          ["Due soon", resources.filter((resource) => isLearningResourceDueSoon(resource) || isLearningResourceOverdue(resource)).length],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+            <div className="text-xs text-gray-500">{label}</div>
+            <div className="mt-1 text-xl font-bold text-white">{value}</div>
+          </div>
+        ))}
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
