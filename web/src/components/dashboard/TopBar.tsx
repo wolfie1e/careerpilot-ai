@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BarChart2, BriefcaseBusiness, Download, FileText, LayoutDashboard, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UsersRound } from "lucide-react";
+import { Award, BarChart2, BookOpen, BriefcaseBusiness, Download, FileText, LayoutDashboard, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UsersRound } from "lucide-react";
 import UserMenu from "@/components/dashboard/UserMenu";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
@@ -11,6 +11,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
   "/resume": { title: "Resume", subtitle: "Upload, analyze, and improve your resume", actionHref: "/reports", actionLabel: "Reports", actionIcon: Download },
   "/interview": { title: "Interview", subtitle: "Practice and track your sessions", actionHref: "/interview/setup", actionLabel: "New Interview", actionIcon: MessageSquare },
   "/planner": { title: "Career Planner", subtitle: "Turn career insights into focused actions", actionHref: "/applications", actionLabel: "Applications", actionIcon: ListChecks },
+  "/learning": { title: "Learning Path", subtitle: "Plan resources, skills, and practice time", actionHref: "/planner", actionLabel: "Planner", actionIcon: BookOpen },
   "/goals": { title: "Career Goals", subtitle: "Track outcomes, progress, and deadlines", actionHref: "/planner", actionLabel: "Planner", actionIcon: Target },
   "/achievements": { title: "Achievement Vault", subtitle: "Capture STAR stories and measurable wins", actionHref: "/resume", actionLabel: "Resume", actionIcon: Medal },
   "/certifications": { title: "Certification Tracker", subtitle: "Plan credentials, exams, and renewals", actionHref: "/planner", actionLabel: "Planner", actionIcon: Award },
