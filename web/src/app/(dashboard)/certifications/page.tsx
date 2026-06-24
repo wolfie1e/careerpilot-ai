@@ -14,6 +14,7 @@ import {
   certificationCategoryCounts,
   certificationPlanText,
   certificationProgress,
+  certificationRemainingStudyHours,
   certificationSkillCounts,
   createCertificationRecord,
   isCertificationActive,
@@ -124,12 +125,13 @@ export default function CertificationsPage() {
         <p className="mt-1 text-sm text-gray-400">Plan, earn, and renew credentials that support your next role.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         {[
           ["Tracked", records.filter((record) => record.status !== "archived").length],
           ["Studying", records.filter((record) => record.status === "studying").length],
           ["Active", activeRecords.length],
           ["Renewals", expiringRecords.length],
+          ["Study left", `${certificationRemainingStudyHours(records)}h`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
