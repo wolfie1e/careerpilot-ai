@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
+import type { PlannerTask } from "@/lib/career-planner";
 import {
   CERTIFICATION_CATEGORIES,
   CERTIFICATION_STATUSES,
@@ -26,6 +27,7 @@ import {
 
 export default function CertificationsPage() {
   const [records, setRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
+  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<CertificationCategory | "all">("all");
@@ -91,6 +93,27 @@ export default function CertificationsPage() {
   function removeRecord(id: string) {
     setRecords((current) => current.filter((record) => record.id !== id));
     toast.success("Certification deleted");
+  }
+
+  function addRecordToPlanner(record: CertificationRecord) {
+    const task: PlannerTask = {
+      id: crypto.randomUUID(),
+      title: record.status === "earned" ? `Renew ${record.title}` : `Study for ${record.title}`,
+      notes: `Created from certification tracker.${record.provider ? ` Provider: ${record.provider}.` : ""}`,
+      priority: isCertificationExpiring(record) ? "high" : "medium",
+      category: "learning",
+      estimateMinutes: Math.max(30, Math.round((record.studyHours - record.completedHours) * 60)),
+      resourceUrl: record.credentialUrl,
+      status: "todo",
+      dueDate: record.expiresAt || record.targetDate,
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      archived: false,
+      tags: ["certification", ...record.skills.slice(0, 5)],
+      recurrence: "none",
+    };
+    setPlannerTasks([task, ...plannerTasks]);
+    toast.success("Certification task added to planner");
   }
 
   return (
@@ -210,6 +233,9 @@ export default function CertificationsPage() {
                   <button onClick={() => removeRecord(record.id)} aria-label={`Delete ${record.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
+              <button onClick={() => addRecordToPlanner(record)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
+                Add planner task
+              </button>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${certificationProgress(record)}%` }} />
               </div>
