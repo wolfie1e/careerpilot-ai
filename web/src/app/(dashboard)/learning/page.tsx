@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { BookOpen, Plus, Search } from "lucide-react";
+import { useState, type ChangeEvent } from "react";
+import { BookOpen, Download, Plus, Search, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
+import { downloadJson } from "@/lib/export-utils";
 import {
   LEARNING_RESOURCE_STATUSES,
   LEARNING_RESOURCE_TYPES,
   createLearningResource,
   isLearningResourceDueSoon,
   isLearningResourceOverdue,
+  learningPlanText,
+  mergeLearningResources,
   sortLearningResources,
   type LearningResource,
   type LearningResourceStatus,
@@ -37,6 +41,20 @@ export default function LearningPage() {
     setResources((current) => [createLearningResource(title), ...current]);
     setTitle("");
     toast.success("Learning resource added");
+  }
+
+  async function importResources(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as { resources?: LearningResource[] } | LearningResource[];
+      const incoming = Array.isArray(parsed) ? parsed : parsed.resources || [];
+      setResources((current) => mergeLearningResources(current, incoming));
+      toast.success(`${incoming.length} learning resources imported`);
+    } catch {
+      toast.error("Could not import learning resources");
+    }
   }
 
   return (
@@ -83,6 +101,16 @@ export default function LearningPage() {
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search learning resources" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
         </label>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Upload className="h-4 w-4" />
+          Import
+          <input type="file" accept=".json,application/json" onChange={importResources} className="sr-only" />
+        </label>
+        <CopyButton value={learningPlanText(visibleResources) || "No learning resources yet"} label="Copy plan" className="rounded-xl px-3" />
+        <button onClick={() => downloadJson("careerpilot-learning-resources.json", { resources })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Download className="h-4 w-4" />
+          JSON
+        </button>
       </div>
 
       {visibleResources.length === 0 ? (
