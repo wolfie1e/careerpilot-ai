@@ -188,6 +188,11 @@ export default function LearningPage() {
                 <input type="number" min={0} value={resource.completedHours} onChange={(event) => updateResource(resource.id, { completedHours: Number(event.target.value) })} placeholder="Completed hours" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <div className="rounded-lg border border-gray-800 bg-gray-950/50 px-3 py-2 text-xs text-gray-400">{learningProgress(resource)}% complete</div>
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <input type="date" value={resource.startedAt} onChange={(event) => updateResource(resource.id, { startedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={resource.targetDate} onChange={(event) => updateResource(resource.id, { targetDate: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={resource.completedAt} onChange={(event) => updateResource(resource.id, { completedAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
