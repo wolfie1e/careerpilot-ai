@@ -78,3 +78,9 @@ export function createLearningResource(title: string): LearningResource {
     updatedAt: now,
   };
 }
+
+export function learningProgress(resource: LearningResource): number {
+  if (resource.status === "completed") return 100;
+  if (resource.estimatedHours <= 0) return resource.completedHours > 0 ? 100 : 0;
+  return Math.min(100, Math.round((resource.completedHours / resource.estimatedHours) * 100));
+}
