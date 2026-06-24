@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { Award, Download, Plus, Search, Upload } from "lucide-react";
+import { Archive, Award, Download, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -81,6 +81,16 @@ export default function CertificationsPage() {
 
   function updateRecord(id: string, patch: Partial<CertificationRecord>) {
     setRecords((current) => current.map((record) => record.id === id ? { ...record, ...patch, updatedAt: new Date().toISOString() } : record));
+  }
+
+  function duplicateRecord(record: CertificationRecord) {
+    setRecords((current) => [{ ...record, id: crypto.randomUUID(), title: `${record.title} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Certification duplicated");
+  }
+
+  function removeRecord(id: string) {
+    setRecords((current) => current.filter((record) => record.id !== id));
+    toast.success("Certification deleted");
   }
 
   return (
@@ -182,15 +192,23 @@ export default function CertificationsPage() {
         <div className="space-y-3">
           {visibleRecords.map((record) => (
             <article key={record.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_180px_180px]">
-                <input value={record.title} maxLength={140} onChange={(event) => updateRecord(record.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <input value={record.provider} maxLength={120} onChange={(event) => updateRecord(record.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
-                <select value={record.category} onChange={(event) => updateRecord(record.id, { category: event.target.value as CertificationCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
-                  {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                </select>
-                <select value={record.status} onChange={(event) => updateRecord(record.id, { status: event.target.value as CertificationStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
-                  {CERTIFICATION_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                </select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-[1.2fr_1fr_180px_180px]">
+                  <input value={record.title} maxLength={140} onChange={(event) => updateRecord(record.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <input value={record.provider} maxLength={120} onChange={(event) => updateRecord(record.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <select value={record.category} onChange={(event) => updateRecord(record.id, { category: event.target.value as CertificationCategory })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
+                    {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  </select>
+                  <select value={record.status} onChange={(event) => updateRecord(record.id, { status: event.target.value as CertificationStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">
+                    {CERTIFICATION_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => duplicateRecord(record)} aria-label={`Duplicate ${record.title}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => updateRecord(record.id, { favorite: !record.favorite })} aria-label={`Favorite ${record.title}`} className={record.favorite ? "text-amber-300" : "text-gray-600 hover:text-amber-300"}><Star className="h-4 w-4" /></button>
+                  <button onClick={() => updateRecord(record.id, { status: "archived" })} aria-label={`Archive ${record.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeRecord(record.id)} aria-label={`Delete ${record.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${certificationProgress(record)}%` }} />
