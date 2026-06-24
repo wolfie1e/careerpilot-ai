@@ -1,22 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { Award, Plus } from "lucide-react";
+import { Award, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
+  CERTIFICATION_CATEGORIES,
+  CERTIFICATION_STATUSES,
   createCertificationRecord,
   isCertificationActive,
   isCertificationExpiring,
   sortCertificationRecords,
+  type CertificationCategory,
   type CertificationRecord,
+  type CertificationStatus,
 } from "@/lib/certification-tracker";
 
 export default function CertificationsPage() {
   const [records, setRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [title, setTitle] = useState("");
-  const visibleRecords = sortCertificationRecords(records).filter((record) => record.status !== "archived");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<CertificationCategory | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<CertificationStatus | "all">("all");
+  const visibleRecords = sortCertificationRecords(records).filter((record) => {
+    if (record.status === "archived") return false;
+    if (categoryFilter !== "all" && record.category !== categoryFilter) return false;
+    if (statusFilter !== "all" && record.status !== statusFilter) return false;
+    const query = search.trim().toLowerCase();
+    return !query || `${record.title} ${record.provider} ${record.examCode} ${record.notes} ${record.skills.join(" ")}`.toLowerCase().includes(query);
+  });
   const activeRecords = records.filter((record) => isCertificationActive(record));
   const expiringRecords = records.filter((record) => isCertificationExpiring(record));
 
@@ -63,6 +76,21 @@ export default function CertificationsPage() {
             Add
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <select aria-label="Filter certifications by category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as CertificationCategory | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All categories</option>
+          {CERTIFICATION_CATEGORIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <select aria-label="Filter certifications by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as CertificationStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All statuses</option>
+          {CERTIFICATION_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <label className="relative min-w-64 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search certifications" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
+        </label>
       </div>
 
       {visibleRecords.length === 0 ? (
