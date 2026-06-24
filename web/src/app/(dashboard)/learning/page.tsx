@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { BookOpen, Download, Plus, Search, Upload } from "lucide-react";
+import { Archive, BookOpen, Download, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -78,6 +78,16 @@ export default function LearningPage() {
 
   function updateResource(id: string, patch: Partial<LearningResource>) {
     setResources((current) => current.map((resource) => resource.id === id ? { ...resource, ...patch, updatedAt: new Date().toISOString() } : resource));
+  }
+
+  function duplicateResource(resource: LearningResource) {
+    setResources((current) => [{ ...resource, id: crypto.randomUUID(), title: `${resource.title} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Learning resource duplicated");
+  }
+
+  function removeResource(id: string) {
+    setResources((current) => current.filter((resource) => resource.id !== id));
+    toast.success("Learning resource deleted");
   }
 
   return (
@@ -173,12 +183,20 @@ export default function LearningPage() {
         <div className="space-y-3">
           {visibleResources.map((resource) => (
             <article key={resource.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_150px_150px_150px]">
-                <input value={resource.title} maxLength={140} onChange={(event) => updateResource(resource.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <input value={resource.provider} maxLength={120} onChange={(event) => updateResource(resource.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
-                <select value={resource.type} onChange={(event) => updateResource(resource.id, { type: event.target.value as LearningResourceType })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                <select value={resource.status} onChange={(event) => updateResource(resource.id, { status: event.target.value as LearningResourceStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                <select value={resource.priority} onChange={(event) => updateResource(resource.id, { priority: event.target.value as LearningResourcePriority })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_PRIORITIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-[1.2fr_1fr_150px_150px_150px]">
+                  <input value={resource.title} maxLength={140} onChange={(event) => updateResource(resource.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <input value={resource.provider} maxLength={120} onChange={(event) => updateResource(resource.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <select value={resource.type} onChange={(event) => updateResource(resource.id, { type: event.target.value as LearningResourceType })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  <select value={resource.status} onChange={(event) => updateResource(resource.id, { status: event.target.value as LearningResourceStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  <select value={resource.priority} onChange={(event) => updateResource(resource.id, { priority: event.target.value as LearningResourcePriority })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_PRIORITIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => duplicateResource(resource)} aria-label={`Duplicate ${resource.title}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => updateResource(resource.id, { favorite: !resource.favorite })} aria-label={`Favorite ${resource.title}`} className={resource.favorite ? "text-amber-300" : "text-gray-600 hover:text-amber-300"}><Star className="h-4 w-4" /></button>
+                  <button onClick={() => updateResource(resource.id, { status: "archived" })} aria-label={`Archive ${resource.title}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeResource(resource.id)} aria-label={`Delete ${resource.title}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-gray-800">
                 <div className="h-full rounded-full bg-blue-500" style={{ width: `${learningProgress(resource)}%` }} />
