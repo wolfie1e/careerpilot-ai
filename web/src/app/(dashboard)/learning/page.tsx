@@ -9,6 +9,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   LEARNING_RESOURCE_STATUSES,
+  LEARNING_RESOURCE_PRIORITIES,
   LEARNING_RESOURCE_TYPES,
   createLearningResource,
   isLearningResourceDueSoon,
@@ -20,6 +21,7 @@ import {
   mergeLearningResources,
   sortLearningResources,
   type LearningResource,
+  type LearningResourcePriority,
   type LearningResourceStatus,
   type LearningResourceType,
 } from "@/lib/learning-path";
@@ -72,6 +74,10 @@ export default function LearningPage() {
   function clearArchivedResources() {
     setResources((current) => current.filter((resource) => resource.status !== "archived"));
     toast.success("Archived learning resources cleared");
+  }
+
+  function updateResource(id: string, patch: Partial<LearningResource>) {
+    setResources((current) => current.map((resource) => resource.id === id ? { ...resource, ...patch, updatedAt: new Date().toISOString() } : resource));
   }
 
   return (
@@ -167,8 +173,13 @@ export default function LearningPage() {
         <div className="space-y-3">
           {visibleResources.map((resource) => (
             <article key={resource.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="font-semibold text-white">{resource.title}</div>
-              <div className="mt-1 text-xs text-gray-500">{resource.provider || "Provider not set"} · {resource.status}</div>
+              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_150px_150px_150px]">
+                <input value={resource.title} maxLength={140} onChange={(event) => updateResource(resource.id, { title: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                <input value={resource.provider} maxLength={120} onChange={(event) => updateResource(resource.id, { provider: event.target.value })} placeholder="Provider" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <select value={resource.type} onChange={(event) => updateResource(resource.id, { type: event.target.value as LearningResourceType })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                <select value={resource.status} onChange={(event) => updateResource(resource.id, { status: event.target.value as LearningResourceStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                <select value={resource.priority} onChange={(event) => updateResource(resource.id, { priority: event.target.value as LearningResourcePriority })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{LEARNING_RESOURCE_PRIORITIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              </div>
             </article>
           ))}
         </div>
