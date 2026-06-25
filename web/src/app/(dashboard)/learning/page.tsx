@@ -83,6 +83,13 @@ export default function LearningPage() {
     toast.success("Archived learning resources cleared");
   }
 
+  function resetFilters() {
+    setSearch("");
+    setTypeFilter("all");
+    setStatusFilter("all");
+    setShowArchived(false);
+  }
+
   function updateResource(id: string, patch: Partial<LearningResource>) {
     setResources((current) => current.map((resource) => resource.id === id ? { ...resource, ...patch, updatedAt: new Date().toISOString() } : resource));
   }
@@ -163,6 +170,7 @@ export default function LearningPage() {
         <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleResources.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <button onClick={clearArchivedResources} disabled={!resources.some((resource) => resource.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
+        <button onClick={resetFilters} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Reset filters</button>
         <select aria-label="Filter learning resources by type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as LearningResourceType | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All types</option>
           {LEARNING_RESOURCE_TYPES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
