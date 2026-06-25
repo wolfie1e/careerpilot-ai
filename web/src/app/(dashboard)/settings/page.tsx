@@ -18,6 +18,7 @@ import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import type { LearningResource } from "@/lib/learning-path";
 
 type FieldErrors = Record<string, string>;
 
@@ -39,6 +40,7 @@ export default function SettingsPage() {
   const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
+  const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -180,6 +182,11 @@ export default function SettingsPage() {
         total_actions: plannerTasks.length,
         completed_actions: plannerTasks.filter((task) => task.status === "done").length,
         recurring_actions: plannerTasks.filter((task) => task.recurrence && task.recurrence !== "none").length,
+      },
+      learning: {
+        total: learningResources.length,
+        active: learningResources.filter((resource) => resource.status !== "completed" && resource.status !== "archived").length,
+        completed: learningResources.filter((resource) => resource.status === "completed").length,
       },
       applications: {
         total: jobApplications.length,
