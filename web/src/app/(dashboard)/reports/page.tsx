@@ -120,6 +120,8 @@ export default function ReportsPage() {
       file_size: resume.file_size ?? "",
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId ? "yes" : "no",
+      learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
+      learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
       certification_renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
     })));
