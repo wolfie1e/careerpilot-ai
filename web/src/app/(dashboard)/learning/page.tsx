@@ -22,6 +22,7 @@ import {
   learningTypeCounts,
   learningPlanText,
   mergeLearningResources,
+  nextLearningDate,
   sortLearningResources,
   type LearningResource,
   type LearningResourcePriority,
@@ -48,6 +49,7 @@ export default function LearningPage() {
   const typeRows = Object.entries(learningTypeCounts(visibleResources)).map(([type, count]) => ({ type, count }));
   const tagRows = Object.entries(learningTagCounts(visibleResources)).map(([tag, count]) => ({ tag, count }));
   const learningBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(learningTotalCost(resources));
+  const nextDate = nextLearningDate(resources);
 
   function addResource() {
     if (!title.trim()) return;
@@ -138,6 +140,12 @@ export default function LearningPage() {
           </div>
         ))}
       </div>
+
+      {nextDate && (
+        <div className="rounded-2xl border border-cyan-800/50 bg-cyan-950/20 p-4 text-sm text-cyan-100">
+          Next learning target: <span className="font-semibold">{nextDate.title}</span> on {nextDate.date}
+        </div>
+      )}
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
