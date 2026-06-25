@@ -12,6 +12,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import { formatBytes, safeFilename } from "@/lib/utils";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import type { LearningResource } from "@/lib/learning-path";
 
 interface Resume {
   id: string;
@@ -34,6 +35,7 @@ export default function ReportsPage() {
   const [pinnedResumeId] = useLocalStorage<string | null>(LOCAL_STORAGE_KEYS.pinnedResume, null);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
+  const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
@@ -106,6 +108,8 @@ export default function ReportsPage() {
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId,
       ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
+      learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
+      learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
       certification_renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
     })));
