@@ -70,6 +70,7 @@ const quickActions = [
   { href: "/interview/setup", icon: Mic, label: "Start Mock Interview", desc: "Practice your answers", color: "text-emerald-400" },
   { href: "/analytics", icon: BarChart2, label: "View Analytics", desc: "Track your progress", color: "text-amber-400" },
   { href: "/planner", icon: ListChecks, label: "Open Career Planner", desc: "Focus your next actions", color: "text-blue-400" },
+  { href: "/learning", icon: BookOpen, label: "Build Learning Path", desc: "Plan courses, books, and practice", color: "text-cyan-400" },
   { href: "/applications", icon: BriefcaseBusiness, label: "Track Applications", desc: "Manage your opportunity pipeline", color: "text-emerald-400" },
   { href: "/review", icon: NotebookPen, label: "Complete Weekly Review", desc: "Reflect and choose the next focus", color: "text-violet-400" },
   { href: "/networking", icon: UsersRound, label: "Manage Network", desc: "Track contacts and warm follow-ups", color: "text-cyan-400" },
