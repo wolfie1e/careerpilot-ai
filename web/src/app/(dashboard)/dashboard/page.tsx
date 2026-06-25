@@ -288,6 +288,10 @@ export default function DashboardPage() {
         .filter((record) => record.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_learning_resources: learningResources
+        .filter((resource) => resource.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
     });
   }
 
