@@ -16,6 +16,7 @@ import {
   isLearningResourceDueSoon,
   isLearningResourceOverdue,
   learningProgress,
+  learningRemainingHours,
   learningTagCounts,
   learningTypeCounts,
   learningPlanText,
@@ -120,12 +121,13 @@ export default function LearningPage() {
         <p className="mt-1 text-sm text-gray-400">Plan courses, projects, and practice resources for your next career move.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         {[
           ["Active", activeResources.length],
           ["In progress", resources.filter((resource) => resource.status === "in_progress").length],
           ["Completed", resources.filter((resource) => resource.status === "completed").length],
           ["Due soon", resources.filter((resource) => isLearningResourceDueSoon(resource) || isLearningResourceOverdue(resource)).length],
+          ["Hours left", `${learningRemainingHours(resources)}h`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
