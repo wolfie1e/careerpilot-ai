@@ -49,6 +49,7 @@ export default function WeeklyReviewPage() {
   const activeCertificationCount = certificationRecords.filter((record) => isCertificationActive(record)).length;
   const certificationRenewalsDue = certificationRecords.filter((record) => isCertificationExpiring(record)).length;
   const activeLearningCount = learningResources.filter((resource) => resource.status !== "completed" && resource.status !== "archived").length;
+  const completedLearningCount = learningResources.filter((resource) => resource.status === "completed").length;
   const completion = weeklyReviewCompletion(currentReview);
   const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
 
@@ -89,7 +90,7 @@ export default function WeeklyReviewPage() {
         <p className="mt-1 text-sm text-gray-400">Review the week of {currentWeek} and choose what matters next.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-11">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-12">
         {[
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
@@ -99,6 +100,8 @@ export default function WeeklyReviewPage() {
           ["Active goals", activeGoalCount],
           ["Active offers", activeOfferCount],
           ["Ready stories", readyAchievementCount],
+          ["Active learning", activeLearningCount],
+          ["Learning done", completedLearningCount],
           ["Active certs", activeCertificationCount],
           ["Renewals", certificationRenewalsDue],
           ["Avg confidence", `${averageReviewConfidence(reviews)}/10`],
