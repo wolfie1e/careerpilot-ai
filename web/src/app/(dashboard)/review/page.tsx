@@ -24,6 +24,7 @@ import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import type { LearningResource } from "@/lib/learning-path";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
@@ -34,6 +35,7 @@ export default function WeeklyReviewPage() {
   const [offerComparisons] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
+  const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
@@ -46,8 +48,9 @@ export default function WeeklyReviewPage() {
   const readyAchievementCount = achievementStories.filter((story) => story.status === "ready").length;
   const activeCertificationCount = certificationRecords.filter((record) => isCertificationActive(record)).length;
   const certificationRenewalsDue = certificationRecords.filter((record) => isCertificationExpiring(record)).length;
+  const activeLearningCount = learningResources.filter((resource) => resource.status !== "completed" && resource.status !== "archived").length;
   const completion = weeklyReviewCompletion(currentReview);
-  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}`;
+  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
 
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
