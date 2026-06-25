@@ -206,3 +206,11 @@ export function learningTotalCost(resources: LearningResource[]): number {
     .filter((resource) => resource.status !== "archived")
     .reduce((total, resource) => total + Math.max(0, resource.cost || 0), 0);
 }
+
+export function nextLearningDate(resources: LearningResource[]): { title: string; date: string } | null {
+  const upcoming = resources
+    .filter((resource) => resource.status !== "archived" && resource.targetDate >= learningTodayKey())
+    .map((resource) => ({ title: resource.title, date: resource.targetDate }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return upcoming[0] || null;
+}
