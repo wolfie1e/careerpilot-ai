@@ -200,3 +200,9 @@ export function learningRemainingHours(resources: LearningResource[]): number {
     .filter((resource) => !["completed", "archived"].includes(resource.status))
     .reduce((total, resource) => total + Math.max(0, resource.estimatedHours - resource.completedHours), 0);
 }
+
+export function learningTotalCost(resources: LearningResource[]): number {
+  return resources
+    .filter((resource) => resource.status !== "archived")
+    .reduce((total, resource) => total + Math.max(0, resource.cost || 0), 0);
+}
