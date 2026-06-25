@@ -59,6 +59,12 @@ const features = [
     description: "Turn insights into prioritized, recurring actions with deadlines, effort estimates, tags, and portable plans.",
   },
   {
+    icon: BookOpen,
+    color: "cyan",
+    title: "Learning Path",
+    description: "Organize courses, books, projects, and practice resources with progress, deadlines, skill areas, and planner handoff.",
+  },
+  {
     icon: BriefcaseBusiness,
     color: "emerald",
     title: "Application Pipeline",
