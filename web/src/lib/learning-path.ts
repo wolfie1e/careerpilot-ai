@@ -194,3 +194,9 @@ export function mergeLearningResources(current: LearningResource[], incoming: Le
   incoming.map(normalizeLearningResource).forEach((resource) => byId.set(resource.id, resource));
   return sortLearningResources([...byId.values()]);
 }
+
+export function learningRemainingHours(resources: LearningResource[]): number {
+  return resources
+    .filter((resource) => !["completed", "archived"].includes(resource.status))
+    .reduce((total, resource) => total + Math.max(0, resource.estimatedHours - resource.completedHours), 0);
+}
