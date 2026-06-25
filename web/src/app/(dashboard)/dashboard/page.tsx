@@ -21,7 +21,7 @@ import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { certificationRemainingStudyHours, certificationTotalCost, isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
-import type { LearningResource } from "@/lib/learning-path";
+import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -243,6 +243,8 @@ export default function DashboardPage() {
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_in_progress: learningResources.filter((resource) => resource.status === "in_progress").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
+      learning_hours_remaining: learningRemainingHours(learningResources),
+      learning_budget_total: learningTotalCost(learningResources),
       active_job_applications: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
       weekly_reviews_completed: weeklyReviews.length,
       networking_contacts: networkingContacts.filter((contact) => !contact.archived).length,
