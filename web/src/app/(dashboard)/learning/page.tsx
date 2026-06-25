@@ -18,6 +18,7 @@ import {
   learningProgress,
   learningRemainingHours,
   learningTagCounts,
+  learningTotalCost,
   learningTypeCounts,
   learningPlanText,
   mergeLearningResources,
@@ -46,6 +47,7 @@ export default function LearningPage() {
   const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
   const typeRows = Object.entries(learningTypeCounts(visibleResources)).map(([type, count]) => ({ type, count }));
   const tagRows = Object.entries(learningTagCounts(visibleResources)).map(([tag, count]) => ({ tag, count }));
+  const learningBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(learningTotalCost(resources));
 
   function addResource() {
     if (!title.trim()) return;
@@ -121,13 +123,14 @@ export default function LearningPage() {
         <p className="mt-1 text-sm text-gray-400">Plan courses, projects, and practice resources for your next career move.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Active", activeResources.length],
           ["In progress", resources.filter((resource) => resource.status === "in_progress").length],
           ["Completed", resources.filter((resource) => resource.status === "completed").length],
           ["Due soon", resources.filter((resource) => isLearningResourceDueSoon(resource) || isLearningResourceOverdue(resource)).length],
           ["Hours left", `${learningRemainingHours(resources)}h`],
+          ["Budget", learningBudget],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
