@@ -17,6 +17,7 @@ import {
   isLearningResourceOverdue,
   learningProgress,
   learningRemainingHours,
+  learningStatusCounts,
   learningTagCounts,
   learningTotalCost,
   learningTypeCounts,
@@ -47,6 +48,7 @@ export default function LearningPage() {
   });
   const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
   const typeRows = Object.entries(learningTypeCounts(visibleResources)).map(([type, count]) => ({ type, count }));
+  const statusRows = Object.entries(learningStatusCounts(visibleResources)).map(([status, count]) => ({ status, count }));
   const tagRows = Object.entries(learningTagCounts(visibleResources)).map(([tag, count]) => ({ tag, count }));
   const learningBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(learningTotalCost(resources));
   const nextDate = nextLearningDate(resources);
@@ -215,6 +217,10 @@ export default function LearningPage() {
         <button onClick={() => downloadCsv("careerpilot-learning-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Tags
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-statuses.csv", statusRows)} disabled={!statusRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Statuses
         </button>
       </div>
 
