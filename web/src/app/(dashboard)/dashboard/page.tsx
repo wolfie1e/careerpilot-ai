@@ -427,6 +427,11 @@ export default function DashboardPage() {
           <div className="mt-1 text-2xl font-bold text-white">{plannerTasks.filter((task) => task.status !== "done" && !task.archived).length}</div>
           <div className="mt-1 text-xs text-gray-500">{plannerTasks.filter((task) => task.dueDate && task.dueDate < new Date().toISOString().slice(0, 10) && task.status !== "done").length} overdue</div>
         </Link>
+        <Link href="/learning" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-cyan-700/60">
+          <div className="text-xs text-gray-500">Learning resources</div>
+          <div className="mt-1 text-2xl font-bold text-white">{learningResources.filter((resource) => resource.status !== "archived").length}</div>
+          <div className="mt-1 text-xs text-gray-500">{learningResources.filter((resource) => resource.status === "in_progress").length} in progress</div>
+        </Link>
         <Link href="/applications" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-emerald-700/60">
           <div className="text-xs text-gray-500">Active applications</div>
           <div className="mt-1 text-2xl font-bold text-white">{jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length}</div>
