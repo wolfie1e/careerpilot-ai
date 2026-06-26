@@ -185,6 +185,12 @@ export default function MentorshipPage() {
                 <input type="number" min={1} value={contact.cadenceDays} onChange={(event) => updateContact(contact.id, { cadenceDays: Number(event.target.value) })} placeholder="Cadence days" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input type="number" min={0} value={contact.conversationCount} onChange={(event) => updateContact(contact.id, { conversationCount: Number(event.target.value) })} placeholder="Conversations" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-[1fr_1fr_220px]">
+                <input value={(contact.topics || []).join(", ")} onChange={(event) => updateContact(contact.id, { topics: event.target.value.split(",").map((topic) => topic.trim()).filter(Boolean) })} placeholder="Topics, comma separated" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={contact.goals} maxLength={500} onChange={(event) => updateContact(contact.id, { goals: event.target.value })} placeholder="Mentorship goals" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <label className="text-xs text-gray-500">Confidence {contact.confidence}/10<input type="range" min={1} max={10} value={contact.confidence} onChange={(event) => updateContact(contact.id, { confidence: Number(event.target.value) })} className="mt-2 w-full accent-blue-500" /></label>
+              </div>
+              <textarea value={contact.notes} maxLength={1600} onChange={(event) => updateContact(contact.id, { notes: event.target.value })} rows={2} placeholder="Conversation notes, questions, and follow-up ideas" className="mt-3 w-full resize-none rounded-xl border border-gray-800 bg-gray-950/50 px-3 py-2 text-sm text-gray-300 outline-none focus:border-blue-500" />
             </article>
           ))}
         </div>
