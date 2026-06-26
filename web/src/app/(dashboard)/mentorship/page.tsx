@@ -179,6 +179,12 @@ export default function MentorshipPage() {
                 <input type="email" value={contact.email} maxLength={255} onChange={(event) => updateContact(contact.id, { email: event.target.value })} placeholder="Email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input value={contact.linkedInUrl} maxLength={2048} onChange={(event) => updateContact(contact.id, { linkedInUrl: event.target.value })} placeholder="LinkedIn URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-4">
+                <input type="date" value={contact.lastContactAt} onChange={(event) => updateContact(contact.id, { lastContactAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="date" value={contact.nextContactAt} onChange={(event) => updateContact(contact.id, { nextContactAt: event.target.value })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={1} value={contact.cadenceDays} onChange={(event) => updateContact(contact.id, { cadenceDays: Number(event.target.value) })} placeholder="Cadence days" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input type="number" min={0} value={contact.conversationCount} onChange={(event) => updateContact(contact.id, { conversationCount: Number(event.target.value) })} placeholder="Conversations" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
