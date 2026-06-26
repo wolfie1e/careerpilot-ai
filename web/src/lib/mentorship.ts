@@ -111,3 +111,26 @@ export function sortMentorshipContacts(contacts: MentorshipContact[]): Mentorshi
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 }
+
+export function mentorshipContactSummary(contact: MentorshipContact): string {
+  const details = [contact.relationship, contact.status, contact.role, contact.company].filter(Boolean);
+  const nextContact = contact.nextContactAt || suggestedMentorshipNextContact(contact);
+  if (nextContact) details.push(`next ${nextContact}`);
+  return `${contact.name}${details.length ? ` (${details.join(", ")})` : ""}`;
+}
+
+export function mentorshipPlanText(contacts: MentorshipContact[]): string {
+  return sortMentorshipContacts(contacts)
+    .map((contact) => {
+      const lines = [
+        mentorshipContactSummary(contact),
+        contact.email ? `Email: ${contact.email}` : "",
+        contact.linkedInUrl ? `LinkedIn: ${contact.linkedInUrl}` : "",
+        contact.goals ? `Goals: ${contact.goals}` : "",
+        contact.notes ? `Notes: ${contact.notes}` : "",
+        contact.topics.length ? `Topics: ${contact.topics.join(", ")}` : "",
+      ];
+      return lines.filter(Boolean).join("\n");
+    })
+    .join("\n\n");
+}
