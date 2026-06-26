@@ -134,3 +134,26 @@ export function mentorshipPlanText(contacts: MentorshipContact[]): string {
     })
     .join("\n\n");
 }
+
+export function mentorshipRelationshipCounts(contacts: MentorshipContact[]): Record<MentorshipRelationship, number> {
+  const counts = MENTORSHIP_RELATIONSHIPS.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<MentorshipRelationship, number>);
+  contacts.forEach((contact) => {
+    counts[contact.relationship || "other"] += 1;
+  });
+  return counts;
+}
+
+export function mentorshipStatusCounts(contacts: MentorshipContact[]): Record<MentorshipStatus, number> {
+  const counts = MENTORSHIP_STATUSES.reduce((acc, option) => ({ ...acc, [option.value]: 0 }), {} as Record<MentorshipStatus, number>);
+  contacts.forEach((contact) => {
+    counts[contact.status || "active"] += 1;
+  });
+  return counts;
+}
+
+export function mentorshipTopicCounts(contacts: MentorshipContact[]): Record<string, number> {
+  return contacts.flatMap((contact) => contact.topics || []).reduce<Record<string, number>>((counts, topic) => {
+    counts[topic] = (counts[topic] || 0) + 1;
+    return counts;
+  }, {});
+}
