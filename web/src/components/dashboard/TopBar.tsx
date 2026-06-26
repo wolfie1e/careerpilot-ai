@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BarChart2, BookOpen, BriefcaseBusiness, Download, FileText, LayoutDashboard, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UsersRound } from "lucide-react";
+import { Award, BarChart2, BookOpen, BriefcaseBusiness, Download, FileText, Handshake, LayoutDashboard, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UsersRound } from "lucide-react";
 import UserMenu from "@/components/dashboard/UserMenu";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
@@ -19,6 +19,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
   "/offers": { title: "Offer Tracker", subtitle: "Compare compensation and decision tradeoffs", actionHref: "/applications", actionLabel: "Applications", actionIcon: BriefcaseBusiness },
   "/review": { title: "Weekly Review", subtitle: "Reflect, learn, and choose the next focus", actionHref: "/planner", actionLabel: "Planner", actionIcon: NotebookPen },
   "/networking": { title: "Networking", subtitle: "Manage relationships and follow-ups", actionHref: "/planner", actionLabel: "Planner", actionIcon: UsersRound },
+  "/mentorship": { title: "Mentorship", subtitle: "Track mentors, advisors, and recurring conversations", actionHref: "/planner", actionLabel: "Planner", actionIcon: Handshake },
   "/analytics": { title: "Analytics", subtitle: "Score trends and skill progress", actionHref: "/dashboard", actionLabel: "Overview", actionIcon: LayoutDashboard },
   "/reports": { title: "Reports", subtitle: "Download your analysis reports", actionHref: "/resume", actionLabel: "Resume", actionIcon: FileText },
   "/settings": { title: "Settings", subtitle: "Profile, security, and privacy controls", actionHref: "/analytics", actionLabel: "Analytics", actionIcon: BarChart2 },
