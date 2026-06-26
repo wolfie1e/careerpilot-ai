@@ -88,3 +88,26 @@ export function isMentorshipFollowUpSoon(contact: MentorshipContact, today = new
   const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 7;
 }
+
+const MENTORSHIP_STATUS_WEIGHT: Record<MentorshipStatus, number> = {
+  active: 0,
+  dormant: 1,
+  archived: 2,
+};
+
+export function sortMentorshipContacts(contacts: MentorshipContact[]): MentorshipContact[] {
+  return [...contacts].sort((a, b) => {
+    if (a.status === "archived" && b.status !== "archived") return 1;
+    if (b.status === "archived" && a.status !== "archived") return -1;
+    if (Boolean(a.favorite) !== Boolean(b.favorite)) return a.favorite ? -1 : 1;
+    if (isMentorshipFollowUpDue(a) !== isMentorshipFollowUpDue(b)) return isMentorshipFollowUpDue(a) ? -1 : 1;
+    const statusDifference = MENTORSHIP_STATUS_WEIGHT[a.status] - MENTORSHIP_STATUS_WEIGHT[b.status];
+    if (statusDifference) return statusDifference;
+    const nextA = a.nextContactAt || suggestedMentorshipNextContact(a);
+    const nextB = b.nextContactAt || suggestedMentorshipNextContact(b);
+    if (nextA && nextB) return nextA.localeCompare(nextB);
+    if (nextA) return -1;
+    if (nextB) return 1;
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
