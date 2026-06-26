@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { Archive, Download, Handshake, Plus, Search, Star, Trash2, Upload } from "lucide-react";
+import { Archive, Download, ExternalLink, Handshake, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -243,6 +243,12 @@ export default function MentorshipPage() {
               <button onClick={() => addContactToPlanner(contact)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
               </button>
+              {contact.linkedInUrl && (
+                <a href={contact.linkedInUrl} target="_blank" rel="noreferrer" className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Open profile
+                </a>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {isMentorshipFollowUpDue(contact) && <span className="rounded-full bg-rose-500/10 px-2 py-1 text-xs font-medium text-rose-300">Follow-up due</span>}
                 {isMentorshipFollowUpSoon(contact) && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300">Due soon</span>}
