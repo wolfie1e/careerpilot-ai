@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { Download, Handshake, Plus, Search, Upload } from "lucide-react";
+import { Archive, Download, Handshake, Plus, Search, Star, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -74,6 +74,16 @@ export default function MentorshipPage() {
 
   function updateContact(id: string, patch: Partial<MentorshipContact>) {
     setContacts((current) => current.map((contact) => contact.id === id ? { ...contact, ...patch, updatedAt: new Date().toISOString() } : contact));
+  }
+
+  function duplicateContact(contact: MentorshipContact) {
+    setContacts((current) => [{ ...contact, id: crypto.randomUUID(), name: `${contact.name} copy`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current]);
+    toast.success("Mentorship contact duplicated");
+  }
+
+  function removeContact(id: string) {
+    setContacts((current) => current.filter((contact) => contact.id !== id));
+    toast.success("Mentorship contact deleted");
   }
 
   return (
@@ -168,12 +178,20 @@ export default function MentorshipPage() {
         <div className="space-y-3">
           {visibleContacts.map((contact) => (
             <article key={contact.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_170px_150px]">
-                <input value={contact.name} maxLength={140} onChange={(event) => updateContact(contact.id, { name: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
-                <input value={contact.role} maxLength={120} onChange={(event) => updateContact(contact.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
-                <input value={contact.company} maxLength={120} onChange={(event) => updateContact(contact.id, { company: event.target.value })} placeholder="Company" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
-                <select value={contact.relationship} onChange={(event) => updateContact(contact.id, { relationship: event.target.value as MentorshipRelationship })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                <select value={contact.status} onChange={(event) => updateContact(contact.id, { status: event.target.value as MentorshipStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              <div className="flex items-start gap-3">
+                <div className="grid min-w-0 flex-1 gap-2 md:grid-cols-[1.2fr_1fr_1fr_170px_150px]">
+                  <input value={contact.name} maxLength={140} onChange={(event) => updateContact(contact.id, { name: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                  <input value={contact.role} maxLength={120} onChange={(event) => updateContact(contact.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <input value={contact.company} maxLength={120} onChange={(event) => updateContact(contact.id, { company: event.target.value })} placeholder="Company" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                  <select value={contact.relationship} onChange={(event) => updateContact(contact.id, { relationship: event.target.value as MentorshipRelationship })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  <select value={contact.status} onChange={(event) => updateContact(contact.id, { status: event.target.value as MentorshipStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => duplicateContact(contact)} aria-label={`Duplicate ${contact.name}`} className="text-gray-600 hover:text-emerald-400"><Plus className="h-4 w-4" /></button>
+                  <button onClick={() => updateContact(contact.id, { favorite: !contact.favorite })} aria-label={`Favorite ${contact.name}`} className={contact.favorite ? "text-amber-300" : "text-gray-600 hover:text-amber-300"}><Star className="h-4 w-4" /></button>
+                  <button onClick={() => updateContact(contact.id, { status: "archived" })} aria-label={`Archive ${contact.name}`} className="text-gray-600 hover:text-blue-400"><Archive className="h-4 w-4" /></button>
+                  <button onClick={() => removeContact(contact.id)} aria-label={`Delete ${contact.name}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                </div>
               </div>
               <div className="mt-3 grid gap-2 md:grid-cols-2">
                 <input type="email" value={contact.email} maxLength={255} onChange={(event) => updateContact(contact.id, { email: event.target.value })} placeholder="Email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
