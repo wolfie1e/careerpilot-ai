@@ -75,3 +75,16 @@ export function suggestedMentorshipNextContact(contact: MentorshipContact): stri
   date.setDate(date.getDate() + contact.cadenceDays);
   return date.toISOString().slice(0, 10);
 }
+
+export function isMentorshipFollowUpDue(contact: MentorshipContact, dateKey = mentorshipTodayKey()): boolean {
+  const nextContact = contact.nextContactAt || suggestedMentorshipNextContact(contact);
+  return Boolean(nextContact && nextContact <= dateKey && contact.status !== "archived");
+}
+
+export function isMentorshipFollowUpSoon(contact: MentorshipContact, today = new Date()): boolean {
+  const nextContact = contact.nextContactAt || suggestedMentorshipNextContact(contact);
+  if (!nextContact || contact.status === "archived") return false;
+  const due = new Date(`${nextContact}T00:00:00`);
+  const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
