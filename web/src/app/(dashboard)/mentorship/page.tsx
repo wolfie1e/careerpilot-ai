@@ -6,13 +6,15 @@ import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
-import { downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   MENTORSHIP_RELATIONSHIPS,
   MENTORSHIP_STATUSES,
   createMentorshipContact,
   isMentorshipFollowUpDue,
   mentorshipPlanText,
+  mentorshipRelationshipCounts,
+  mentorshipTopicCounts,
   mergeMentorshipContacts,
   sortMentorshipContacts,
   type MentorshipContact,
@@ -34,6 +36,8 @@ export default function MentorshipPage() {
     return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.email} ${contact.goals} ${contact.notes} ${contact.topics.join(" ")}`.toLowerCase().includes(query);
   });
   const activeContacts = contacts.filter((contact) => contact.status === "active");
+  const relationshipRows = Object.entries(mentorshipRelationshipCounts(visibleContacts)).map(([relationship, count]) => ({ relationship, count }));
+  const topicRows = Object.entries(mentorshipTopicCounts(visibleContacts)).map(([topic, count]) => ({ topic, count }));
 
   function addContact() {
     if (!name.trim()) return;
@@ -109,6 +113,28 @@ export default function MentorshipPage() {
         <button onClick={() => downloadJson("careerpilot-mentorship-contacts.json", { contacts })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
           <Download className="h-4 w-4" />
           JSON
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-mentorship-contacts.csv", visibleContacts.map((contact) => ({
+          name: contact.name,
+          role: contact.role,
+          company: contact.company,
+          relationship: contact.relationship,
+          status: contact.status,
+          last_contact_at: contact.lastContactAt,
+          next_contact_at: contact.nextContactAt,
+          conversations: contact.conversationCount,
+          topics: contact.topics.join(", "),
+        })))} disabled={!visibleContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          CSV
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-mentorship-relationships.csv", relationshipRows)} disabled={!relationshipRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Relationships
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-mentorship-topics.csv", topicRows)} disabled={!topicRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Topics
         </button>
       </div>
 
