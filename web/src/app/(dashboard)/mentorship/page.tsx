@@ -72,6 +72,10 @@ export default function MentorshipPage() {
     toast.success("Archived mentorship contacts cleared");
   }
 
+  function updateContact(id: string, patch: Partial<MentorshipContact>) {
+    setContacts((current) => current.map((contact) => contact.id === id ? { ...contact, ...patch, updatedAt: new Date().toISOString() } : contact));
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -164,8 +168,13 @@ export default function MentorshipPage() {
         <div className="space-y-3">
           {visibleContacts.map((contact) => (
             <article key={contact.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="font-semibold text-white">{contact.name}</div>
-              <div className="mt-1 text-xs text-gray-500">{contact.role || "Role not set"} · {contact.relationship}</div>
+              <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_170px_150px]">
+                <input value={contact.name} maxLength={140} onChange={(event) => updateContact(contact.id, { name: event.target.value })} className="bg-transparent text-base font-semibold text-white outline-none" />
+                <input value={contact.role} maxLength={120} onChange={(event) => updateContact(contact.id, { role: event.target.value })} placeholder="Role" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={contact.company} maxLength={120} onChange={(event) => updateContact(contact.id, { company: event.target.value })} placeholder="Company" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <select value={contact.relationship} onChange={(event) => updateContact(contact.id, { relationship: event.target.value as MentorshipRelationship })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                <select value={contact.status} onChange={(event) => updateContact(contact.id, { status: event.target.value as MentorshipStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+              </div>
             </article>
           ))}
         </div>
