@@ -456,6 +456,11 @@ export default function DashboardPage() {
           <div className="mt-1 text-2xl font-bold text-white">{networkingContacts.filter((contact) => !contact.archived).length}</div>
           <div className="mt-1 text-xs text-gray-500">{networkingFollowUpsDue} follow-ups due</div>
         </Link>
+        <Link href="/mentorship" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-emerald-700/60">
+          <div className="text-xs text-gray-500">Mentorship contacts</div>
+          <div className="mt-1 text-2xl font-bold text-white">{mentorshipContacts.filter((contact) => contact.status !== "archived").length}</div>
+          <div className="mt-1 text-xs text-gray-500">{mentorshipContacts.filter((contact) => contact.status === "active").length} active</div>
+        </Link>
         <Link href="/goals" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-rose-700/60">
           <div className="text-xs text-gray-500">Career goals</div>
           <div className="mt-1 text-2xl font-bold text-white">{careerGoals.filter((goal) => goal.status === "active").length}</div>
