@@ -101,6 +101,8 @@ export default function WeeklyReviewPage() {
           ["Applications sent", appliedThisWeek],
           ["Upcoming interviews", upcomingInterviews],
           ["Networking due", networkingFollowUpsDue],
+          ["Mentorship", activeMentorshipCount],
+          ["Mentor due", mentorshipFollowUpsDue],
           ["Active goals", activeGoalCount],
           ["Active offers", activeOfferCount],
           ["Ready stories", readyAchievementCount],
