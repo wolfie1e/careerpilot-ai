@@ -179,3 +179,12 @@ export function mergeMentorshipContacts(current: MentorshipContact[], incoming: 
 export function mentorshipConversationTotal(contacts: MentorshipContact[]): number {
   return contacts.reduce((total, contact) => total + Math.max(0, contact.conversationCount || 0), 0);
 }
+
+export function nextMentorshipContact(contacts: MentorshipContact[]): { name: string; date: string } | null {
+  const upcoming = contacts
+    .filter((contact) => contact.status !== "archived")
+    .map((contact) => ({ name: contact.name, date: contact.nextContactAt || suggestedMentorshipNextContact(contact) }))
+    .filter((item) => item.date && item.date >= mentorshipTodayKey())
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return upcoming[0] || null;
+}
