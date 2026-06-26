@@ -25,6 +25,7 @@ import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import type { LearningResource } from "@/lib/learning-path";
+import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
@@ -36,6 +37,7 @@ export default function WeeklyReviewPage() {
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
+  const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
@@ -50,8 +52,10 @@ export default function WeeklyReviewPage() {
   const certificationRenewalsDue = certificationRecords.filter((record) => isCertificationExpiring(record)).length;
   const activeLearningCount = learningResources.filter((resource) => resource.status !== "completed" && resource.status !== "archived").length;
   const completedLearningCount = learningResources.filter((resource) => resource.status === "completed").length;
+  const activeMentorshipCount = mentorshipContacts.filter((contact) => contact.status === "active").length;
+  const mentorshipFollowUpsDue = mentorshipContacts.filter((contact) => isMentorshipFollowUpDue(contact)).length;
   const completion = weeklyReviewCompletion(currentReview);
-  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
+  const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive mentorship contacts: ${activeMentorshipCount}\nMentorship follow-ups due: ${mentorshipFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
 
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
