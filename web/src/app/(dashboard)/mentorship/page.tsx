@@ -17,6 +17,7 @@ import {
   mentorshipConversationTotal,
   mentorshipPlanText,
   mentorshipRelationshipCounts,
+  mentorshipStatusCounts,
   mentorshipTopicCounts,
   mergeMentorshipContacts,
   nextMentorshipContact,
@@ -44,6 +45,7 @@ export default function MentorshipPage() {
   const activeContacts = contacts.filter((contact) => contact.status === "active");
   const nextContact = nextMentorshipContact(contacts);
   const relationshipRows = Object.entries(mentorshipRelationshipCounts(visibleContacts)).map(([relationship, count]) => ({ relationship, count }));
+  const statusRows = Object.entries(mentorshipStatusCounts(visibleContacts)).map(([status, count]) => ({ status, count }));
   const topicRows = Object.entries(mentorshipTopicCounts(visibleContacts)).map(([topic, count]) => ({ topic, count }));
 
   function addContact() {
@@ -207,6 +209,10 @@ export default function MentorshipPage() {
         <button onClick={() => downloadCsv("careerpilot-mentorship-topics.csv", topicRows)} disabled={!topicRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Topics
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-mentorship-statuses.csv", statusRows)} disabled={!statusRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Statuses
         </button>
       </div>
 
