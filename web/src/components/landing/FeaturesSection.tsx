@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal } from "lucide-react";
+import { Award, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Handshake } from "lucide-react";
 
 const features = [
   {
@@ -81,6 +81,12 @@ const features = [
     color: "cyan",
     title: "Networking Follow-ups",
     description: "Manage contacts, relationship strength, warm follow-ups, tags, LinkedIn links, and planner-ready outreach tasks.",
+  },
+  {
+    icon: Handshake,
+    color: "emerald",
+    title: "Mentorship Tracker",
+    description: "Track mentors, advisors, peers, goals, conversation cadence, follow-ups, topics, and planner-ready next steps.",
   },
   {
     icon: Medal,
