@@ -14,10 +14,12 @@ import {
   createMentorshipContact,
   isMentorshipFollowUpDue,
   isMentorshipFollowUpSoon,
+  mentorshipConversationTotal,
   mentorshipPlanText,
   mentorshipRelationshipCounts,
   mentorshipTopicCounts,
   mergeMentorshipContacts,
+  nextMentorshipContact,
   sortMentorshipContacts,
   type MentorshipContact,
   type MentorshipRelationship,
@@ -40,6 +42,7 @@ export default function MentorshipPage() {
     return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.email} ${contact.goals} ${contact.notes} ${contact.topics.join(" ")}`.toLowerCase().includes(query);
   });
   const activeContacts = contacts.filter((contact) => contact.status === "active");
+  const nextContact = nextMentorshipContact(contacts);
   const relationshipRows = Object.entries(mentorshipRelationshipCounts(visibleContacts)).map(([relationship, count]) => ({ relationship, count }));
   const topicRows = Object.entries(mentorshipTopicCounts(visibleContacts)).map(([topic, count]) => ({ topic, count }));
 
@@ -121,7 +124,7 @@ export default function MentorshipPage() {
         {[
           ["Active", activeContacts.length],
           ["Follow-ups", contacts.filter((contact) => isMentorshipFollowUpDue(contact)).length],
-          ["Conversations", contacts.reduce((sum, contact) => sum + contact.conversationCount, 0)],
+          ["Conversations", mentorshipConversationTotal(contacts)],
           ["Favorites", contacts.filter((contact) => contact.favorite && contact.status !== "archived").length],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -130,6 +133,12 @@ export default function MentorshipPage() {
           </div>
         ))}
       </div>
+
+      {nextContact && (
+        <div className="rounded-2xl border border-emerald-800/50 bg-emerald-950/20 p-4 text-sm text-emerald-100">
+          Next mentorship touchpoint: <span className="font-semibold">{nextContact.name}</span> on {nextContact.date}
+        </div>
+      )}
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
