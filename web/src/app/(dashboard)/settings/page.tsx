@@ -19,6 +19,7 @@ import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import type { LearningResource } from "@/lib/learning-path";
+import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
 
 type FieldErrors = Record<string, string>;
 
@@ -41,6 +42,7 @@ export default function SettingsPage() {
   const [achievementStories] = useLocalStorage<AchievementStory[]>(LOCAL_STORAGE_KEYS.achievementStories, []);
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
+  const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -200,6 +202,11 @@ export default function SettingsPage() {
       networking: {
         total_contacts: networkingContacts.length,
         active_contacts: networkingContacts.filter((contact) => !contact.archived).length,
+      },
+      mentorship: {
+        total_contacts: mentorshipContacts.length,
+        active_contacts: mentorshipContacts.filter((contact) => contact.status === "active").length,
+        follow_ups_due: mentorshipContacts.filter((contact) => isMentorshipFollowUpDue(contact)).length,
       },
       goals: {
         total: careerGoals.length,
