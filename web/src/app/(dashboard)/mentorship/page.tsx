@@ -28,8 +28,9 @@ export default function MentorshipPage() {
   const [search, setSearch] = useState("");
   const [relationshipFilter, setRelationshipFilter] = useState<MentorshipRelationship | "all">("all");
   const [statusFilter, setStatusFilter] = useState<MentorshipStatus | "all">("all");
+  const [showArchived, setShowArchived] = useState(false);
   const visibleContacts = sortMentorshipContacts(contacts).filter((contact) => {
-    if (contact.status === "archived") return false;
+    if (!showArchived && contact.status === "archived") return false;
     if (relationshipFilter !== "all" && contact.relationship !== relationshipFilter) return false;
     if (statusFilter !== "all" && contact.status !== statusFilter) return false;
     const query = search.trim().toLowerCase();
@@ -58,6 +59,17 @@ export default function MentorshipPage() {
     } catch {
       toast.error("Could not import mentorship contacts");
     }
+  }
+
+  function updateVisibleStatus(status: MentorshipStatus) {
+    const visibleIds = new Set(visibleContacts.map((contact) => contact.id));
+    setContacts((current) => current.map((contact) => visibleIds.has(contact.id) ? { ...contact, status, updatedAt: new Date().toISOString() } : contact));
+    toast.success(`Visible contacts marked ${status}`);
+  }
+
+  function clearArchivedContacts() {
+    setContacts((current) => current.filter((contact) => contact.status !== "archived"));
+    toast.success("Archived mentorship contacts cleared");
   }
 
   return (
@@ -92,6 +104,11 @@ export default function MentorshipPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={() => updateVisibleStatus("active")} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Activate visible</button>
+        <button onClick={() => updateVisibleStatus("dormant")} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Dormant visible</button>
+        <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
+        <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
+        <button onClick={clearArchivedContacts} disabled={!contacts.some((contact) => contact.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
         <select aria-label="Filter mentorship contacts by relationship" value={relationshipFilter} onChange={(event) => setRelationshipFilter(event.target.value as MentorshipRelationship | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All relationships</option>
           {MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
