@@ -175,6 +175,10 @@ export default function MentorshipPage() {
                 <select value={contact.relationship} onChange={(event) => updateContact(contact.id, { relationship: event.target.value as MentorshipRelationship })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
                 <select value={contact.status} onChange={(event) => updateContact(contact.id, { status: event.target.value as MentorshipStatus })} className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300">{MENTORSHIP_STATUSES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
               </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                <input type="email" value={contact.email} maxLength={255} onChange={(event) => updateContact(contact.id, { email: event.target.value })} placeholder="Email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+                <input value={contact.linkedInUrl} maxLength={2048} onChange={(event) => updateContact(contact.id, { linkedInUrl: event.target.value })} placeholder="LinkedIn URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
+              </div>
             </article>
           ))}
         </div>
