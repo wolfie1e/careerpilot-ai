@@ -78,6 +78,13 @@ export default function MentorshipPage() {
     toast.success("Archived mentorship contacts cleared");
   }
 
+  function resetFilters() {
+    setSearch("");
+    setRelationshipFilter("all");
+    setStatusFilter("all");
+    setShowArchived(false);
+  }
+
   function updateContact(id: string, patch: Partial<MentorshipContact>) {
     setContacts((current) => current.map((contact) => contact.id === id ? { ...contact, ...patch, updatedAt: new Date().toISOString() } : contact));
   }
@@ -156,6 +163,7 @@ export default function MentorshipPage() {
         <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleContacts.length} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Archive visible</button>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Archived</button>
         <button onClick={clearArchivedContacts} disabled={!contacts.some((contact) => contact.status === "archived")} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">Clear archived</button>
+        <button onClick={resetFilters} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">Reset filters</button>
         <select aria-label="Filter mentorship contacts by relationship" value={relationshipFilter} onChange={(event) => setRelationshipFilter(event.target.value as MentorshipRelationship | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
           <option value="all">All relationships</option>
           {MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
