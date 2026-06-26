@@ -2,7 +2,7 @@
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
-import { Award, BarChart2, BookOpen, BriefcaseBusiness, Download, ListChecks, LogOut, Medal, NotebookPen, Settings, ChevronDown, Target, UsersRound } from "lucide-react";
+import { Award, BarChart2, BookOpen, BriefcaseBusiness, Download, Handshake, ListChecks, LogOut, Medal, NotebookPen, Settings, ChevronDown, Target, UsersRound } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function UserMenu() {
@@ -112,6 +112,12 @@ export default function UserMenu() {
             <Link href="/networking" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
               <UsersRound className="w-3.5 h-3.5" />
               Networking
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item asChild>
+            <Link href="/mentorship" className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors outline-none">
+              <Handshake className="w-3.5 h-3.5" />
+              Mentorship
             </Link>
           </DropdownMenu.Item>
 
