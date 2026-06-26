@@ -1,21 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { Handshake, Plus } from "lucide-react";
+import { Handshake, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
+  MENTORSHIP_RELATIONSHIPS,
+  MENTORSHIP_STATUSES,
   createMentorshipContact,
   isMentorshipFollowUpDue,
   sortMentorshipContacts,
   type MentorshipContact,
+  type MentorshipRelationship,
+  type MentorshipStatus,
 } from "@/lib/mentorship";
 
 export default function MentorshipPage() {
   const [contacts, setContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const [name, setName] = useState("");
-  const visibleContacts = sortMentorshipContacts(contacts).filter((contact) => contact.status !== "archived");
+  const [search, setSearch] = useState("");
+  const [relationshipFilter, setRelationshipFilter] = useState<MentorshipRelationship | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<MentorshipStatus | "all">("all");
+  const visibleContacts = sortMentorshipContacts(contacts).filter((contact) => {
+    if (contact.status === "archived") return false;
+    if (relationshipFilter !== "all" && contact.relationship !== relationshipFilter) return false;
+    if (statusFilter !== "all" && contact.status !== statusFilter) return false;
+    const query = search.trim().toLowerCase();
+    return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.email} ${contact.goals} ${contact.notes} ${contact.topics.join(" ")}`.toLowerCase().includes(query);
+  });
   const activeContacts = contacts.filter((contact) => contact.status === "active");
 
   function addContact() {
@@ -54,6 +67,21 @@ export default function MentorshipPage() {
             Add
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <select aria-label="Filter mentorship contacts by relationship" value={relationshipFilter} onChange={(event) => setRelationshipFilter(event.target.value as MentorshipRelationship | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All relationships</option>
+          {MENTORSHIP_RELATIONSHIPS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <select aria-label="Filter mentorship contacts by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as MentorshipStatus | "all")} className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300">
+          <option value="all">All statuses</option>
+          {MENTORSHIP_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <label className="relative min-w-64 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search mentorship contacts" className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" />
+        </label>
       </div>
 
       {visibleContacts.length === 0 ? (
