@@ -126,6 +126,8 @@ export default function ReportsPage() {
       is_primary: resume.id === pinnedResumeId ? "yes" : "no",
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
+      mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
+      mentorship_conversations: mentorshipContacts.reduce((sum, contact) => sum + contact.conversationCount, 0),
       earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
       certification_renewals_due: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
     })));
