@@ -157,3 +157,21 @@ export function mentorshipTopicCounts(contacts: MentorshipContact[]): Record<str
     return counts;
   }, {});
 }
+
+export function normalizeMentorshipContact(contact: Partial<MentorshipContact>): MentorshipContact {
+  const base = createMentorshipContact(contact.name || "Untitled contact");
+  return {
+    ...base,
+    ...contact,
+    cadenceDays: Math.max(1, Number(contact.cadenceDays ?? base.cadenceDays)),
+    conversationCount: Math.max(0, Number(contact.conversationCount ?? base.conversationCount)),
+    confidence: Math.min(10, Math.max(1, Number(contact.confidence ?? base.confidence))),
+    topics: contact.topics || [],
+  };
+}
+
+export function mergeMentorshipContacts(current: MentorshipContact[], incoming: MentorshipContact[]): MentorshipContact[] {
+  const byId = new Map(current.map((contact) => [contact.id, contact]));
+  incoming.map(normalizeMentorshipContact).forEach((contact) => byId.set(contact.id, contact));
+  return sortMentorshipContacts([...byId.values()]);
+}
