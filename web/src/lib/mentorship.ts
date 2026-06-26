@@ -175,3 +175,7 @@ export function mergeMentorshipContacts(current: MentorshipContact[], incoming: 
   incoming.map(normalizeMentorshipContact).forEach((contact) => byId.set(contact.id, contact));
   return sortMentorshipContacts([...byId.values()]);
 }
+
+export function mentorshipConversationTotal(contacts: MentorshipContact[]): number {
+  return contacts.reduce((total, contact) => total + Math.max(0, contact.conversationCount || 0), 0);
+}
