@@ -13,6 +13,7 @@ import {
   MENTORSHIP_STATUSES,
   createMentorshipContact,
   isMentorshipFollowUpDue,
+  isMentorshipFollowUpSoon,
   mentorshipPlanText,
   mentorshipRelationshipCounts,
   mentorshipTopicCounts,
@@ -219,6 +220,11 @@ export default function MentorshipPage() {
               <button onClick={() => addContactToPlanner(contact)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
               </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {isMentorshipFollowUpDue(contact) && <span className="rounded-full bg-rose-500/10 px-2 py-1 text-xs font-medium text-rose-300">Follow-up due</span>}
+                {isMentorshipFollowUpSoon(contact) && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-300">Due soon</span>}
+                {contact.favorite && <span className="rounded-full bg-fuchsia-500/10 px-2 py-1 text-xs font-medium text-fuchsia-300">Priority</span>}
+              </div>
               <div className="mt-3 grid gap-2 md:grid-cols-2">
                 <input type="email" value={contact.email} maxLength={255} onChange={(event) => updateContact(contact.id, { email: event.target.value })} placeholder="Email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input value={contact.linkedInUrl} maxLength={2048} onChange={(event) => updateContact(contact.id, { linkedInUrl: event.target.value })} placeholder="LinkedIn URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
