@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
+import type { PlannerTask } from "@/lib/career-planner";
 import {
   MENTORSHIP_RELATIONSHIPS,
   MENTORSHIP_STATUSES,
@@ -24,6 +25,7 @@ import {
 
 export default function MentorshipPage() {
   const [contacts, setContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
+  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [relationshipFilter, setRelationshipFilter] = useState<MentorshipRelationship | "all">("all");
@@ -84,6 +86,27 @@ export default function MentorshipPage() {
   function removeContact(id: string) {
     setContacts((current) => current.filter((contact) => contact.id !== id));
     toast.success("Mentorship contact deleted");
+  }
+
+  function addContactToPlanner(contact: MentorshipContact) {
+    const task: PlannerTask = {
+      id: crypto.randomUUID(),
+      title: `Follow up with ${contact.name}`,
+      notes: `Created from mentorship tracker.${contact.goals ? ` Goals: ${contact.goals}` : ""}`,
+      priority: isMentorshipFollowUpDue(contact) ? "high" : "medium",
+      category: "networking",
+      estimateMinutes: 30,
+      resourceUrl: contact.linkedInUrl,
+      status: "todo",
+      dueDate: contact.nextContactAt || "",
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      archived: false,
+      tags: ["mentorship", ...contact.topics.slice(0, 5)],
+      recurrence: "none",
+    };
+    setPlannerTasks([task, ...plannerTasks]);
+    toast.success("Mentorship follow-up added to planner");
   }
 
   return (
@@ -193,6 +216,9 @@ export default function MentorshipPage() {
                   <button onClick={() => removeContact(contact.id)} aria-label={`Delete ${contact.name}`} className="text-gray-600 hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
+              <button onClick={() => addContactToPlanner(contact)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
+                Add planner task
+              </button>
               <div className="mt-3 grid gap-2 md:grid-cols-2">
                 <input type="email" value={contact.email} maxLength={255} onChange={(event) => updateContact(contact.id, { email: event.target.value })} placeholder="Email" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
                 <input value={contact.linkedInUrl} maxLength={2048} onChange={(event) => updateContact(contact.id, { linkedInUrl: event.target.value })} placeholder="LinkedIn URL" className="rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
