@@ -192,3 +192,9 @@ export function nextMentorshipContact(contacts: MentorshipContact[]): { name: st
 export function mentorshipFollowUpDueCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => isMentorshipFollowUpDue(contact)).length;
 }
+
+export function mentorshipAverageConfidence(contacts: MentorshipContact[]): number {
+  const activeContacts = contacts.filter((contact) => contact.status !== "archived");
+  if (!activeContacts.length) return 0;
+  return Math.round(activeContacts.reduce((total, contact) => total + contact.confidence, 0) / activeContacts.length);
+}
