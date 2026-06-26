@@ -64,3 +64,14 @@ export function createMentorshipContact(name: string): MentorshipContact {
     updatedAt: now,
   };
 }
+
+export function mentorshipTodayKey(date = new Date()): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function suggestedMentorshipNextContact(contact: MentorshipContact): string {
+  if (!contact.lastContactAt || contact.cadenceDays <= 0) return contact.nextContactAt;
+  const date = new Date(`${contact.lastContactAt}T00:00:00`);
+  date.setDate(date.getDate() + contact.cadenceDays);
+  return date.toISOString().slice(0, 10);
+}
