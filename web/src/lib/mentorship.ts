@@ -188,3 +188,7 @@ export function nextMentorshipContact(contacts: MentorshipContact[]): { name: st
     .sort((a, b) => a.date.localeCompare(b.date));
   return upcoming[0] || null;
 }
+
+export function mentorshipFollowUpDueCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => isMentorshipFollowUpDue(contact)).length;
+}
