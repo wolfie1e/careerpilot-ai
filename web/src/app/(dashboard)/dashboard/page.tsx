@@ -22,7 +22,7 @@ import type { OfferComparison } from "@/lib/offer-tracker";
 import type { AchievementStory } from "@/lib/achievement-vault";
 import { certificationRemainingStudyHours, certificationTotalCost, isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
-import { mentorshipConversationTotal, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
+import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFollowUpDueCount, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -256,8 +256,9 @@ export default function DashboardPage() {
       networking_contacts: networkingContacts.filter((contact) => !contact.archived).length,
       networking_follow_ups_due: networkingFollowUpsDue,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
-      mentorship_follow_ups_due: mentorshipContacts.filter((contact) => contact.nextContactAt && contact.nextContactAt <= new Date().toISOString().slice(0, 10) && contact.status !== "archived").length,
+      mentorship_follow_ups_due: mentorshipFollowUpDueCount(mentorshipContacts),
       mentorship_conversations: mentorshipConversationTotal(mentorshipContacts),
+      mentorship_average_confidence: mentorshipAverageConfidence(mentorshipContacts),
       next_mentorship_contact: nextMentorship,
       career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
       completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
