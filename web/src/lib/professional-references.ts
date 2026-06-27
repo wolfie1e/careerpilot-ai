@@ -128,6 +128,9 @@ export function referenceProfileCompletion(reference: ProfessionalReference): nu
 export function contactableReferenceCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status !== "archived" && Boolean(reference.email || reference.phone || reference.linkedInUrl)).length;
 }
+export function referenceStrengthCoverage(references: ProfessionalReference[]): number {
+  return new Set(references.filter((reference) => reference.status !== "archived").flatMap((reference) => reference.strengths)).size;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
