@@ -11,7 +11,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText,
   companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
-  sortTargetCompanies, isCompanyActionSoon, type CompanyPriority, type CompanyStage, type TargetCompany,
+  sortTargetCompanies, isCompanyActionSoon, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
 
 export default function CompaniesPage() {
@@ -33,6 +33,7 @@ export default function CompaniesPage() {
   const activeCompanies = companies.filter((company) => company.stage !== "archived");
   const stageRows = Object.entries(companyStageCounts(visibleCompanies));
   const tagRows = Object.entries(companyTagCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
+  const topCompany = topTargetCompany(companies);
 
   function addCompany() {
     if (!name.trim()) return;
@@ -101,6 +102,8 @@ export default function CompaniesPage() {
           ["Avg interest", `${companyAverageInterest(companies)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-lg border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
+
+      {topCompany && <div className="rounded-lg border border-emerald-800/50 bg-emerald-950/20 p-4 text-sm text-emerald-100">Strongest current target: <span className="font-semibold">{topCompany.name}</span> with fit {topCompany.fitScore}/10 and interest {topCompany.interestScore}/10.</div>}
 
       <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
