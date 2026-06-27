@@ -272,6 +272,8 @@ export default function DashboardPage() {
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
       confirmed_references: confirmedReferenceCount(professionalReferences),
+      reference_actions_due: professionalReferences.filter((reference) => isReferenceActionDue(reference)).length,
+      reference_average_confidence: referenceAverageConfidence(professionalReferences),
       target_company_actions_due: targetCompanies.filter((company) => isCompanyActionDue(company)).length,
       target_company_open_roles: companyOpenRoleTotal(targetCompanies),
       top_target_company: topTargetCompany(targetCompanies),
