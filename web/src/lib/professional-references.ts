@@ -110,6 +110,9 @@ export function confirmedReferenceCount(references: ProfessionalReference[]): nu
 export function recentlyUsedReferenceCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status === "used").length;
 }
+export function referenceThankYouDueCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status === "used" && !reference.thankYouSent).length;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
