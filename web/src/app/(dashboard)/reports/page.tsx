@@ -127,6 +127,8 @@ export default function ReportsPage() {
       file_size: resume.file_size ?? "",
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId ? "yes" : "no",
+      target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
+      target_company_open_roles: targetCompanies.reduce((sum, company) => sum + company.openRoles, 0),
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
