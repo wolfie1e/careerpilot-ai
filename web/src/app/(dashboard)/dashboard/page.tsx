@@ -311,6 +311,10 @@ export default function DashboardPage() {
         .filter((company) => company.stage !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_professional_references: professionalReferences
+        .filter((reference) => reference.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
       recent_career_goals: careerGoals
         .filter((goal) => goal.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
