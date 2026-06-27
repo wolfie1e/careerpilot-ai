@@ -14,6 +14,7 @@ import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import type { LearningResource } from "@/lib/learning-path";
 import type { MentorshipContact } from "@/lib/mentorship";
+import type { TargetCompany } from "@/lib/target-companies";
 
 interface Resume {
   id: string;
@@ -38,6 +39,7 @@ export default function ReportsPage() {
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
+  const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
