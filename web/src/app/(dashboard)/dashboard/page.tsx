@@ -267,6 +267,7 @@ export default function DashboardPage() {
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       target_company_actions_due: targetCompanies.filter((company) => isCompanyActionDue(company)).length,
       target_company_open_roles: companyOpenRoleTotal(targetCompanies),
+      top_target_company: topTargetCompany(targetCompanies),
       next_mentorship_contact: nextMentorship,
       career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
       completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
