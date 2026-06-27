@@ -67,6 +67,7 @@ const ONBOARDING_STEPS = [
   { key: "achievement", label: "Capture an achievement", href: "/achievements", done: false },
   { key: "certification", label: "Plan a certification", href: "/certifications", done: false },
   { key: "company", label: "Research a target company", href: "/companies", done: false },
+  { key: "reference", label: "Prepare a professional reference", href: "/references", done: false },
 ];
 
 const quickActions = [
@@ -214,6 +215,7 @@ export default function DashboardPage() {
     achievementStories.length > 0,
     certificationRecords.length > 0,
     targetCompanies.length > 0,
+    professionalReferences.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
