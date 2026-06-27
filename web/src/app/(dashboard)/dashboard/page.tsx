@@ -297,6 +297,10 @@ export default function DashboardPage() {
         .filter((contact) => contact.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_target_companies: targetCompanies
+        .filter((company) => company.stage !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
       recent_career_goals: careerGoals
         .filter((goal) => goal.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
