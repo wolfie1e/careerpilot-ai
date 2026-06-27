@@ -121,6 +121,10 @@ export function nextReferenceAction(references: ProfessionalReference[]): { name
 export function strongestProfessionalReference(references: ProfessionalReference[]): ProfessionalReference | null {
   return [...references].filter((reference) => reference.status !== "archived").sort((a, b) => b.confidence - a.confidence || Number(b.status === "confirmed") - Number(a.status === "confirmed"))[0] || null;
 }
+export function referenceProfileCompletion(reference: ProfessionalReference): number {
+  const checks = [reference.title, reference.company, reference.email || reference.phone || reference.linkedInUrl, reference.workedTogether, reference.supportingStories, reference.strengths.length, reference.nextAction];
+  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
