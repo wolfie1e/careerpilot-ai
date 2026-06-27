@@ -21,6 +21,7 @@ import { isCertificationExpiring, type CertificationRecord } from "@/lib/certifi
 import type { LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
 import type { TargetCompany } from "@/lib/target-companies";
+import type { ProfessionalReference } from "@/lib/professional-references";
 
 type FieldErrors = Record<string, string>;
 
@@ -45,6 +46,7 @@ export default function SettingsPage() {
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
+  const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -191,6 +193,11 @@ export default function SettingsPage() {
         total: targetCompanies.length,
         active: targetCompanies.filter((company) => company.stage !== "archived").length,
         ready: targetCompanies.filter((company) => company.stage === "ready").length,
+      },
+      professional_references: {
+        total: professionalReferences.length,
+        confirmed: professionalReferences.filter((reference) => reference.status === "confirmed").length,
+        active: professionalReferences.filter((reference) => reference.status !== "archived").length,
       },
       learning: {
         total: learningResources.length,
