@@ -105,6 +105,9 @@ export function companyTagCounts(companies: TargetCompany[]): Record<string, num
 export function companyIndustryCounts(companies: TargetCompany[]): Record<string, number> {
   return companies.filter((company) => company.industry && company.stage !== "archived").reduce<Record<string, number>>((counts, company) => { counts[company.industry] = (counts[company.industry] || 0) + 1; return counts; }, {});
 }
+export function companyLocationCounts(companies: TargetCompany[]): Record<string, number> {
+  return companies.filter((company) => company.location && company.stage !== "archived").reduce<Record<string, number>>((counts, company) => { counts[company.location] = (counts[company.location] || 0) + 1; return counts; }, {});
+}
 
 export function companyAverageFit(companies: TargetCompany[]): number {
   const active = companies.filter((company) => company.stage !== "archived");
