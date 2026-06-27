@@ -95,6 +95,10 @@ export default function CompaniesPage() {
     setCompanies((current) => current.filter((company) => company.stage !== "archived"));
     toast.success("Archived companies cleared");
   }
+  function scheduleToday(company: TargetCompany) {
+    updateCompany(company.id, { nextActionDate: new Date().toISOString().slice(0, 10), nextAction: company.nextAction || "Research " + company.name });
+    toast.success("Company action scheduled for today");
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -181,6 +185,7 @@ export default function CompaniesPage() {
             {isCompanyActionDue(company) && <span className="rounded-full bg-amber-950 px-2.5 py-1 text-xs text-amber-300">Action due</span>}
             {!isCompanyActionDue(company) && isCompanyActionSoon(company) && <span className="rounded-full bg-blue-950 px-2.5 py-1 text-xs text-blue-300">Due this week</span>}
             <button onClick={() => addToPlanner(company)} className="ml-auto rounded-md border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">Add action to planner</button>
+            <button onClick={() => scheduleToday(company)} className="rounded-md border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">Schedule today</button>
           </div>
         </article>
       ))}</div>}
