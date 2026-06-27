@@ -61,6 +61,8 @@ export default function WeeklyReviewPage() {
   const completion = weeklyReviewCompletion(currentReview);
   const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive mentorship contacts: ${activeMentorshipCount}\nMentorship follow-ups due: ${mentorshipFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
 
+  const targetCompanyReviewText = "Target companies: " + activeTargetCompanyCount + "\nCompany actions due: " + targetCompanyActionsDue + "\n" + reviewCopyText;
+
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
     setReviews((current) => [next, ...current.filter((review) => review.weekOf !== currentWeek)]);
