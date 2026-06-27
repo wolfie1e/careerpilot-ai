@@ -91,6 +91,10 @@ export default function CompaniesPage() {
     setCompanies((current) => current.map((company) => ids.has(company.id) ? { ...company, stage, updatedAt: new Date().toISOString() } : company));
     toast.success("Visible companies marked " + stage);
   }
+  function clearArchived() {
+    setCompanies((current) => current.filter((company) => company.stage !== "archived"));
+    toast.success("Archived companies cleared");
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -127,6 +131,7 @@ export default function CompaniesPage() {
         <select aria-label="Filter companies by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CompanyPriority | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All priorities</option>{COMPANY_PRIORITIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search companies, roles, notes, or tags" className="w-full rounded-lg border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         <button onClick={() => setShowArchived((value) => !value)} aria-pressed={showArchived} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">Archived</button>
+        <button onClick={clearArchived} disabled={!companies.some((company) => company.stage === "archived")} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Clear archived</button>
         <button onClick={resetFilters} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">Reset</button>
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importCompanies} className="sr-only" /></label>
         <CopyButton value={companyPlanText(visibleCompanies) || "No target companies yet"} label="Copy plan" className="rounded-lg px-3" />
