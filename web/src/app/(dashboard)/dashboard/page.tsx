@@ -270,6 +270,7 @@ export default function DashboardPage() {
       mentorship_conversations: mentorshipConversationTotal(mentorshipContacts),
       mentorship_average_confidence: mentorshipAverageConfidence(mentorshipContacts),
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
+      professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
       target_company_actions_due: targetCompanies.filter((company) => isCompanyActionDue(company)).length,
       target_company_open_roles: companyOpenRoleTotal(targetCompanies),
       top_target_company: topTargetCompany(targetCompanies),
