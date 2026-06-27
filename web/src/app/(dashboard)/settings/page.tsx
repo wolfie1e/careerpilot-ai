@@ -20,6 +20,7 @@ import type { AchievementStory } from "@/lib/achievement-vault";
 import { isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import type { LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
+import type { TargetCompany } from "@/lib/target-companies";
 
 type FieldErrors = Record<string, string>;
 
@@ -43,6 +44,7 @@ export default function SettingsPage() {
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
+  const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -184,6 +186,11 @@ export default function SettingsPage() {
         total_actions: plannerTasks.length,
         completed_actions: plannerTasks.filter((task) => task.status === "done").length,
         recurring_actions: plannerTasks.filter((task) => task.recurrence && task.recurrence !== "none").length,
+      },
+      target_companies: {
+        total: targetCompanies.length,
+        active: targetCompanies.filter((company) => company.stage !== "archived").length,
+        ready: targetCompanies.filter((company) => company.stage === "ready").length,
       },
       learning: {
         total: learningResources.length,
