@@ -11,7 +11,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText, companyReadinessScore, companyResearchCompletion,
   companyIndustryCounts, companyLocationCounts, companyPriorityCounts, companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
-  sortTargetCompanies, isCompanyActionSoon, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
+  sortTargetCompanies, isCompanyActionSoon, nextCompanyAction, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
 
 export default function CompaniesPage() {
@@ -37,6 +37,7 @@ export default function CompaniesPage() {
   const industryRows = Object.entries(companyIndustryCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const locationRows = Object.entries(companyLocationCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const topCompany = topTargetCompany(companies);
+  const nextAction = nextCompanyAction(companies);
 
   function addCompany() {
     if (!name.trim()) return;
@@ -120,6 +121,7 @@ export default function CompaniesPage() {
       </div>
 
       {topCompany && <div className="rounded-lg border border-emerald-800/50 bg-emerald-950/20 p-4 text-sm text-emerald-100">Strongest current target: <span className="font-semibold">{topCompany.name}</span> with fit {topCompany.fitScore}/10 and interest {topCompany.interestScore}/10.</div>}
+      {nextAction && <div className="rounded-lg border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">Next company action: <span className="font-semibold">{nextAction.action}</span> for {nextAction.name} by {nextAction.date}.</div>}
 
       <div className="rounded-lg border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
