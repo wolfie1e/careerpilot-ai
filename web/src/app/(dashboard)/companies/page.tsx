@@ -121,6 +121,7 @@ export default function CompaniesPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={() => updateVisibleStage("ready")} disabled={!visibleCompanies.length} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Mark ready</button>
         <button onClick={() => updateVisibleStage("archived")} disabled={!visibleCompanies.length} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Archive visible</button>
         <select aria-label="Filter companies by stage" value={stageFilter} onChange={(event) => setStageFilter(event.target.value as CompanyStage | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All stages</option>{COMPANY_STAGES.filter((item) => item.value !== "archived").map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
         <select aria-label="Filter companies by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CompanyPriority | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All priorities</option>{COMPANY_PRIORITIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
