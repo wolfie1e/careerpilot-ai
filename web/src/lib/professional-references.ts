@@ -104,6 +104,9 @@ export function referenceAverageConfidence(references: ProfessionalReference[]):
   const active = references.filter((reference) => reference.status !== "archived");
   return active.length ? Math.round(active.reduce((sum, reference) => sum + reference.confidence, 0) / active.length) : 0;
 }
+export function confirmedReferenceCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status === "confirmed").length;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
