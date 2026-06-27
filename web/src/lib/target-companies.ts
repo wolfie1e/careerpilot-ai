@@ -113,6 +113,9 @@ export function companyOpenRoleTotal(companies: TargetCompany[]): number {
 export function companyContactTotal(companies: TargetCompany[]): number {
   return companies.filter((company) => company.stage !== "archived").reduce((sum, company) => sum + company.contactCount, 0);
 }
+export function topTargetCompany(companies: TargetCompany[]): TargetCompany | null {
+  return [...companies].filter((company) => company.stage !== "archived").sort((a, b) => (b.fitScore + b.interestScore) - (a.fitScore + a.interestScore))[0] || null;
+}
 
 export function companyPlanText(companies: TargetCompany[]): string {
   return sortTargetCompanies(companies).map((company) => [
