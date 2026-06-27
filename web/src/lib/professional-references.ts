@@ -54,6 +54,12 @@ export function referenceTodayKey(date = new Date()): string { return date.toISO
 export function isReferenceActionDue(reference: ProfessionalReference, today = referenceTodayKey()): boolean {
   return Boolean(reference.nextActionDate && reference.nextActionDate <= today && reference.status !== "archived");
 }
+export function isReferenceActionSoon(reference: ProfessionalReference, today = new Date()): boolean {
+  if (!reference.nextActionDate || reference.status === "archived") return false;
+  const due = new Date(reference.nextActionDate + "T00:00:00");
+  const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
 
 const STATUS_WEIGHT: Record<ReferenceStatus, number> = { confirmed: 0, permission_requested: 1, potential: 2, used: 3, archived: 4 };
 export function sortProfessionalReferences(references: ProfessionalReference[]): ProfessionalReference[] {
