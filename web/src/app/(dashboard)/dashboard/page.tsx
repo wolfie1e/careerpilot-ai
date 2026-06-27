@@ -264,6 +264,7 @@ export default function DashboardPage() {
       mentorship_follow_ups_due: mentorshipFollowUpDueCount(mentorshipContacts),
       mentorship_conversations: mentorshipConversationTotal(mentorshipContacts),
       mentorship_average_confidence: mentorshipAverageConfidence(mentorshipContacts),
+      target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       next_mentorship_contact: nextMentorship,
       career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
       completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
