@@ -27,6 +27,7 @@ import { isCertificationActive, isCertificationExpiring, type CertificationRecor
 import type { LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
 import { isCompanyActionDue, type TargetCompany } from "@/lib/target-companies";
+import { confirmedReferenceCount, isReferenceActionDue, type ProfessionalReference } from "@/lib/professional-references";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
@@ -40,6 +41,7 @@ export default function WeeklyReviewPage() {
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
+  const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
