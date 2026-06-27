@@ -10,7 +10,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   REFERENCE_RELATIONSHIPS, REFERENCE_STATUSES, createProfessionalReference, isReferenceActionDue, isReferenceActionSoon,
-  confirmedReferenceCount, mergeProfessionalReferences, recentlyUsedReferenceCount, referenceAverageConfidence, referencePlanText, referenceRelationshipCounts, referenceThankYouDueCount,
+  confirmedReferenceCount, mergeProfessionalReferences, nextReferenceAction, recentlyUsedReferenceCount, referenceAverageConfidence, referencePlanText, referenceRelationshipCounts, referenceThankYouDueCount,
   referenceStatusCounts, referenceStrengthCounts, sortProfessionalReferences, type ProfessionalReference,
   type ReferenceRelationship, type ReferenceStatus,
 } from "@/lib/professional-references";
@@ -33,6 +33,7 @@ export default function ReferencesPage() {
   const statusRows = Object.entries(referenceStatusCounts(visibleReferences));
   const relationshipRows = Object.entries(referenceRelationshipCounts(visibleReferences));
   const strengthRows = Object.entries(referenceStrengthCounts(visibleReferences)).sort((a, b) => b[1] - a[1]);
+  const nextAction = nextReferenceAction(references);
 
   function addReference() { if (!name.trim()) return; setReferences((current) => [createProfessionalReference(name), ...current]); setName(""); toast.success("Professional reference added"); }
   function updateReference(id: string, patch: Partial<ProfessionalReference>) { setReferences((current) => current.map((reference) => reference.id === id ? { ...reference, ...patch, updatedAt: new Date().toISOString() } : reference)); }
@@ -50,6 +51,7 @@ export default function ReferencesPage() {
 
   return <div className="max-w-6xl space-y-6">
     <div><h2 className="text-xl font-semibold text-white">Professional References</h2><p className="mt-1 text-sm text-gray-400">Prepare trusted advocates before an employer asks for them.</p></div>
+    {nextAction && <div className="rounded-lg border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">Next reference action: <span className="font-semibold">{nextAction.action}</span> for {nextAction.name} by {nextAction.date}.</div>}
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">{[
       ["Active", references.filter((reference) => reference.status !== "archived").length],
       ["Confirmed", confirmedReferenceCount(references)],
