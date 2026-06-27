@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award, BookOpen, Handshake,
+  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award, BookOpen, Handshake, Building2,
   Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus, Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ const navItems = [
   { href: "/goals", icon: Target, label: "Goals" },
   { href: "/achievements", icon: Medal, label: "Achievements" },
   { href: "/certifications", icon: Award, label: "Certifications" },
+  { href: "/companies", icon: Building2, label: "Target Companies" },
   { href: "/applications", icon: BriefcaseBusiness, label: "Applications" },
   { href: "/offers", icon: BriefcaseBusiness, label: "Offers" },
   { href: "/review", icon: NotebookPen, label: "Weekly Review" },
