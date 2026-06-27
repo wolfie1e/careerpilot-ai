@@ -107,6 +107,9 @@ export function referenceAverageConfidence(references: ProfessionalReference[]):
 export function confirmedReferenceCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status === "confirmed").length;
 }
+export function recentlyUsedReferenceCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status === "used").length;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
