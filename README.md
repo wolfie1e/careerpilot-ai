@@ -30,6 +30,7 @@ Upload your resume, match it with job descriptions, improve your ATS score, and 
 | 📖 Learning Path | Track courses, books, projects, practice, progress, deadlines, and planner-ready next steps |
 | 🏅 Certification Tracker | Plan exam attempts, track study progress, store credential proof, and monitor renewal windows |
 | 🤝 Mentorship Tracker | Manage mentors, advisors, peers, conversation cadence, goals, topics, and follow-up tasks |
+| 🏢 Target Companies | Research and prioritize companies by fit, interest, roles, contacts, readiness, and next actions |
 | 🔒 Route Protection | JWT auth with httpOnly cookies and server-side middleware |
 | ⚡ Rate Limiting | AI-heavy endpoints limited to 10 req/min per IP |
 
