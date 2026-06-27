@@ -11,7 +11,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   REFERENCE_RELATIONSHIPS, REFERENCE_STATUSES, createProfessionalReference, isReferenceActionDue, isReferenceActionSoon,
   confirmedReferenceCount, mergeProfessionalReferences, nextReferenceAction, recentlyUsedReferenceCount, referenceAverageConfidence, referencePlanText, referenceRelationshipCounts, referenceThankYouDueCount,
-  referenceStatusCounts, referenceStrengthCounts, sortProfessionalReferences, type ProfessionalReference,
+  contactableReferenceCount, referenceStatusCounts, referenceStrengthCounts, sortProfessionalReferences, type ProfessionalReference,
   type ReferenceRelationship, type ReferenceStatus,
 } from "@/lib/professional-references";
 
@@ -52,11 +52,12 @@ export default function ReferencesPage() {
   return <div className="max-w-6xl space-y-6">
     <div><h2 className="text-xl font-semibold text-white">Professional References</h2><p className="mt-1 text-sm text-gray-400">Prepare trusted advocates before an employer asks for them.</p></div>
     {nextAction && <div className="rounded-lg border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">Next reference action: <span className="font-semibold">{nextAction.action}</span> for {nextAction.name} by {nextAction.date}.</div>}
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">{[
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">{[
       ["Active", references.filter((reference) => reference.status !== "archived").length],
       ["Confirmed", confirmedReferenceCount(references)],
       ["Recently used", recentlyUsedReferenceCount(references)],
       ["Thank-yous due", referenceThankYouDueCount(references)],
+      ["Contactable", contactableReferenceCount(references)],
       ["Permission pending", references.filter((reference) => reference.status === "permission_requested").length],
       ["Actions due", references.filter((reference) => isReferenceActionDue(reference)).length],
       ["Avg confidence", `${referenceAverageConfidence(references)}/10`],
