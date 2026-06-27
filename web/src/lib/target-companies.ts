@@ -53,6 +53,12 @@ export function companyTodayKey(date = new Date()): string { return date.toISOSt
 export function isCompanyActionDue(company: TargetCompany, today = companyTodayKey()): boolean {
   return Boolean(company.nextActionDate && company.nextActionDate <= today && company.stage !== "archived");
 }
+export function isCompanyActionSoon(company: TargetCompany, today = new Date()): boolean {
+  if (!company.nextActionDate || company.stage === "archived") return false;
+  const due = new Date(company.nextActionDate + "T00:00:00");
+  const days = Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
 
 const STAGE_WEIGHT: Record<CompanyStage, number> = { ready: 0, networking: 1, researching: 2, watching: 3, archived: 4 };
 const PRIORITY_WEIGHT: Record<CompanyPriority, number> = { high: 0, medium: 1, low: 2 };
