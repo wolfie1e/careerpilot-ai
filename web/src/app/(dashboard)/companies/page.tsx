@@ -9,7 +9,7 @@ import type { PlannerTask } from "@/lib/career-planner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
-  COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyPlanText,
+  COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyOpenRoleTotal, companyPlanText,
   companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
   sortTargetCompanies, isCompanyActionSoon, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
@@ -90,11 +90,12 @@ export default function CompaniesPage() {
         <p className="mt-1 text-sm text-gray-400">Build a focused company shortlist and turn research into deliberate action.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Active", activeCompanies.length],
           ["Ready", companies.filter((company) => company.stage === "ready").length],
           ["Actions due", companies.filter((company) => isCompanyActionDue(company)).length],
+          ["Open roles", companyOpenRoleTotal(companies)],
           ["Average fit", `${companyAverageFit(companies)}/10`],
           ["Avg interest", `${companyAverageInterest(companies)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-lg border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
