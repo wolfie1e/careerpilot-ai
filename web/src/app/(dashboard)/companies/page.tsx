@@ -86,6 +86,11 @@ export default function CompaniesPage() {
   }
 
   function resetFilters() { setSearch(""); setStageFilter("all"); setPriorityFilter("all"); setShowArchived(false); }
+  function updateVisibleStage(stage: CompanyStage) {
+    const ids = new Set(visibleCompanies.map((company) => company.id));
+    setCompanies((current) => current.map((company) => ids.has(company.id) ? { ...company, stage, updatedAt: new Date().toISOString() } : company));
+    toast.success("Visible companies marked " + stage);
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -116,6 +121,7 @@ export default function CompaniesPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <button onClick={() => updateVisibleStage("archived")} disabled={!visibleCompanies.length} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Archive visible</button>
         <select aria-label="Filter companies by stage" value={stageFilter} onChange={(event) => setStageFilter(event.target.value as CompanyStage | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All stages</option>{COMPANY_STAGES.filter((item) => item.value !== "archived").map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
         <select aria-label="Filter companies by priority" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as CompanyPriority | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All priorities</option>{COMPANY_PRIORITIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
         <label className="relative min-w-64 flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search companies, roles, notes, or tags" className="w-full rounded-lg border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500" /></label>
