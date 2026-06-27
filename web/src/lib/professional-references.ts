@@ -140,3 +140,7 @@ export function referencePlanText(references: ProfessionalReference[]): string {
     reference.strengths.length ? `Can speak to: ${reference.strengths.join(", ")}` : "",
   ].filter(Boolean).join("\n")).join("\n\n");
 }
+export function referenceRequestText(reference: ProfessionalReference): string {
+  const context = reference.workedTogether ? " from our work together on " + reference.workedTogether : "";
+  return "Hi " + reference.name + ", I am preparing for upcoming opportunities and would be grateful if you would serve as a professional reference" + context + ". I can share role details and a short brief to make the process easy.";
+}
