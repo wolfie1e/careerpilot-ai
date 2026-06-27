@@ -11,7 +11,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyPlanText,
   companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
-  sortTargetCompanies, type CompanyPriority, type CompanyStage, type TargetCompany,
+  sortTargetCompanies, isCompanyActionSoon, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
 
 export default function CompaniesPage() {
@@ -157,6 +157,7 @@ export default function CompaniesPage() {
             <label className="text-xs text-gray-500">Fit <input type="range" min="1" max="10" value={company.fitScore} onChange={(event) => updateCompany(company.id, { fitScore: Number(event.target.value) })} className="mx-2 align-middle" /><span className="text-white">{company.fitScore}/10</span></label>
             <label className="text-xs text-gray-500">Interest <input type="range" min="1" max="10" value={company.interestScore} onChange={(event) => updateCompany(company.id, { interestScore: Number(event.target.value) })} className="mx-2 align-middle" /><span className="text-white">{company.interestScore}/10</span></label>
             {isCompanyActionDue(company) && <span className="rounded-full bg-amber-950 px-2.5 py-1 text-xs text-amber-300">Action due</span>}
+            {!isCompanyActionDue(company) && isCompanyActionSoon(company) && <span className="rounded-full bg-blue-950 px-2.5 py-1 text-xs text-blue-300">Due this week</span>}
             <button onClick={() => addToPlanner(company)} className="ml-auto rounded-md border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">Add action to planner</button>
           </div>
         </article>
