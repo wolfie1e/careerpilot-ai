@@ -133,6 +133,8 @@ export default function ReportsPage() {
       is_primary: resume.id === pinnedResumeId ? "yes" : "no",
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       target_company_open_roles: targetCompanies.reduce((sum, company) => sum + company.openRoles, 0),
+      professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
+      confirmed_references: professionalReferences.filter((reference) => reference.status === "confirmed").length,
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
