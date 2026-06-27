@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, Building2, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Handshake } from "lucide-react";
 
 const features = [
   {
@@ -63,6 +63,12 @@ const features = [
     color: "cyan",
     title: "Learning Path",
     description: "Organize courses, books, projects, and practice resources with progress, deadlines, skill areas, and planner handoff.",
+  },
+  {
+    icon: Building2,
+    color: "emerald",
+    title: "Target Company Research",
+    description: "Prioritize a company shortlist with fit, interest, research depth, contacts, open roles, and clear next actions.",
   },
   {
     icon: BriefcaseBusiness,
