@@ -125,6 +125,9 @@ export function referenceProfileCompletion(reference: ProfessionalReference): nu
   const checks = [reference.title, reference.company, reference.email || reference.phone || reference.linkedInUrl, reference.workedTogether, reference.supportingStories, reference.strengths.length, reference.nextAction];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }
+export function contactableReferenceCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status !== "archived" && Boolean(reference.email || reference.phone || reference.linkedInUrl)).length;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
