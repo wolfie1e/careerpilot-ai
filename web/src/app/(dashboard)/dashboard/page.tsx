@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, BookOpen, FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, BookOpen, Building2, FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Handshake } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -23,6 +23,7 @@ import type { AchievementStory } from "@/lib/achievement-vault";
 import { certificationRemainingStudyHours, certificationTotalCost, isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
 import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFollowUpDueCount, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
+import { companyAverageFit, companyOpenRoleTotal, isCompanyActionDue, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -167,6 +168,7 @@ export default function DashboardPage() {
   const [certificationRecords] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
   const [learningResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
+  const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const nextMentorship = nextMentorshipContact(mentorshipContacts);
 
   useEffect(() => {
