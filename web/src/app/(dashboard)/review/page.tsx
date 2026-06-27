@@ -60,6 +60,8 @@ export default function WeeklyReviewPage() {
   const mentorshipFollowUpsDue = mentorshipContacts.filter((contact) => isMentorshipFollowUpDue(contact)).length;
   const activeTargetCompanyCount = targetCompanies.filter((company) => company.stage !== "archived").length;
   const targetCompanyActionsDue = targetCompanies.filter((company) => isCompanyActionDue(company)).length;
+  const confirmedReferences = confirmedReferenceCount(professionalReferences);
+  const referenceActionsDue = professionalReferences.filter((reference) => isReferenceActionDue(reference)).length;
   const completion = weeklyReviewCompletion(currentReview);
   const reviewCopyText = `${weeklyReviewSummary(currentReview)}\nNetworking contacts: ${networkingContacts.length}\nNetworking follow-ups due: ${networkingFollowUpsDue}\nActive mentorship contacts: ${activeMentorshipCount}\nMentorship follow-ups due: ${mentorshipFollowUpsDue}\nActive career goals: ${activeGoalCount}\nActive offers: ${activeOfferCount}\nReady achievement stories: ${readyAchievementCount}\nActive certifications: ${activeCertificationCount}\nCertification renewals: ${certificationRenewalsDue}\nActive learning resources: ${activeLearningCount}`;
 
