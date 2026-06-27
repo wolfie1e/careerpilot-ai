@@ -127,6 +127,11 @@ export function companyContactTotal(companies: TargetCompany[]): number {
 export function topTargetCompany(companies: TargetCompany[]): TargetCompany | null {
   return [...companies].filter((company) => company.stage !== "archived").sort((a, b) => (b.fitScore + b.interestScore) - (a.fitScore + a.interestScore))[0] || null;
 }
+export function nextCompanyAction(companies: TargetCompany[]): { name: string; action: string; date: string } | null {
+  return companies.filter((company) => company.stage !== "archived" && company.nextActionDate)
+    .map((company) => ({ name: company.name, action: company.nextAction || "Research company", date: company.nextActionDate }))
+    .sort((a, b) => a.date.localeCompare(b.date))[0] || null;
+}
 export function companyResearchCompletion(company: TargetCompany): number {
   const checks = [company.industry, company.location, company.website, company.targetRole, company.cultureNotes, company.researchNotes, company.nextAction];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
