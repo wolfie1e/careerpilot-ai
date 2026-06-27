@@ -107,6 +107,9 @@ export function companyAverageInterest(companies: TargetCompany[]): number {
   const active = companies.filter((company) => company.stage !== "archived");
   return active.length ? Math.round(active.reduce((sum, company) => sum + company.interestScore, 0) / active.length) : 0;
 }
+export function companyOpenRoleTotal(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage !== "archived").reduce((sum, company) => sum + company.openRoles, 0);
+}
 
 export function companyPlanText(companies: TargetCompany[]): string {
   return sortTargetCompanies(companies).map((company) => [
