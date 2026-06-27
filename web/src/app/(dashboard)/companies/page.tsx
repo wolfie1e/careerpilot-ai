@@ -10,7 +10,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
   COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText, companyReadinessScore, companyResearchCompletion,
-  companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
+  companyPriorityCounts, companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
   sortTargetCompanies, isCompanyActionSoon, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
 
@@ -32,6 +32,7 @@ export default function CompaniesPage() {
   });
   const activeCompanies = companies.filter((company) => company.stage !== "archived");
   const stageRows = Object.entries(companyStageCounts(visibleCompanies));
+  const priorityRows = Object.entries(companyPriorityCounts(visibleCompanies));
   const tagRows = Object.entries(companyTagCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const topCompany = topTargetCompany(companies);
 
@@ -171,6 +172,7 @@ export default function CompaniesPage() {
       ))}</div>}
 
       {(stageRows.some(([, count]) => count > 0) || tagRows.length > 0) && <div className="grid gap-4 md:grid-cols-2"><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Pipeline stages</h3><div className="mt-3 space-y-2">{stageRows.filter(([, count]) => count > 0).map(([stage, count]) => <div key={stage} className="flex justify-between text-sm text-gray-400"><span>{COMPANY_STAGES.find((item) => item.value === stage)?.label}</span><span className="text-white">{count}</span></div>)}</div></div><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Research themes</h3><div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map(([tag, count]) => <span key={tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{tag} · {count}</span>)}</div></div></div>}
+      {priorityRows.some(([, count]) => count > 0) && <div className="text-xs capitalize text-gray-500">Priorities: {priorityRows.map(([priority, count]) => priority + " " + count).join(" · ")}</div>}
     </div>
   );
 }
