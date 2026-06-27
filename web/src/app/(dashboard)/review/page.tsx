@@ -103,6 +103,8 @@ export default function WeeklyReviewPage() {
           ["Review complete", `${completion}%`],
           ["Actions completed", completedActions],
           ["Applications sent", appliedThisWeek],
+          ["Target companies", activeTargetCompanyCount],
+          ["Company actions", targetCompanyActionsDue],
           ["Upcoming interviews", upcomingInterviews],
           ["Networking due", networkingFollowUpsDue],
           ["Mentorship", activeMentorshipCount],
