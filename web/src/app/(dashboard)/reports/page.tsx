@@ -112,6 +112,7 @@ export default function ReportsPage() {
       uploaded_at: resume.created_at,
       is_primary: resume.id === pinnedResumeId,
       ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
+      target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
