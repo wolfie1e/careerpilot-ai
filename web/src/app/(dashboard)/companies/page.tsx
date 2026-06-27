@@ -60,7 +60,7 @@ export default function CompaniesPage() {
     const task: PlannerTask = {
       id: crypto.randomUUID(), title: company.nextAction || `Research ${company.name}`,
       notes: `Created from target companies.${company.targetRole ? ` Target role: ${company.targetRole}.` : ""}`,
-      priority: company.priority, category: "job_search", estimateMinutes: 45,
+      priority: company.priority, category: "application", estimateMinutes: 45,
       resourceUrl: company.careersUrl || company.website, status: "todo", dueDate: company.nextActionDate,
       createdAt: new Date().toISOString(), completedAt: null, archived: false,
       tags: ["target-company", ...company.tags.slice(0, 5)], recurrence: "none",
