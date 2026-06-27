@@ -131,6 +131,9 @@ export function companyResearchCompletion(company: TargetCompany): number {
   const checks = [company.industry, company.location, company.website, company.targetRole, company.cultureNotes, company.researchNotes, company.nextAction];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }
+export function companyReadinessScore(company: TargetCompany): number {
+  return Math.round((company.fitScore * 4 + company.interestScore * 3 + companyResearchCompletion(company) * 0.3) / 10);
+}
 
 export function companyPlanText(companies: TargetCompany[]): string {
   return sortTargetCompanies(companies).map((company) => [
