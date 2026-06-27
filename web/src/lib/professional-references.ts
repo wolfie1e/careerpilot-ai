@@ -113,6 +113,11 @@ export function recentlyUsedReferenceCount(references: ProfessionalReference[]):
 export function referenceThankYouDueCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status === "used" && !reference.thankYouSent).length;
 }
+export function nextReferenceAction(references: ProfessionalReference[]): { name: string; action: string; date: string } | null {
+  return references.filter((reference) => reference.status !== "archived" && reference.nextActionDate)
+    .map((reference) => ({ name: reference.name, action: reference.nextAction || "Contact reference", date: reference.nextActionDate }))
+    .sort((a, b) => a.date.localeCompare(b.date))[0] || null;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
