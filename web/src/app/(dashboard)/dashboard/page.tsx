@@ -65,6 +65,7 @@ const ONBOARDING_STEPS = [
   { key: "offer", label: "Compare an offer", href: "/offers", done: false },
   { key: "achievement", label: "Capture an achievement", href: "/achievements", done: false },
   { key: "certification", label: "Plan a certification", href: "/certifications", done: false },
+  { key: "company", label: "Research a target company", href: "/companies", done: false },
 ];
 
 const quickActions = [
@@ -209,6 +210,7 @@ export default function DashboardPage() {
     offerComparisons.length > 0,
     achievementStories.length > 0,
     certificationRecords.length > 0,
+    targetCompanies.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
