@@ -93,6 +93,11 @@ export function companyStageCounts(companies: TargetCompany[]): Record<CompanySt
   companies.forEach((company) => { counts[company.stage] += 1; });
   return counts;
 }
+export function companyPriorityCounts(companies: TargetCompany[]): Record<CompanyPriority, number> {
+  const counts: Record<CompanyPriority, number> = { high: 0, medium: 0, low: 0 };
+  companies.filter((company) => company.stage !== "archived").forEach((company) => { counts[company.priority] += 1; });
+  return counts;
+}
 
 export function companyTagCounts(companies: TargetCompany[]): Record<string, number> {
   return companies.flatMap((company) => company.tags).reduce<Record<string, number>>((counts, tag) => { counts[tag] = (counts[tag] || 0) + 1; return counts; }, {});
