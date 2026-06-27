@@ -9,7 +9,7 @@ import type { PlannerTask } from "@/lib/career-planner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
-  COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText,
+  COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText, companyResearchCompletion,
   companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
   sortTargetCompanies, isCompanyActionSoon, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
@@ -159,6 +159,7 @@ export default function CompaniesPage() {
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-gray-800 pt-4">
+            <span className="text-xs text-gray-500">Research <span className="text-white">{companyResearchCompletion(company)}%</span></span>
             <label className="text-xs text-gray-500">Fit <input type="range" min="1" max="10" value={company.fitScore} onChange={(event) => updateCompany(company.id, { fitScore: Number(event.target.value) })} className="mx-2 align-middle" /><span className="text-white">{company.fitScore}/10</span></label>
             <label className="text-xs text-gray-500">Interest <input type="range" min="1" max="10" value={company.interestScore} onChange={(event) => updateCompany(company.id, { interestScore: Number(event.target.value) })} className="mx-2 align-middle" /><span className="text-white">{company.interestScore}/10</span></label>
             {isCompanyActionDue(company) && <span className="rounded-full bg-amber-950 px-2.5 py-1 text-xs text-amber-300">Action due</span>}
