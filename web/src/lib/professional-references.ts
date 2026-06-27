@@ -118,6 +118,9 @@ export function nextReferenceAction(references: ProfessionalReference[]): { name
     .map((reference) => ({ name: reference.name, action: reference.nextAction || "Contact reference", date: reference.nextActionDate }))
     .sort((a, b) => a.date.localeCompare(b.date))[0] || null;
 }
+export function strongestProfessionalReference(references: ProfessionalReference[]): ProfessionalReference | null {
+  return [...references].filter((reference) => reference.status !== "archived").sort((a, b) => b.confidence - a.confidence || Number(b.status === "confirmed") - Number(a.status === "confirmed"))[0] || null;
+}
 
 export function referencePlanText(references: ProfessionalReference[]): string {
   return sortProfessionalReferences(references).map((reference) => [
