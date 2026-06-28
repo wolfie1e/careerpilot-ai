@@ -276,6 +276,7 @@ export default function DashboardPage() {
       mentorship_average_confidence: mentorshipAverageConfidence(mentorshipContacts),
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
+      interview_questions: questionBank.filter((item) => item.status !== "archived").length,
       confirmed_references: confirmedReferenceCount(professionalReferences),
       reference_actions_due: professionalReferences.filter((reference) => isReferenceActionDue(reference)).length,
       reference_average_confidence: referenceAverageConfidence(professionalReferences),
