@@ -498,6 +498,11 @@ export default function DashboardPage() {
           <div className="mt-1 text-2xl font-bold text-white">{targetCompanies.filter((company) => company.stage !== "archived").length}</div>
           <div className="mt-1 text-xs text-gray-500">{targetCompanies.filter((company) => isCompanyActionDue(company)).length} actions due · fit {companyAverageFit(targetCompanies)}/10</div>
         </Link>
+        <Link href="/question-bank" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-violet-700/60">
+          <div className="text-xs text-gray-500">Interview questions</div>
+          <div className="mt-1 text-2xl font-bold text-white">{questionBank.filter((item) => item.status !== "archived").length}</div>
+          <div className="mt-1 text-xs text-gray-500">{readyQuestionCount(questionBank)} ready · {questionReviewDueCount(questionBank)} reviews due</div>
+        </Link>
         <Link href="/references" className="rounded-2xl border border-gray-800 bg-gray-900 p-5 transition hover:border-emerald-700/60">
           <div className="text-xs text-gray-500">Professional references</div>
           <div className="mt-1 text-2xl font-bold text-white">{professionalReferences.filter((reference) => reference.status !== "archived").length}</div>
