@@ -104,6 +104,9 @@ export function referenceContactMethodCounts(references: ProfessionalReference[]
 export function referenceStrengthCounts(references: ProfessionalReference[]): Record<string, number> {
   return references.flatMap((reference) => reference.strengths).reduce<Record<string, number>>((counts, strength) => { counts[strength] = (counts[strength] || 0) + 1; return counts; }, {});
 }
+export function referenceCompanyCounts(references: ProfessionalReference[]): Record<string, number> {
+  return references.filter((reference) => reference.company && reference.status !== "archived").reduce<Record<string, number>>((counts, reference) => { counts[reference.company] = (counts[reference.company] || 0) + 1; return counts; }, {});
+}
 
 export function referenceAverageConfidence(references: ProfessionalReference[]): number {
   const active = references.filter((reference) => reference.status !== "archived");
