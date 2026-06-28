@@ -20,6 +20,7 @@ export const LOCAL_STORAGE_KEYS = {
   mentorshipContacts: "careerpilot-mentorship-contacts",
   targetCompanies: "careerpilot-target-companies",
   professionalReferences: "careerpilot-professional-references",
+  interviewQuestionBank: "careerpilot-interview-question-bank",
   onboardingDismissed: "careerpilot_onboarding_dismissed",
   pinnedResume: "careerpilot_pinned_resume",
   savedJobDescriptions: "careerpilot_saved_job_descriptions",
