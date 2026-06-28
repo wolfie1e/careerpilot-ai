@@ -60,3 +60,4 @@ export function questionRoleCounts(items: QuestionBankItem[]): Record<string, nu
 export function questionCompanyCounts(items: QuestionBankItem[]): Record<string, number> { return items.filter((item) => item.company && item.status !== "archived").reduce<Record<string, number>>((counts, item) => { counts[item.company] = (counts[item.company] || 0) + 1; return counts; }, {}); }
 export function suggestedQuestionReviewDate(item: QuestionBankItem, date = new Date()): string { const next = new Date(date); next.setDate(next.getDate() + (item.confidence >= 8 ? 14 : item.confidence >= 6 ? 7 : 3)); return next.toISOString().slice(0, 10); }
 export function questionOutlineWordCount(item: QuestionBankItem): number { return item.answerOutline.trim() ? item.answerOutline.trim().split(/\s+/).length : 0; }
+export function questionSampleWordCount(item: QuestionBankItem): number { return item.sampleAnswer.trim() ? item.sampleAnswer.trim().split(/\s+/).length : 0; }
