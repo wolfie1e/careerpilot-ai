@@ -52,3 +52,4 @@ export function questionBankText(items: QuestionBankItem[]): string { return sor
 export function questionReviewDueCount(items: QuestionBankItem[]): number { return items.filter((item) => isQuestionReviewDue(item)).length; }
 export function questionPracticeTotal(items: QuestionBankItem[]): number { return items.reduce((sum, item) => sum + item.practiceCount, 0); }
 export function readyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status === "ready").length; }
+export function averageQuestionDifficulty(items: QuestionBankItem[]): number { const active = items.filter((item) => item.status !== "archived"); return active.length ? Math.round(active.reduce((sum, item) => sum + item.difficulty, 0) / active.length) : 0; }
