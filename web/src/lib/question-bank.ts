@@ -62,3 +62,4 @@ export function suggestedQuestionReviewDate(item: QuestionBankItem, date = new D
 export function questionOutlineWordCount(item: QuestionBankItem): number { return item.answerOutline.trim() ? item.answerOutline.trim().split(/\s+/).length : 0; }
 export function questionSampleWordCount(item: QuestionBankItem): number { return item.sampleAnswer.trim() ? item.sampleAnswer.trim().split(/\s+/).length : 0; }
 export function questionStarCoverage(item: QuestionBankItem): number { const text = (item.answerOutline + " " + item.sampleAnswer).toLowerCase(); return ["situation", "task", "action", "result"].filter((part) => text.includes(part)).length; }
+export function averageQuestionPracticeCount(items: QuestionBankItem[]): number { const active = items.filter((item) => item.status !== "archived"); return active.length ? Math.round(active.reduce((sum, item) => sum + item.practiceCount, 0) / active.length) : 0; }
