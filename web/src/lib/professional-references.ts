@@ -147,3 +147,7 @@ export function referenceRequestText(reference: ProfessionalReference): string {
 export function referenceBriefText(reference: ProfessionalReference): string {
   return [reference.name, [reference.title, reference.company].filter(Boolean).join(" at "), reference.workedTogether, reference.strengths.join(", "), reference.supportingStories].filter(Boolean).join("\n");
 }
+export function referenceReadinessScore(reference: ProfessionalReference): number {
+  const statusScore = reference.status === "confirmed" ? 30 : reference.status === "permission_requested" ? 15 : 0;
+  return Math.min(100, statusScore + reference.confidence * 4 + Math.round(referenceProfileCompletion(reference) * 0.3));
+}
