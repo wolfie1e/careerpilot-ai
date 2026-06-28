@@ -61,3 +61,4 @@ export function questionCompanyCounts(items: QuestionBankItem[]): Record<string,
 export function suggestedQuestionReviewDate(item: QuestionBankItem, date = new Date()): string { const next = new Date(date); next.setDate(next.getDate() + (item.confidence >= 8 ? 14 : item.confidence >= 6 ? 7 : 3)); return next.toISOString().slice(0, 10); }
 export function questionOutlineWordCount(item: QuestionBankItem): number { return item.answerOutline.trim() ? item.answerOutline.trim().split(/\s+/).length : 0; }
 export function questionSampleWordCount(item: QuestionBankItem): number { return item.sampleAnswer.trim() ? item.sampleAnswer.trim().split(/\s+/).length : 0; }
+export function questionStarCoverage(item: QuestionBankItem): number { const text = (item.answerOutline + " " + item.sampleAnswer).toLowerCase(); return ["situation", "task", "action", "result"].filter((part) => text.includes(part)).length; }
