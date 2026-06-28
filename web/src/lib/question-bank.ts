@@ -51,3 +51,4 @@ export function averageQuestionConfidence(items: QuestionBankItem[]): number { c
 export function questionBankText(items: QuestionBankItem[]): string { return sortQuestionBank(items).map((item) => [`${item.question} (${item.category}, ${item.status}, confidence ${item.confidence}/10)`, item.answerOutline ? `Outline: ${item.answerOutline}` : "", item.keyPoints.length ? `Key points: ${item.keyPoints.join(", ")}` : "", item.nextReviewAt ? `Review: ${item.nextReviewAt}` : ""].filter(Boolean).join("\n")).join("\n\n"); }
 export function questionReviewDueCount(items: QuestionBankItem[]): number { return items.filter((item) => isQuestionReviewDue(item)).length; }
 export function questionPracticeTotal(items: QuestionBankItem[]): number { return items.reduce((sum, item) => sum + item.practiceCount, 0); }
+export function readyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status === "ready").length; }
