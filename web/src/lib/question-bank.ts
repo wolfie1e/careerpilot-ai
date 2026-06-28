@@ -54,3 +54,4 @@ export function questionPracticeTotal(items: QuestionBankItem[]): number { retur
 export function readyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status === "ready").length; }
 export function averageQuestionDifficulty(items: QuestionBankItem[]): number { const active = items.filter((item) => item.status !== "archived"); return active.length ? Math.round(active.reduce((sum, item) => sum + item.difficulty, 0) / active.length) : 0; }
 export function nextQuestionReview(items: QuestionBankItem[]): QuestionBankItem | null { return [...items].filter((item) => item.status !== "archived" && item.nextReviewAt).sort((a, b) => a.nextReviewAt.localeCompare(b.nextReviewAt))[0] || null; }
+export function lowestConfidenceQuestion(items: QuestionBankItem[]): QuestionBankItem | null { return [...items].filter((item) => item.status !== "archived").sort((a, b) => a.confidence - b.confidence || b.difficulty - a.difficulty)[0] || null; }
