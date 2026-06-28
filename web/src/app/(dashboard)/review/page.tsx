@@ -73,6 +73,8 @@ export default function WeeklyReviewPage() {
 
   const referenceReviewText = "Confirmed references: " + confirmedReferences + "\nReference actions due: " + referenceActionsDue + "\n" + targetCompanyReviewText;
 
+  const questionBankReviewText = "Ready interview questions: " + readyQuestions + "\nQuestion reviews due: " + questionReviewsDue + "\n" + referenceReviewText;
+
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
     setReviews((current) => [next, ...current.filter((review) => review.weekOf !== currentWeek)]);
@@ -140,7 +142,7 @@ export default function WeeklyReviewPage() {
         <div className="flex flex-wrap justify-between gap-2">
           <h3 className="font-semibold text-white">Current reflection</h3>
           <div className="flex flex-wrap gap-2">
-            <CopyButton value={referenceReviewText} label="Copy review" />
+            <CopyButton value={questionBankReviewText} label="Copy review" />
             <button onClick={() => downloadJson("careerpilot-weekly-reviews.json", { reviews, networking: { contacts: networkingContacts.length, follow_ups_due: networkingFollowUpsDue }, mentorship: { active: activeMentorshipCount, follow_ups_due: mentorshipFollowUpsDue, total: mentorshipContacts.length }, goals: { active: activeGoalCount, total: careerGoals.length }, offers: { active: activeOfferCount, total: offerComparisons.length }, achievements: { ready: readyAchievementCount, total: achievementStories.length }, learning: { active: activeLearningCount, completed: completedLearningCount, total: learningResources.length }, certifications: { active: activeCertificationCount, renewals_due: certificationRenewalsDue, total: certificationRecords.length } })} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />JSON</button>
             <button onClick={() => downloadCsv("careerpilot-weekly-reviews.csv", orderedReviews.map((review) => ({ week_of: review.weekOf, confidence: review.confidence, wins: review.wins, challenges: review.challenges, lessons: review.lessons, next_focus: review.nextFocus, networking_contacts: networkingContacts.length, networking_follow_ups_due: networkingFollowUpsDue, active_mentorship_contacts: activeMentorshipCount, mentorship_follow_ups_due: mentorshipFollowUpsDue, active_career_goals: activeGoalCount, active_offers: activeOfferCount, ready_achievement_stories: readyAchievementCount, active_learning_resources: activeLearningCount, completed_learning_resources: completedLearningCount, active_certifications: activeCertificationCount, certification_renewals_due: certificationRenewalsDue })))} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Download className="h-3.5 w-3.5" />CSV</button>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-300"><Upload className="h-3.5 w-3.5" />Import<input type="file" accept=".json,application/json" onChange={importReviews} className="sr-only" /></label>
