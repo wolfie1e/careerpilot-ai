@@ -65,3 +65,4 @@ export function questionStarCoverage(item: QuestionBankItem): number { const tex
 export function averageQuestionPracticeCount(items: QuestionBankItem[]): number { const active = items.filter((item) => item.status !== "archived"); return active.length ? Math.round(active.reduce((sum, item) => sum + item.practiceCount, 0) / active.length) : 0; }
 export function highDifficultyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && item.difficulty >= 8).length; }
 export function sourcedQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && Boolean(item.sourceUrl)).length; }
+export function questionKeyPointCoverage(items: QuestionBankItem[]): number { return new Set(items.filter((item) => item.status !== "archived").flatMap((item) => item.keyPoints)).size; }
