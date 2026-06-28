@@ -22,6 +22,7 @@ import type { LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorship";
 import type { TargetCompany } from "@/lib/target-companies";
 import type { ProfessionalReference } from "@/lib/professional-references";
+import type { QuestionBankItem } from "@/lib/question-bank";
 
 type FieldErrors = Record<string, string>;
 
@@ -47,6 +48,7 @@ export default function SettingsPage() {
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
+  const [questionBank] = useLocalStorage<QuestionBankItem[]>(LOCAL_STORAGE_KEYS.interviewQuestionBank, []);
   const initialProfile = {
     full_name: user?.full_name || "",
     username: user?.username || "",
@@ -198,6 +200,11 @@ export default function SettingsPage() {
         total: professionalReferences.length,
         confirmed: professionalReferences.filter((reference) => reference.status === "confirmed").length,
         active: professionalReferences.filter((reference) => reference.status !== "archived").length,
+      },
+      interview_question_bank: {
+        total: questionBank.length,
+        ready: questionBank.filter((item) => item.status === "ready").length,
+        active: questionBank.filter((item) => item.status !== "archived").length,
       },
       learning: {
         total: learningResources.length,
