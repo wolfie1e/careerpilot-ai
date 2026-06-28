@@ -53,6 +53,10 @@ export default function ReferencesPage() {
     setReferences((current) => current.map((reference) => ids.has(reference.id) ? { ...reference, status, updatedAt: new Date().toISOString() } : reference));
     toast.success("Visible references marked " + status);
   }
+  function clearArchivedReferences() {
+    setReferences((current) => current.filter((reference) => reference.status !== "archived"));
+    toast.success("Archived references cleared");
+  }
 
   return <div className="max-w-6xl space-y-6">
     <div><h2 className="text-xl font-semibold text-white">Professional References</h2><p className="mt-1 text-sm text-gray-400">Prepare trusted advocates before an employer asks for them.</p></div>
@@ -71,6 +75,7 @@ export default function ReferencesPage() {
     <div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><div className="flex gap-2"><input value={name} maxLength={140} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addReference(); }} placeholder="Add a manager, colleague, client, or mentor" className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white outline-none focus:border-blue-500" /><button onClick={addReference} disabled={!name.trim()} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"><Plus className="h-4 w-4" />Add</button></div></div>
 
     <div className="flex flex-wrap gap-2">
+      <button onClick={clearArchivedReferences} disabled={!references.some((reference) => reference.status === "archived")} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Clear archived</button>
       <button onClick={() => updateVisibleStatus("archived")} disabled={!visibleReferences.length} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Archive visible</button>
       <button onClick={() => updateVisibleStatus("confirmed")} disabled={!visibleReferences.length} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40">Confirm visible</button>
       <select aria-label="Filter references by status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as ReferenceStatus | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All statuses</option>{REFERENCE_STATUSES.filter((item) => item.value !== "archived").map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
