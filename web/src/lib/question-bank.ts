@@ -64,3 +64,4 @@ export function questionSampleWordCount(item: QuestionBankItem): number { return
 export function questionStarCoverage(item: QuestionBankItem): number { const text = (item.answerOutline + " " + item.sampleAnswer).toLowerCase(); return ["situation", "task", "action", "result"].filter((part) => text.includes(part)).length; }
 export function averageQuestionPracticeCount(items: QuestionBankItem[]): number { const active = items.filter((item) => item.status !== "archived"); return active.length ? Math.round(active.reduce((sum, item) => sum + item.practiceCount, 0) / active.length) : 0; }
 export function highDifficultyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && item.difficulty >= 8).length; }
+export function sourcedQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && Boolean(item.sourceUrl)).length; }
