@@ -95,6 +95,11 @@ export function referenceRelationshipCounts(references: ProfessionalReference[])
   references.forEach((reference) => { counts[reference.relationship] += 1; });
   return counts;
 }
+export function referenceContactMethodCounts(references: ProfessionalReference[]): Record<ProfessionalReference["preferredContact"], number> {
+  const counts = { email: 0, phone: 0, linkedin: 0 };
+  references.filter((reference) => reference.status !== "archived").forEach((reference) => { counts[reference.preferredContact] += 1; });
+  return counts;
+}
 
 export function referenceStrengthCounts(references: ProfessionalReference[]): Record<string, number> {
   return references.flatMap((reference) => reference.strengths).reduce<Record<string, number>>((counts, strength) => { counts[strength] = (counts[strength] || 0) + 1; return counts; }, {});
