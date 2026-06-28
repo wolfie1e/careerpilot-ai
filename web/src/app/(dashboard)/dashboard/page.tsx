@@ -89,6 +89,7 @@ const quickActions = [
   { href: "/certifications", icon: Award, label: "Plan Certifications", desc: "Track exams, credentials, and renewals", color: "text-cyan-400" },
   { href: "/companies", icon: Building2, label: "Research Companies", desc: "Build and prioritize your target list", color: "text-emerald-400" },
   { href: "/references", icon: UserCheck, label: "Prepare References", desc: "Organize trusted advocates before hiring checks", color: "text-emerald-400" },
+  { href: "/question-bank", icon: Library, label: "Build Question Bank", desc: "Rehearse answers with spaced review", color: "text-violet-400" },
 ];
 
 function getGreeting() {
