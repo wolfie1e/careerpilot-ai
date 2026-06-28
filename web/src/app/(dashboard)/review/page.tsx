@@ -118,6 +118,8 @@ export default function WeeklyReviewPage() {
           ["Target companies", activeTargetCompanyCount],
           ["Confirmed refs", confirmedReferences],
           ["Reference actions", referenceActionsDue],
+          ["Ready questions", readyQuestions],
+          ["Question reviews", questionReviewsDue],
           ["Company actions", targetCompanyActionsDue],
           ["Upcoming interviews", upcomingInterviews],
           ["Networking due", networkingFollowUpsDue],
