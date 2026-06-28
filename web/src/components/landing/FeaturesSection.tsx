@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Building2, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, ListChecks, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, Building2, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, Library, ListChecks, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
 
 const features = [
   {
@@ -75,6 +75,12 @@ const features = [
     color: "emerald",
     title: "Professional References",
     description: "Prepare trusted advocates with permission status, relationship context, supporting stories, strengths, and follow-up reminders.",
+  },
+  {
+    icon: Library,
+    color: "violet",
+    title: "Interview Question Bank",
+    description: "Build reusable answer outlines, track confidence and difficulty, and revisit weak questions with spaced review.",
   },
   {
     icon: BriefcaseBusiness,
