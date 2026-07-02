@@ -71,6 +71,7 @@ const ONBOARDING_STEPS = [
   { key: "company", label: "Research a target company", href: "/companies", done: false },
   { key: "reference", label: "Prepare a professional reference", href: "/references", done: false },
   { key: "question", label: "Add an interview question", href: "/question-bank", done: false },
+  { key: "portfolio", label: "Create a portfolio project", href: "/portfolio", done: false },
 ];
 
 const quickActions = [
@@ -224,6 +225,7 @@ export default function DashboardPage() {
     targetCompanies.length > 0,
     professionalReferences.length > 0,
     questionBank.length > 0,
+    portfolioProjects.length > 0,
   ].filter(Boolean).length;
 
   const showOnboarding = !onboardingDismissed && stepsCompleted < ONBOARDING_STEPS.length;
