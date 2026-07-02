@@ -33,6 +33,7 @@ Upload your resume, match it with job descriptions, improve your ATS score, and 
 | 🏢 Target Companies | Research and prioritize companies by fit, interest, roles, contacts, readiness, and next actions |
 | 👤 Professional References | Prepare trusted advocates with permission, context, strengths, stories, reminders, and thank-you tracking |
 | 📚 Interview Question Bank | Build answer outlines, track confidence and difficulty, schedule reviews, and record practice repetitions |
+| 🗂️ Portfolio Projects | Track project readiness, skills, technology, evidence links, impact, milestones, and publication progress |
 | 🔒 Route Protection | JWT auth with httpOnly cookies and server-side middleware |
 | ⚡ Rate Limiting | AI-heavy endpoints limited to 10 req/min per IP |
 
