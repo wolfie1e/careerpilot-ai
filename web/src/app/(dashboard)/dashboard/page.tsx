@@ -338,6 +338,10 @@ export default function DashboardPage() {
         .filter((item) => item.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 5),
+      recent_portfolio_projects: portfolioProjects
+        .filter((project) => project.status !== "archived")
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, 5),
       recent_career_goals: careerGoals
         .filter((goal) => goal.status !== "archived")
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
