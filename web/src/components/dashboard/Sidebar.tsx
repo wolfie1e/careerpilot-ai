@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award, BookOpen, Handshake, Building2, UserCheck, Library,
+  LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award, BookOpen, Handshake, Building2, UserCheck, Library, FolderKanban,
   Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus, Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,7 @@ const navItems = [
   { href: "/question-bank", icon: Library, label: "Question Bank" },
   { href: "/planner", icon: ListChecks, label: "Planner" },
   { href: "/learning", icon: BookOpen, label: "Learning" },
+  { href: "/portfolio", icon: FolderKanban, label: "Portfolio" },
   { href: "/goals", icon: Target, label: "Goals" },
   { href: "/achievements", icon: Medal, label: "Achievements" },
   { href: "/certifications", icon: Award, label: "Certifications" },
