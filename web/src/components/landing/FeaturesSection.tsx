@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Award, Building2, FileText, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, Library, ListChecks, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, Building2, FileText, FolderKanban, Target, TrendingUp, Mic, BarChart2, GitBranch, Sparkles, BookOpen, Library, ListChecks, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
 
 const features = [
   {
@@ -81,6 +81,12 @@ const features = [
     color: "violet",
     title: "Interview Question Bank",
     description: "Build reusable answer outlines, track confidence and difficulty, and revisit weak questions with spaced review.",
+  },
+  {
+    icon: FolderKanban,
+    color: "cyan",
+    title: "Portfolio Projects",
+    description: "Turn learning into visible proof with project progress, impact stories, skill coverage, milestones, and publish-ready links.",
   },
   {
     icon: BriefcaseBusiness,
