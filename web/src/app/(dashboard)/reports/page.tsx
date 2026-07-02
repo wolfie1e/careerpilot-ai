@@ -17,6 +17,7 @@ import type { MentorshipContact } from "@/lib/mentorship";
 import type { TargetCompany } from "@/lib/target-companies";
 import type { ProfessionalReference } from "@/lib/professional-references";
 import type { QuestionBankItem } from "@/lib/question-bank";
+import type { PortfolioProject } from "@/lib/portfolio-projects";
 
 interface Resume {
   id: string;
@@ -44,6 +45,7 @@ export default function ReportsPage() {
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
   const [questionBank] = useLocalStorage<QuestionBankItem[]>(LOCAL_STORAGE_KEYS.interviewQuestionBank, []);
+  const [portfolioProjects] = useLocalStorage<PortfolioProject[]>(LOCAL_STORAGE_KEYS.portfolioProjects, []);
   const orderedResumes = [...resumes].sort((a, b) => {
     if (a.id === pinnedResumeId) return -1;
     if (b.id === pinnedResumeId) return 1;
