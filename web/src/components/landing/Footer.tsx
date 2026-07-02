@@ -28,6 +28,7 @@ export default function Footer() {
             <Link href="/companies" className="hover:text-gray-300 transition-colors">Target Companies</Link>
             <Link href="/references" className="hover:text-gray-300 transition-colors">References</Link>
             <Link href="/question-bank" className="hover:text-gray-300 transition-colors">Question Bank</Link>
+            <Link href="/portfolio" className="hover:text-gray-300 transition-colors">Portfolio Projects</Link>
             <Link href="/applications" className="hover:text-gray-300 transition-colors">Applications</Link>
             <Link href="/dashboard" className="hover:text-gray-300 transition-colors">Dashboard</Link>
             <Link href="/review" className="hover:text-gray-300 transition-colors">Weekly Review</Link>
