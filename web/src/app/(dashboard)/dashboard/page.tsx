@@ -282,6 +282,7 @@ export default function DashboardPage() {
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
       professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
       interview_questions: questionBank.filter((item) => item.status !== "archived").length,
+      portfolio_projects: portfolioProjects.filter((project) => project.status !== "archived").length,
       interview_questions_ready: readyQuestionCount(questionBank),
       question_reviews_due: questionReviewDueCount(questionBank),
       question_average_confidence: averageQuestionConfidence(questionBank),
