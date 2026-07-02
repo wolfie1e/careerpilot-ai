@@ -31,3 +31,4 @@ export function portfolioPublishedCount(projects: PortfolioProject[]): number { 
 export function portfolioOverdueCount(projects: PortfolioProject[]): number { return projects.filter((project) => isPortfolioProjectOverdue(project)).length; }
 export function portfolioTotalHours(projects: PortfolioProject[]): number { return projects.reduce((sum, project) => sum + project.hoursSpent, 0); }
 export function portfolioAverageProgress(projects: PortfolioProject[]): number { const active = projects.filter((project) => project.status !== "archived"); return active.length ? Math.round(active.reduce((sum, project) => sum + project.progress, 0) / active.length) : 0; }
+export function portfolioFeaturedCount(projects: PortfolioProject[]): number { return projects.filter((project) => project.featured && project.status !== "archived").length; }
