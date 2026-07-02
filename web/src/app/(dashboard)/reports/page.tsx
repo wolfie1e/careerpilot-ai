@@ -123,6 +123,8 @@ export default function ReportsPage() {
       confirmed_references: professionalReferences.filter((reference) => reference.status === "confirmed").length,
       interview_questions: questionBank.filter((item) => item.status !== "archived").length,
       interview_questions_ready: questionBank.filter((item) => item.status === "ready").length,
+      portfolio_projects: portfolioProjects.filter((project) => project.status !== "archived").length,
+      portfolio_projects_published: portfolioProjects.filter((project) => project.status === "published").length,
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
