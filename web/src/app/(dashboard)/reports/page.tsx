@@ -125,6 +125,8 @@ export default function ReportsPage() {
       interview_questions_ready: questionBank.filter((item) => item.status === "ready").length,
       portfolio_projects: portfolioProjects.filter((project) => project.status !== "archived").length,
       portfolio_projects_published: portfolioProjects.filter((project) => project.status === "published").length,
+      portfolio_projects: portfolioProjects.filter((project) => project.status !== "archived").length,
+      portfolio_projects_published: portfolioProjects.filter((project) => project.status === "published").length,
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
       learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
       mentorship_contacts: mentorshipContacts.filter((contact) => contact.status !== "archived").length,
