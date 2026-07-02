@@ -33,3 +33,4 @@ export function portfolioTotalHours(projects: PortfolioProject[]): number { retu
 export function portfolioAverageProgress(projects: PortfolioProject[]): number { const active = projects.filter((project) => project.status !== "archived"); return active.length ? Math.round(active.reduce((sum, project) => sum + project.progress, 0) / active.length) : 0; }
 export function portfolioFeaturedCount(projects: PortfolioProject[]): number { return projects.filter((project) => project.featured && project.status !== "archived").length; }
 export function portfolioSkillCoverage(projects: PortfolioProject[]): number { return new Set(projects.filter((project) => project.status !== "archived").flatMap((project) => project.skills)).size; }
+export function portfolioTechCoverage(projects: PortfolioProject[]): number { return new Set(projects.filter((project) => project.status !== "archived").flatMap((project) => project.techStack)).size; }
