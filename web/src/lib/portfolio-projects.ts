@@ -44,3 +44,4 @@ export function portfolioTagCounts(projects: PortfolioProject[]): Record<string,
 export function portfolioEvidenceCount(projects: PortfolioProject[]): number { return projects.filter((project) => project.status !== "archived" && Boolean(project.repositoryUrl || project.liveUrl || project.caseStudyUrl)).length; }
 export function portfolioMilestoneTotal(projects: PortfolioProject[]): number { return projects.reduce((sum, project) => sum + project.milestoneCount, 0); }
 export function portfolioCompletedMilestoneTotal(projects: PortfolioProject[]): number { return projects.reduce((sum, project) => sum + Math.min(project.completedMilestones, project.milestoneCount), 0); }
+export function portfolioAverageReadiness(projects: PortfolioProject[]): number { const active = projects.filter((project) => project.status !== "archived"); return active.length ? Math.round(active.reduce((sum, project) => sum + portfolioProjectReadiness(project), 0) / active.length) : 0; }
