@@ -29,6 +29,7 @@ import { isMentorshipFollowUpDue, type MentorshipContact } from "@/lib/mentorshi
 import { isCompanyActionDue, type TargetCompany } from "@/lib/target-companies";
 import { confirmedReferenceCount, isReferenceActionDue, type ProfessionalReference } from "@/lib/professional-references";
 import { questionReviewDueCount, readyQuestionCount, type QuestionBankItem } from "@/lib/question-bank";
+import { portfolioActiveCount, portfolioOverdueCount, portfolioPublishedCount, type PortfolioProject } from "@/lib/portfolio-projects";
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
@@ -44,6 +45,7 @@ export default function WeeklyReviewPage() {
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
   const [questionBank] = useLocalStorage<QuestionBankItem[]>(LOCAL_STORAGE_KEYS.interviewQuestionBank, []);
+  const [portfolioProjects] = useLocalStorage<PortfolioProject[]>(LOCAL_STORAGE_KEYS.portfolioProjects, []);
   const currentWeek = weekStart();
   const currentReview = reviews.find((review) => review.weekOf === currentWeek) || createWeeklyReview();
   const orderedReviews = sortWeeklyReviews(reviews);
