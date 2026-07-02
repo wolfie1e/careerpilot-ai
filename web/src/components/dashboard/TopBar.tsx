@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BarChart2, BookOpen, BriefcaseBusiness, Building2, Download, FileText, Handshake, LayoutDashboard, Library, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UserCheck, UsersRound } from "lucide-react";
+import { Award, BarChart2, BookOpen, BriefcaseBusiness, Building2, Download, FileText, FolderKanban, Handshake, LayoutDashboard, Library, ListChecks, Medal, MessageSquare, NotebookPen, Plus, Settings, Target, UserCheck, UsersRound } from "lucide-react";
 import UserMenu from "@/components/dashboard/UserMenu";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
@@ -13,6 +13,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; actionHref: 
   "/question-bank": { title: "Interview Question Bank", subtitle: "Build and rehearse answers with spaced review", actionHref: "/interview/setup", actionLabel: "Practice", actionIcon: Library },
   "/planner": { title: "Career Planner", subtitle: "Turn career insights into focused actions", actionHref: "/applications", actionLabel: "Applications", actionIcon: ListChecks },
   "/learning": { title: "Learning Path", subtitle: "Plan resources, skills, and practice time", actionHref: "/planner", actionLabel: "Planner", actionIcon: BookOpen },
+  "/portfolio": { title: "Portfolio Projects", subtitle: "Turn skills into visible proof and impact", actionHref: "/planner", actionLabel: "Planner", actionIcon: FolderKanban },
   "/goals": { title: "Career Goals", subtitle: "Track outcomes, progress, and deadlines", actionHref: "/planner", actionLabel: "Planner", actionIcon: Target },
   "/achievements": { title: "Achievement Vault", subtitle: "Capture STAR stories and measurable wins", actionHref: "/resume", actionLabel: "Resume", actionIcon: Medal },
   "/certifications": { title: "Certification Tracker", subtitle: "Plan credentials, exams, and renewals", actionHref: "/planner", actionLabel: "Planner", actionIcon: Award },
