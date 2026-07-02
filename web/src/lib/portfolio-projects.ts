@@ -30,3 +30,4 @@ export function portfolioActiveCount(projects: PortfolioProject[]): number { ret
 export function portfolioPublishedCount(projects: PortfolioProject[]): number { return projects.filter((project) => project.status === "published").length; }
 export function portfolioOverdueCount(projects: PortfolioProject[]): number { return projects.filter((project) => isPortfolioProjectOverdue(project)).length; }
 export function portfolioTotalHours(projects: PortfolioProject[]): number { return projects.reduce((sum, project) => sum + project.hoursSpent, 0); }
+export function portfolioAverageProgress(projects: PortfolioProject[]): number { const active = projects.filter((project) => project.status !== "archived"); return active.length ? Math.round(active.reduce((sum, project) => sum + project.progress, 0) / active.length) : 0; }
