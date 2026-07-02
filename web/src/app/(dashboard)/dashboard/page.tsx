@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, BookOpen, Building2, FileText, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, Library, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, BookOpen, Building2, FileText, FolderKanban, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, Library, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -26,6 +26,7 @@ import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFol
 import { companyAverageFit, companyOpenRoleTotal, isCompanyActionDue, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
 import { confirmedReferenceCount, isReferenceActionDue, referenceAverageConfidence, type ProfessionalReference } from "@/lib/professional-references";
 import { averageQuestionConfidence, questionReviewDueCount, readyQuestionCount, type QuestionBankItem } from "@/lib/question-bank";
+import { portfolioActiveCount, portfolioAverageProgress, portfolioOverdueCount, portfolioPublishedCount, type PortfolioProject } from "@/lib/portfolio-projects";
 
 interface AnalyticsData {
   latest_ats_score: number | null;
@@ -179,6 +180,7 @@ export default function DashboardPage() {
   const [targetCompanies] = useLocalStorage<TargetCompany[]>(LOCAL_STORAGE_KEYS.targetCompanies, []);
   const [professionalReferences] = useLocalStorage<ProfessionalReference[]>(LOCAL_STORAGE_KEYS.professionalReferences, []);
   const [questionBank] = useLocalStorage<QuestionBankItem[]>(LOCAL_STORAGE_KEYS.interviewQuestionBank, []);
+  const [portfolioProjects] = useLocalStorage<PortfolioProject[]>(LOCAL_STORAGE_KEYS.portfolioProjects, []);
   const nextMentorship = nextMentorshipContact(mentorshipContacts);
 
   useEffect(() => {
