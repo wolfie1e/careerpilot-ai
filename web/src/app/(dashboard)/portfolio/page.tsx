@@ -46,12 +46,14 @@ export default function PortfolioPage() {
   const [showArchived, setShowArchived] = useState(false);
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
+  const [evidenceOnly, setEvidenceOnly] = useState(false);
   const visibleProjects = sortPortfolioProjects(projects).filter((project) => {
     if (!showArchived && project.status === "archived") return false;
     if (statusFilter !== "all" && project.status !== statusFilter) return false;
     if (priorityFilter !== "all" && project.priority !== priorityFilter) return false;
     if (featuredOnly && !project.featured) return false;
     if (overdueOnly && !isPortfolioProjectOverdue(project)) return false;
+    if (evidenceOnly && !project.repositoryUrl && !project.liveUrl && !project.caseStudyUrl) return false;
     const query = search.trim().toLowerCase();
     return !query || `${project.name} ${project.summary} ${project.targetRole} ${project.problem} ${project.solution} ${project.impact} ${project.techStack.join(" ")} ${project.skills.join(" ")} ${project.tags.join(" ")}`.toLowerCase().includes(query);
   });
@@ -87,6 +89,7 @@ export default function PortfolioPage() {
     setShowArchived(false);
     setFeaturedOnly(false);
     setOverdueOnly(false);
+    setEvidenceOnly(false);
   }
   function prioritizeVisible() { const ids = new Set(visibleProjects.map((project) => project.id)); setProjects((current) => current.map((project) => ids.has(project.id) ? { ...project, priority: "high", updatedAt: new Date().toISOString() } : project)); toast.success("Visible projects prioritized"); }
   function featureVisible() { const ids = new Set(visibleProjects.map((project) => project.id)); setProjects((current) => current.map((project) => ids.has(project.id) ? { ...project, featured: true, updatedAt: new Date().toISOString() } : project)); toast.success("Visible projects featured"); }
@@ -119,6 +122,7 @@ export default function PortfolioPage() {
       <label className="relative min-w-64 flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search projects, skills, stack, or impact" className="w-full rounded-lg border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white" /></label>
       <button onClick={() => setFeaturedOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{featuredOnly ? "All projects" : "Featured"}</button>
       <button onClick={() => setOverdueOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{overdueOnly ? "All deadlines" : "Overdue only"}</button>
+      <button onClick={() => setEvidenceOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{evidenceOnly ? "All evidence" : "Evidence only"}</button>
       <button onClick={() => setShowArchived((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">Archived</button>
       <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Upload className="h-4 w-4" />Import<input type="file" accept=".json" onChange={importProjects} className="sr-only" /></label>
       <CopyButton value={portfolioProjectText(visibleProjects) || "No projects yet"} label="Copy portfolio" />
