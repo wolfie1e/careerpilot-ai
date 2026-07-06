@@ -47,6 +47,7 @@ export default function PortfolioPage() {
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
   const [unscheduledOnly, setUnscheduledOnly] = useState(false);
+  const [minReadiness, setMinReadiness] = useState(0);
   const [tagFilter, setTagFilter] = useState("");
   const [techFilter, setTechFilter] = useState("");
   const [skillFilter, setSkillFilter] = useState("");
@@ -59,6 +60,7 @@ export default function PortfolioPage() {
     if (featuredOnly && !project.featured) return false;
     if (overdueOnly && !isPortfolioProjectOverdue(project)) return false;
     if (unscheduledOnly && project.targetDate) return false;
+    if (portfolioProjectReadiness(project) < minReadiness) return false;
     if (tagFilter && !project.tags.some((tag) => tag.toLowerCase().includes(tagFilter.toLowerCase()))) return false;
     if (techFilter && !project.techStack.some((tech) => tech.toLowerCase().includes(techFilter.toLowerCase()))) return false;
     if (skillFilter && !project.skills.some((skill) => skill.toLowerCase().includes(skillFilter.toLowerCase()))) return false;
@@ -100,6 +102,7 @@ export default function PortfolioPage() {
     setFeaturedOnly(false);
     setOverdueOnly(false);
     setUnscheduledOnly(false);
+    setMinReadiness(0);
     setTagFilter("");
     setTechFilter("");
     setSkillFilter("");
@@ -138,6 +141,7 @@ export default function PortfolioPage() {
       <button onClick={() => setFeaturedOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{featuredOnly ? "All projects" : "Featured"}</button>
       <button onClick={() => setOverdueOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{overdueOnly ? "All deadlines" : "Overdue only"}</button>
       <button onClick={() => setUnscheduledOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{unscheduledOnly ? "All schedules" : "Unscheduled"}</button>
+      <select value={minReadiness} onChange={(event) => setMinReadiness(Number(event.target.value))} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value={0}>Minimum readiness</option><option value={25}>25%+</option><option value={50}>50%+</option><option value={75}>75%+</option></select>
       <input value={tagFilter} onChange={(event) => setTagFilter(event.target.value)} placeholder="Tag" className="min-w-32 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white" />
       <input value={techFilter} onChange={(event) => setTechFilter(event.target.value)} placeholder="Technology" className="min-w-32 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white" />
       <input value={skillFilter} onChange={(event) => setSkillFilter(event.target.value)} placeholder="Skill" className="min-w-32 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white" />
