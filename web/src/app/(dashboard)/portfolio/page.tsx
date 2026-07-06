@@ -69,7 +69,19 @@ export default function PortfolioPage() {
     if (targetRoleFilter && !project.targetRole.toLowerCase().includes(targetRoleFilter.toLowerCase())) return false;
     if (evidenceOnly && !project.repositoryUrl && !project.liveUrl && !project.caseStudyUrl) return false;
     const query = search.trim().toLowerCase();
-    return !query || `${project.name} ${project.summary} ${project.targetRole} ${project.problem} ${project.solution} ${project.impact} ${project.techStack.join(" ")} ${project.skills.join(" ")} ${project.tags.join(" ")}`.toLowerCase().includes(query);
+    const searchText = [
+      project.name,
+      project.summary,
+      project.targetRole,
+      project.problem,
+      project.solution,
+      project.impact,
+      project.techStack.join(" "),
+      project.skills.join(" "),
+      project.tags.join(" "),
+      project.nextAction,
+    ].join(" ").toLowerCase();
+    return !query || searchText.includes(query);
   });
   const statusRows = Object.entries(portfolioStatusCounts(visibleProjects)); const skillRows = Object.entries(portfolioSkillCounts(visibleProjects)).sort((a, b) => b[1] - a[1]); const techRows = Object.entries(portfolioTechCounts(visibleProjects)).sort((a, b) => b[1] - a[1]);
   const nextDeadline = nextPortfolioDeadline(projects);
