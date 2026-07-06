@@ -15,6 +15,7 @@ import {
   mergePortfolioProjects,
   nextPortfolioDeadline,
   portfolioDueSoonCount,
+  portfolioUnscheduledCount,
   portfolioProjectReadiness,
   portfolioProjectText,
   portfolioSkillCounts,
@@ -36,6 +37,7 @@ export default function PortfolioPage() {
   const topProject = topPortfolioProject(projects);
   const insightRows = [
     ["Due within 7 days", portfolioDueSoonCount(projects)],
+    ["Unscheduled", portfolioUnscheduledCount(projects)],
   ];
   function addProject() { if (!name.trim()) return; setProjects((current) => [createPortfolioProject(name), ...current]); setName(""); toast.success("Portfolio project added"); }
   function updateProject(id: string, patch: Partial<PortfolioProject>) { setProjects((current) => current.map((project) => project.id === id ? { ...project, ...patch, updatedAt: new Date().toISOString() } : project)); }
