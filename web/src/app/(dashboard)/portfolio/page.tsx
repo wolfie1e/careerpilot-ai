@@ -15,6 +15,7 @@ import {
   mergePortfolioProjects,
   nextPortfolioDeadline,
   portfolioDueSoonCount,
+  portfolioTargetRoleCoverage,
   portfolioAverageMilestoneRate,
   portfolioStaleCount,
   portfolioCompletionRate,
@@ -43,6 +44,7 @@ export default function PortfolioPage() {
   const topProject = topPortfolioProject(projects);
   const insightRows = [
     ["Due within 7 days", portfolioDueSoonCount(projects)],
+    ["Target roles", portfolioTargetRoleCoverage(projects)],
     ["Milestone average", portfolioAverageMilestoneRate(projects) + "%"],
     ["Stale 30+ days", portfolioStaleCount(projects)],
     ["Completion rate", portfolioCompletionRate(projects) + "%"],
