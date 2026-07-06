@@ -7,7 +7,25 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import type { PlannerTask } from "@/lib/career-planner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
-import { PORTFOLIO_PROJECT_PRIORITIES, PORTFOLIO_PROJECT_STATUSES, createPortfolioProject, isPortfolioProjectOverdue, mergePortfolioProjects, nextPortfolioDeadline, portfolioProjectReadiness, portfolioProjectText, portfolioSkillCounts, portfolioStatusCounts, portfolioTechCounts, sortPortfolioProjects, topPortfolioProject, type PortfolioProject, type PortfolioProjectPriority, type PortfolioProjectStatus } from "@/lib/portfolio-projects";
+import {
+  PORTFOLIO_PROJECT_PRIORITIES,
+  PORTFOLIO_PROJECT_STATUSES,
+  createPortfolioProject,
+  isPortfolioProjectOverdue,
+  mergePortfolioProjects,
+  nextPortfolioDeadline,
+  portfolioDueSoonCount,
+  portfolioProjectReadiness,
+  portfolioProjectText,
+  portfolioSkillCounts,
+  portfolioStatusCounts,
+  portfolioTechCounts,
+  sortPortfolioProjects,
+  topPortfolioProject,
+  type PortfolioProject,
+  type PortfolioProjectPriority,
+  type PortfolioProjectStatus,
+} from "@/lib/portfolio-projects";
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useLocalStorage<PortfolioProject[]>(LOCAL_STORAGE_KEYS.portfolioProjects, []); const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
@@ -16,6 +34,9 @@ export default function PortfolioPage() {
   const statusRows = Object.entries(portfolioStatusCounts(visibleProjects)); const skillRows = Object.entries(portfolioSkillCounts(visibleProjects)).sort((a, b) => b[1] - a[1]); const techRows = Object.entries(portfolioTechCounts(visibleProjects)).sort((a, b) => b[1] - a[1]);
   const nextDeadline = nextPortfolioDeadline(projects);
   const topProject = topPortfolioProject(projects);
+  const insightRows = [
+    ["Due within 7 days", portfolioDueSoonCount(projects)],
+  ];
   function addProject() { if (!name.trim()) return; setProjects((current) => [createPortfolioProject(name), ...current]); setName(""); toast.success("Portfolio project added"); }
   function updateProject(id: string, patch: Partial<PortfolioProject>) { setProjects((current) => current.map((project) => project.id === id ? { ...project, ...patch, updatedAt: new Date().toISOString() } : project)); }
   function removeProject(id: string) { setProjects((current) => current.filter((project) => project.id !== id)); toast.success("Project deleted"); }
@@ -50,6 +71,7 @@ export default function PortfolioPage() {
     {nextDeadline && <div className="rounded-lg border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">Next deadline: <span className="font-semibold">{nextDeadline.name}</span> on {nextDeadline.targetDate}.</div>}
     {topProject && <div className="rounded-lg border border-emerald-800/50 bg-emerald-950/20 p-4 text-sm text-emerald-100">Strongest portfolio piece: <span className="font-semibold">{topProject.name}</span> at {topProject.progress}% progress.</div>}
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[["Active", projects.filter((project) => !["published", "archived"].includes(project.status)).length], ["Published", projects.filter((project) => project.status === "published").length], ["Overdue", projects.filter((project) => isPortfolioProjectOverdue(project)).length], ["Hours", projects.reduce((sum, project) => sum + project.hoursSpent, 0)], ["Featured", projects.filter((project) => project.featured && project.status !== "archived").length]].map(([label, value]) => <div key={label} className="rounded-lg border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}</div>
+    <div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Portfolio insights</h3><div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">{insightRows.map(([label, value]) => <div key={label} className="rounded-md bg-gray-800 px-3 py-2"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 font-semibold text-white">{value}</div></div>)}</div></div>
     <div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><div className="flex gap-2"><input value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addProject(); }} placeholder="Add a portfolio project" className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white" /><button onClick={addProject} disabled={!name.trim()} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"><Plus className="h-4 w-4" />Add</button></div></div>
     <div className="flex flex-wrap gap-2"><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PortfolioProjectStatus | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All statuses</option>{PORTFOLIO_PROJECT_STATUSES.filter((option) => option.value !== "archived").map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value as PortfolioProjectPriority | "all")} className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"><option value="all">All priorities</option>{PORTFOLIO_PROJECT_PRIORITIES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><label className="relative min-w-64 flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search projects, skills, stack, or impact" className="w-full rounded-lg border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white" /></label><button onClick={() => setShowArchived((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">Archived</button><label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Upload className="h-4 w-4" />Import<input type="file" accept=".json" onChange={importProjects} className="sr-only" /></label><CopyButton value={portfolioProjectText(visibleProjects) || "No projects yet"} label="Copy portfolio" /><button onClick={() => downloadJson("careerpilot-portfolio-projects.json", { projects })} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Download className="h-4 w-4" />JSON</button><button onClick={() => downloadCsv("careerpilot-portfolio-projects.csv", visibleProjects.map((project) => ({ name: project.name, status: project.status, priority: project.priority, target_role: project.targetRole, progress: project.progress, hours: project.hoursSpent, target_date: project.targetDate, skills: project.skills.join(", "), tech_stack: project.techStack.join(", "), live_url: project.liveUrl, repository_url: project.repositoryUrl })))} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">CSV</button></div>
     {visibleProjects.length === 0 ? <div className="rounded-lg border border-dashed border-gray-700 py-14 text-center"><FolderKanban className="mx-auto h-8 w-8 text-gray-600" /><p className="mt-3 text-sm text-gray-400">No projects match this view.</p></div> : <div className="space-y-4">{visibleProjects.map((project) => <article key={project.id} className="rounded-lg border border-gray-800 bg-gray-900 p-5"><div className="flex gap-2"><button onClick={() => updateProject(project.id, { featured: !project.featured })} className={project.featured ? "text-amber-400" : "text-gray-600"}><Star className="h-4 w-4" fill={project.featured ? "currentColor" : "none"} /></button><input value={project.name} onChange={(event) => updateProject(project.id, { name: event.target.value })} className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-white outline-none" /><button onClick={() => duplicateProject(project)} className="text-xs text-gray-400">Duplicate</button><button onClick={() => updateProject(project.id, { status: "archived" })} className="p-2 text-gray-400"><Archive className="h-4 w-4" /></button><button onClick={() => removeProject(project.id)} className="p-2 text-gray-500"><Trash2 className="h-4 w-4" /></button></div>
