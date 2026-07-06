@@ -15,6 +15,7 @@ import {
   mergePortfolioProjects,
   nextPortfolioDeadline,
   portfolioDueSoonCount,
+  portfolioMissingEvidenceCount,
   portfolioUnscheduledCount,
   portfolioProjectReadiness,
   portfolioProjectText,
@@ -37,6 +38,7 @@ export default function PortfolioPage() {
   const topProject = topPortfolioProject(projects);
   const insightRows = [
     ["Due within 7 days", portfolioDueSoonCount(projects)],
+    ["Missing evidence", portfolioMissingEvidenceCount(projects)],
     ["Unscheduled", portfolioUnscheduledCount(projects)],
   ];
   function addProject() { if (!name.trim()) return; setProjects((current) => [createPortfolioProject(name), ...current]); setName(""); toast.success("Portfolio project added"); }
