@@ -47,6 +47,7 @@ export default function PortfolioPage() {
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
   const [unscheduledOnly, setUnscheduledOnly] = useState(false);
+  const [targetRoleFilter, setTargetRoleFilter] = useState("");
   const [evidenceOnly, setEvidenceOnly] = useState(false);
   const visibleProjects = sortPortfolioProjects(projects).filter((project) => {
     if (!showArchived && project.status === "archived") return false;
@@ -55,6 +56,7 @@ export default function PortfolioPage() {
     if (featuredOnly && !project.featured) return false;
     if (overdueOnly && !isPortfolioProjectOverdue(project)) return false;
     if (unscheduledOnly && project.targetDate) return false;
+    if (targetRoleFilter && !project.targetRole.toLowerCase().includes(targetRoleFilter.toLowerCase())) return false;
     if (evidenceOnly && !project.repositoryUrl && !project.liveUrl && !project.caseStudyUrl) return false;
     const query = search.trim().toLowerCase();
     return !query || `${project.name} ${project.summary} ${project.targetRole} ${project.problem} ${project.solution} ${project.impact} ${project.techStack.join(" ")} ${project.skills.join(" ")} ${project.tags.join(" ")}`.toLowerCase().includes(query);
@@ -92,6 +94,7 @@ export default function PortfolioPage() {
     setFeaturedOnly(false);
     setOverdueOnly(false);
     setUnscheduledOnly(false);
+    setTargetRoleFilter("");
     setEvidenceOnly(false);
   }
   function prioritizeVisible() { const ids = new Set(visibleProjects.map((project) => project.id)); setProjects((current) => current.map((project) => ids.has(project.id) ? { ...project, priority: "high", updatedAt: new Date().toISOString() } : project)); toast.success("Visible projects prioritized"); }
@@ -126,6 +129,7 @@ export default function PortfolioPage() {
       <button onClick={() => setFeaturedOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{featuredOnly ? "All projects" : "Featured"}</button>
       <button onClick={() => setOverdueOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{overdueOnly ? "All deadlines" : "Overdue only"}</button>
       <button onClick={() => setUnscheduledOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{unscheduledOnly ? "All schedules" : "Unscheduled"}</button>
+      <input value={targetRoleFilter} onChange={(event) => setTargetRoleFilter(event.target.value)} placeholder="Target role" className="min-w-32 rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white" />
       <button onClick={() => setEvidenceOnly((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">{evidenceOnly ? "All evidence" : "Evidence only"}</button>
       <button onClick={() => setShowArchived((value) => !value)} className="rounded-lg border border-gray-700 px-3 text-sm text-gray-300">Archived</button>
       <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Upload className="h-4 w-4" />Import<input type="file" accept=".json" onChange={importProjects} className="sr-only" /></label>
