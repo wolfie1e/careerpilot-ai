@@ -15,6 +15,7 @@ import {
   mergePortfolioProjects,
   nextPortfolioDeadline,
   portfolioDueSoonCount,
+  portfolioMissingNextActionCount,
   portfolioMissingEvidenceCount,
   portfolioUnscheduledCount,
   portfolioProjectReadiness,
@@ -38,6 +39,7 @@ export default function PortfolioPage() {
   const topProject = topPortfolioProject(projects);
   const insightRows = [
     ["Due within 7 days", portfolioDueSoonCount(projects)],
+    ["Missing next action", portfolioMissingNextActionCount(projects)],
     ["Missing evidence", portfolioMissingEvidenceCount(projects)],
     ["Unscheduled", portfolioUnscheduledCount(projects)],
   ];
