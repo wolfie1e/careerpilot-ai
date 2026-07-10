@@ -218,3 +218,7 @@ export function nextLearningDate(resources: LearningResource[]): { title: string
 export function learningOverdueCount(resources: LearningResource[]): number {
   return resources.filter((resource) => isLearningResourceOverdue(resource)).length;
 }
+
+export function learningDueSoonCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => isLearningResourceDueSoon(resource)).length;
+}
