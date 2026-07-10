@@ -178,6 +178,13 @@ export function offerCurrencyCounts(offers: OfferComparison[]): Record<string, n
   }, {});
 }
 
+export function offerWorkModeCounts(offers: OfferComparison[]): Record<string, number> {
+  return offers.filter((offer) => offer.workMode && offer.status !== "archived").reduce<Record<string, number>>((counts, offer) => {
+    counts[offer.workMode] = (counts[offer.workMode] || 0) + 1;
+    return counts;
+  }, {});
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
