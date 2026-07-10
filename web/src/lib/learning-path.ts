@@ -258,3 +258,7 @@ export function learningProviderCounts(resources: LearningResource[]): Record<st
     return counts;
   }, {});
 }
+
+export function learningCompletedHoursTotal(resources: LearningResource[]): number {
+  return resources.filter((resource) => resource.status !== "archived").reduce((total, resource) => total + Math.max(0, resource.completedHours || 0), 0);
+}
