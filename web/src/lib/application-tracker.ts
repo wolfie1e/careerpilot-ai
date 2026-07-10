@@ -203,6 +203,10 @@ export function applicationsWithoutContactCount(applications: JobApplication[]):
   return applications.filter((application) => !application.archived && !application.contactName && !application.contactEmail).length;
 }
 
+export function nextApplicationFollowUp(applications: JobApplication[]): JobApplication | null {
+  return applicationsWithFollowUps(applications).sort((a, b) => a.followUpAt.localeCompare(b.followUpAt))[0] || null;
+}
+
 export function applicationPipelineText(applications: JobApplication[]): string {
   return sortApplications(applications).map(applicationSummary).join("\n");
 }
