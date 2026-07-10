@@ -206,3 +206,7 @@ export function activeMentorshipCount(contacts: MentorshipContact[]): number {
 export function dormantMentorshipCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => contact.status === "dormant").length;
 }
+
+export function favoriteMentorshipCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.favorite && contact.status !== "archived").length;
+}
