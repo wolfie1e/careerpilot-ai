@@ -167,6 +167,10 @@ export function averageOfferDecisionScore(offers: OfferComparison[]): number {
   return visibleOffers.length ? Math.round(visibleOffers.reduce((total, offer) => total + offerDecisionScore(offer), 0) / visibleOffers.length) : 0;
 }
 
+export function acceptedOfferCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status === "accepted").length;
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
