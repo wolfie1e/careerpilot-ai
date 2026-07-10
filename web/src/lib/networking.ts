@@ -119,3 +119,10 @@ export function networkingCompanyCounts(contacts: NetworkingContact[]): Record<s
     return counts;
   }, {});
 }
+
+export function networkingLocationCounts(contacts: NetworkingContact[]): Record<string, number> {
+  return contacts.filter((contact) => contact.location && !contact.archived).reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.location] = (counts[contact.location] || 0) + 1;
+    return counts;
+  }, {});
+}
