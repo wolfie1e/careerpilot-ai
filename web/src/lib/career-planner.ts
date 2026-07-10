@@ -173,3 +173,7 @@ export function plannerAverageEstimateMinutes(tasks: PlannerTask[]): number {
   const activeTasks = tasks.filter((task) => !task.archived);
   return activeTasks.length ? Math.round(activeTasks.reduce((total, task) => total + Math.max(0, task.estimateMinutes || 0), 0) / activeTasks.length) : 0;
 }
+
+export function nextPlannerTask(tasks: PlannerTask[]): PlannerTask | null {
+  return sortPlannerTasks(tasks).find((task) => !task.archived && task.status !== "done") || null;
+}
