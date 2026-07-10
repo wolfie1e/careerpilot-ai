@@ -182,3 +182,9 @@ export function dueSoonCareerGoalCount(goals: CareerGoal[]): number {
 export function highPriorityActiveCareerGoalCount(goals: CareerGoal[]): number {
   return goals.filter((goal) => goal.status === "active" && goal.priority === "high").length;
 }
+
+export function careerGoalHorizonCounts(goals: CareerGoal[]): Record<CareerGoalHorizon, number> {
+  const counts = CAREER_GOAL_HORIZONS.reduce((result, horizon) => ({ ...result, [horizon.value]: 0 }), {} as Record<CareerGoalHorizon, number>);
+  goals.filter((goal) => goal.status !== "archived").forEach((goal) => { counts[goal.horizon] += 1; });
+  return counts;
+}
