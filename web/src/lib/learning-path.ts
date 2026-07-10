@@ -222,3 +222,7 @@ export function learningOverdueCount(resources: LearningResource[]): number {
 export function learningDueSoonCount(resources: LearningResource[]): number {
   return resources.filter((resource) => isLearningResourceDueSoon(resource)).length;
 }
+
+export function activeLearningCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => !["completed", "archived"].includes(resource.status)).length;
+}
