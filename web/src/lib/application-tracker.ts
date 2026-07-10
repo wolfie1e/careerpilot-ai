@@ -157,6 +157,10 @@ export function applicationsWithFollowUps(applications: JobApplication[]): JobAp
   return sortApplications(applications.filter((application) => application.followUpAt && !application.archived));
 }
 
+export function applicationFollowUpDueCount(applications: JobApplication[]): number {
+  return applications.filter((application) => isApplicationFollowUpDue(application)).length;
+}
+
 export function companyApplicationCounts(applications: JobApplication[]): Record<string, number> {
   return applications.reduce<Record<string, number>>((counts, application) => {
     counts[application.company] = (counts[application.company] || 0) + 1;
