@@ -148,3 +148,7 @@ export function mergePlannerTasks(current: PlannerTask[], incoming: PlannerTask[
   incoming.map(normalizePlannerTask).forEach((task) => byId.set(task.id, task));
   return sortPlannerTasks([...byId.values()]);
 }
+
+export function plannerOverdueCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => isPlannerTaskOverdue(task)).length;
+}
