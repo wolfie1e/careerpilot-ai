@@ -130,3 +130,9 @@ export function networkingLocationCounts(contacts: NetworkingContact[]): Record<
 export function networkingContactableCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => !contact.archived && Boolean(contact.email || contact.linkedin)).length;
 }
+
+export function networkingStaleCount(contacts: NetworkingContact[], days = 30, today = new Date()): number {
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - days);
+  return contacts.filter((contact) => !contact.archived && (!contact.lastContactedAt || new Date(contact.lastContactedAt) < cutoff)).length;
+}
