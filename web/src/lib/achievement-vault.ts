@@ -136,3 +136,7 @@ export function mergeAchievementStories(current: AchievementStory[], incoming: A
   incoming.map(normalizeAchievementStory).forEach((story) => byId.set(story.id, story));
   return sortAchievementStories([...byId.values()]);
 }
+
+export function archivedAchievementCount(stories: AchievementStory[]): number {
+  return stories.filter((story) => story.status === "archived").length;
+}
