@@ -210,3 +210,10 @@ export function dormantMentorshipCount(contacts: MentorshipContact[]): number {
 export function favoriteMentorshipCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => contact.favorite && contact.status !== "archived").length;
 }
+
+export function mentorshipCompanyCounts(contacts: MentorshipContact[]): Record<string, number> {
+  return contacts.filter((contact) => contact.company && contact.status !== "archived").reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.company] = (counts[contact.company] || 0) + 1;
+    return counts;
+  }, {});
+}
