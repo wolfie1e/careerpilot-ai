@@ -230,3 +230,7 @@ export function activeLearningCount(resources: LearningResource[]): number {
 export function completedLearningCount(resources: LearningResource[]): number {
   return resources.filter((resource) => resource.status === "completed").length;
 }
+
+export function favoriteLearningCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => resource.favorite && resource.status !== "archived").length;
+}
