@@ -136,3 +136,9 @@ export function networkingStaleCount(contacts: NetworkingContact[], days = 30, t
   cutoff.setDate(cutoff.getDate() - days);
   return contacts.filter((contact) => !contact.archived && (!contact.lastContactedAt || new Date(contact.lastContactedAt) < cutoff)).length;
 }
+
+export function networkingRecentlyContactedCount(contacts: NetworkingContact[], days = 14, today = new Date()): number {
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - days);
+  return contacts.filter((contact) => !contact.archived && contact.lastContactedAt && new Date(contact.lastContactedAt) >= cutoff).length;
+}
