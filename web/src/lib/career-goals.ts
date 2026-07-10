@@ -170,3 +170,7 @@ export function averageCareerGoalProgress(goals: CareerGoal[]): number {
 export function nextCareerGoalFocus(goals: CareerGoal[]): CareerGoal | null {
   return sortCareerGoals(goals).find((goal) => goal.status === "active" && careerGoalProgress(goal) < 100) || null;
 }
+
+export function pausedCareerGoalCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status === "paused").length;
+}
