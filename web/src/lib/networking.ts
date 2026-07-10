@@ -106,3 +106,9 @@ export function markNetworkingContacted(contact: NetworkingContact): NetworkingC
   const today = new Date().toISOString().slice(0, 10);
   return { ...contact, lastContactedAt: today, updatedAt: new Date().toISOString() };
 }
+
+export function networkingStrengthCounts(contacts: NetworkingContact[]): Record<ContactStrength, number> {
+  const counts: Record<ContactStrength, number> = { new: 0, warm: 0, strong: 0 };
+  contacts.filter((contact) => !contact.archived).forEach((contact) => { counts[contact.strength] += 1; });
+  return counts;
+}
