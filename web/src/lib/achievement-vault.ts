@@ -152,3 +152,10 @@ export function achievementRoleCounts(stories: AchievementStory[]): Record<strin
     return counts;
   }, {});
 }
+
+export function achievementCompanyCounts(stories: AchievementStory[]): Record<string, number> {
+  return stories.filter((story) => story.company && story.status !== "archived").reduce<Record<string, number>>((counts, story) => {
+    counts[story.company] = (counts[story.company] || 0) + 1;
+    return counts;
+  }, {});
+}
