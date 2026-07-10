@@ -148,6 +148,12 @@ export function mergeOfferComparisons(current: OfferComparison[], incoming: Offe
   return sortOffers([...byId.values()]);
 }
 
+export function offerStatusCounts(offers: OfferComparison[]): Record<OfferStatus, number> {
+  const counts = OFFER_STATUSES.reduce((result, status) => ({ ...result, [status.value]: 0 }), {} as Record<OfferStatus, number>);
+  offers.forEach((offer) => { counts[offer.status] += 1; });
+  return counts;
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
