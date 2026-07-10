@@ -188,6 +188,13 @@ export function applicationLocationCounts(applications: JobApplication[]): Recor
   }, {});
 }
 
+export function applicationEmploymentTypeCounts(applications: JobApplication[]): Record<string, number> {
+  return applications.filter((application) => application.employmentType && !application.archived).reduce<Record<string, number>>((counts, application) => {
+    counts[application.employmentType] = (counts[application.employmentType] || 0) + 1;
+    return counts;
+  }, {});
+}
+
 export function applicationPipelineText(applications: JobApplication[]): string {
   return sortApplications(applications).map(applicationSummary).join("\n");
 }
