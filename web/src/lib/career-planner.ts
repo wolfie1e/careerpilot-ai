@@ -164,3 +164,7 @@ export function plannerOpenTaskCount(tasks: PlannerTask[]): number {
 export function plannerArchivedCount(tasks: PlannerTask[]): number {
   return tasks.filter((task) => task.archived).length;
 }
+
+export function plannerHighPriorityOpenCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => !task.archived && task.status !== "done" && task.priority === "high").length;
+}
