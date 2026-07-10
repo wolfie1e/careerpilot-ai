@@ -162,6 +162,11 @@ export function offerDeadlineOverdueCount(offers: OfferComparison[]): number {
   return offers.filter((offer) => isOfferDeadlineOverdue(offer)).length;
 }
 
+export function averageOfferDecisionScore(offers: OfferComparison[]): number {
+  const visibleOffers = offers.filter((offer) => offer.status !== "archived");
+  return visibleOffers.length ? Math.round(visibleOffers.reduce((total, offer) => total + offerDecisionScore(offer), 0) / visibleOffers.length) : 0;
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
