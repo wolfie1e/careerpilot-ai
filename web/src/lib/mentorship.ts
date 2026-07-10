@@ -202,3 +202,7 @@ export function mentorshipAverageConfidence(contacts: MentorshipContact[]): numb
 export function activeMentorshipCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => contact.status === "active").length;
 }
+
+export function dormantMentorshipCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status === "dormant").length;
+}
