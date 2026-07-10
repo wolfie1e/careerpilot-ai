@@ -178,3 +178,7 @@ export function pausedCareerGoalCount(goals: CareerGoal[]): number {
 export function dueSoonCareerGoalCount(goals: CareerGoal[]): number {
   return goals.filter((goal) => isCareerGoalDueSoon(goal)).length;
 }
+
+export function highPriorityActiveCareerGoalCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status === "active" && goal.priority === "high").length;
+}
