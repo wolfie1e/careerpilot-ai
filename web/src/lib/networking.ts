@@ -126,3 +126,7 @@ export function networkingLocationCounts(contacts: NetworkingContact[]): Record<
     return counts;
   }, {});
 }
+
+export function networkingContactableCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => !contact.archived && Boolean(contact.email || contact.linkedin)).length;
+}
