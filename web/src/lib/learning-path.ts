@@ -241,3 +241,8 @@ export function learningSkillAreaCounts(resources: LearningResource[]): Record<s
     return counts;
   }, {});
 }
+
+export function learningAverageProgress(resources: LearningResource[]): number {
+  const visibleResources = resources.filter((resource) => resource.status !== "archived");
+  return visibleResources.length ? Math.round(visibleResources.reduce((total, resource) => total + learningProgress(resource), 0) / visibleResources.length) : 0;
+}
