@@ -158,6 +158,10 @@ export function offerDeadlineSoonCount(offers: OfferComparison[]): number {
   return offers.filter((offer) => isOfferDeadlineSoon(offer)).length;
 }
 
+export function offerDeadlineOverdueCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => isOfferDeadlineOverdue(offer)).length;
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
