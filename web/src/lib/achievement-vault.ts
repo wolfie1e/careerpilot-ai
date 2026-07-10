@@ -140,3 +140,8 @@ export function mergeAchievementStories(current: AchievementStory[], incoming: A
 export function archivedAchievementCount(stories: AchievementStory[]): number {
   return stories.filter((story) => story.status === "archived").length;
 }
+
+export function averageAchievementConfidence(stories: AchievementStory[]): number {
+  const activeStories = stories.filter((story) => story.status !== "archived");
+  return activeStories.length ? Math.round(activeStories.reduce((total, story) => total + story.confidence, 0) / activeStories.length) : 0;
+}
