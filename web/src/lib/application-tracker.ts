@@ -195,6 +195,10 @@ export function applicationEmploymentTypeCounts(applications: JobApplication[]):
   }, {});
 }
 
+export function applicationsMissingNextActionCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage) && !application.nextAction.trim()).length;
+}
+
 export function applicationPipelineText(applications: JobApplication[]): string {
   return sortApplications(applications).map(applicationSummary).join("\n");
 }
