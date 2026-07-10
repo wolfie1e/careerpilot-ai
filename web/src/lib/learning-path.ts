@@ -226,3 +226,7 @@ export function learningDueSoonCount(resources: LearningResource[]): number {
 export function activeLearningCount(resources: LearningResource[]): number {
   return resources.filter((resource) => !["completed", "archived"].includes(resource.status)).length;
 }
+
+export function completedLearningCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => resource.status === "completed").length;
+}
