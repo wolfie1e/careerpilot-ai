@@ -217,3 +217,7 @@ export function mentorshipCompanyCounts(contacts: MentorshipContact[]): Record<s
     return counts;
   }, {});
 }
+
+export function contactableMentorshipCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status !== "archived" && Boolean(contact.email || contact.linkedInUrl)).length;
+}
