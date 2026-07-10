@@ -185,6 +185,10 @@ export function offerWorkModeCounts(offers: OfferComparison[]): Record<string, n
   }, {});
 }
 
+export function totalAcceptedOfferCompensation(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status === "accepted").reduce((total, offer) => total + offerTotalCompensation(offer), 0);
+}
+
 export function offerTagCounts(offers: OfferComparison[]): Record<string, number> {
   return offers.flatMap((offer) => offer.tags || []).reduce<Record<string, number>>((counts, tag) => {
     counts[tag] = (counts[tag] || 0) + 1;
