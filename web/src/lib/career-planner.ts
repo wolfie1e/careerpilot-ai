@@ -152,3 +152,7 @@ export function mergePlannerTasks(current: PlannerTask[], incoming: PlannerTask[
 export function plannerOverdueCount(tasks: PlannerTask[]): number {
   return tasks.filter((task) => isPlannerTaskOverdue(task)).length;
 }
+
+export function plannerDueSoonCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => isPlannerTaskDueSoon(task)).length;
+}
