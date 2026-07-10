@@ -198,3 +198,7 @@ export function mentorshipAverageConfidence(contacts: MentorshipContact[]): numb
   if (!activeContacts.length) return 0;
   return Math.round(activeContacts.reduce((total, contact) => total + contact.confidence, 0) / activeContacts.length);
 }
+
+export function activeMentorshipCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status === "active").length;
+}
