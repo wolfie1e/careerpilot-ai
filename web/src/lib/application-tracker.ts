@@ -161,6 +161,12 @@ export function applicationFollowUpDueCount(applications: JobApplication[]): num
   return applications.filter((application) => isApplicationFollowUpDue(application)).length;
 }
 
+export function staleApplicationCount(applications: JobApplication[], days = 14, today = new Date()): number {
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - days);
+  return applications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage) && new Date(application.updatedAt) < cutoff).length;
+}
+
 export function companyApplicationCounts(applications: JobApplication[]): Record<string, number> {
   return applications.reduce<Record<string, number>>((counts, application) => {
     counts[application.company] = (counts[application.company] || 0) + 1;
