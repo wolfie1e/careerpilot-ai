@@ -181,6 +181,13 @@ export function applicationSourceCounts(applications: JobApplication[]): Record<
   }, {});
 }
 
+export function applicationLocationCounts(applications: JobApplication[]): Record<string, number> {
+  return applications.filter((application) => application.location && !application.archived).reduce<Record<string, number>>((counts, application) => {
+    counts[application.location] = (counts[application.location] || 0) + 1;
+    return counts;
+  }, {});
+}
+
 export function applicationPipelineText(applications: JobApplication[]): string {
   return sortApplications(applications).map(applicationSummary).join("\n");
 }
