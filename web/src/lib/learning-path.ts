@@ -214,3 +214,7 @@ export function nextLearningDate(resources: LearningResource[]): { title: string
     .sort((a, b) => a.date.localeCompare(b.date));
   return upcoming[0] || null;
 }
+
+export function learningOverdueCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => isLearningResourceOverdue(resource)).length;
+}
