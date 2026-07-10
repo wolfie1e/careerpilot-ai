@@ -251,3 +251,10 @@ export function learningAverageRating(resources: LearningResource[]): number {
   const ratedResources = resources.filter((resource) => resource.status !== "archived" && resource.rating > 0);
   return ratedResources.length ? Math.round((ratedResources.reduce((total, resource) => total + resource.rating, 0) / ratedResources.length) * 10) / 10 : 0;
 }
+
+export function learningProviderCounts(resources: LearningResource[]): Record<string, number> {
+  return resources.filter((resource) => resource.provider && resource.status !== "archived").reduce<Record<string, number>>((counts, resource) => {
+    counts[resource.provider] = (counts[resource.provider] || 0) + 1;
+    return counts;
+  }, {});
+}
