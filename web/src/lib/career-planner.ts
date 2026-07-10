@@ -168,3 +168,8 @@ export function plannerArchivedCount(tasks: PlannerTask[]): number {
 export function plannerHighPriorityOpenCount(tasks: PlannerTask[]): number {
   return tasks.filter((task) => !task.archived && task.status !== "done" && task.priority === "high").length;
 }
+
+export function plannerAverageEstimateMinutes(tasks: PlannerTask[]): number {
+  const activeTasks = tasks.filter((task) => !task.archived);
+  return activeTasks.length ? Math.round(activeTasks.reduce((total, task) => total + Math.max(0, task.estimateMinutes || 0), 0) / activeTasks.length) : 0;
+}
