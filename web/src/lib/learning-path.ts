@@ -234,3 +234,10 @@ export function completedLearningCount(resources: LearningResource[]): number {
 export function favoriteLearningCount(resources: LearningResource[]): number {
   return resources.filter((resource) => resource.favorite && resource.status !== "archived").length;
 }
+
+export function learningSkillAreaCounts(resources: LearningResource[]): Record<string, number> {
+  return resources.filter((resource) => resource.skillArea && resource.status !== "archived").reduce<Record<string, number>>((counts, resource) => {
+    counts[resource.skillArea] = (counts[resource.skillArea] || 0) + 1;
+    return counts;
+  }, {});
+}
