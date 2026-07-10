@@ -160,3 +160,7 @@ export function plannerDueSoonCount(tasks: PlannerTask[]): number {
 export function plannerOpenTaskCount(tasks: PlannerTask[]): number {
   return tasks.filter((task) => !task.archived && task.status !== "done").length;
 }
+
+export function plannerArchivedCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => task.archived).length;
+}
