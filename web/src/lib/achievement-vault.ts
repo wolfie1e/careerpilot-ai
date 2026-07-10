@@ -145,3 +145,10 @@ export function averageAchievementConfidence(stories: AchievementStory[]): numbe
   const activeStories = stories.filter((story) => story.status !== "archived");
   return activeStories.length ? Math.round(activeStories.reduce((total, story) => total + story.confidence, 0) / activeStories.length) : 0;
 }
+
+export function achievementRoleCounts(stories: AchievementStory[]): Record<string, number> {
+  return stories.filter((story) => story.role && story.status !== "archived").reduce<Record<string, number>>((counts, story) => {
+    counts[story.role] = (counts[story.role] || 0) + 1;
+    return counts;
+  }, {});
+}
