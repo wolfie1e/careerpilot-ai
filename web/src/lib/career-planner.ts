@@ -177,3 +177,7 @@ export function plannerAverageEstimateMinutes(tasks: PlannerTask[]): number {
 export function nextPlannerTask(tasks: PlannerTask[]): PlannerTask | null {
   return sortPlannerTasks(tasks).find((task) => !task.archived && task.status !== "done") || null;
 }
+
+export function plannerResourceCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => !task.archived && Boolean(task.resourceUrl)).length;
+}
