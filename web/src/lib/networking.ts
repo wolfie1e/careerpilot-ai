@@ -112,3 +112,10 @@ export function networkingStrengthCounts(contacts: NetworkingContact[]): Record<
   contacts.filter((contact) => !contact.archived).forEach((contact) => { counts[contact.strength] += 1; });
   return counts;
 }
+
+export function networkingCompanyCounts(contacts: NetworkingContact[]): Record<string, number> {
+  return contacts.filter((contact) => contact.company && !contact.archived).reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.company] = (counts[contact.company] || 0) + 1;
+    return counts;
+  }, {});
+}
