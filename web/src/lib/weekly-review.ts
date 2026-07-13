@@ -90,3 +90,11 @@ export function weeklyReviewsThisQuarter(reviews: WeeklyReview[], today = new Da
     return week.getFullYear() === year && Math.floor(week.getMonth() / 3) === quarter;
   }).length;
 }
+
+export function weeklyReviewFocusCounts(reviews: WeeklyReview[]): Record<string, number> {
+  return reviews.filter((review) => review.nextFocus.trim()).reduce<Record<string, number>>((counts, review) => {
+    const focus = review.nextFocus.trim();
+    counts[focus] = (counts[focus] || 0) + 1;
+    return counts;
+  }, {});
+}
