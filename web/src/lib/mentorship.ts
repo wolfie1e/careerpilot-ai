@@ -229,3 +229,8 @@ export function mentorshipFollowUpSoonCount(contacts: MentorshipContact[]): numb
 export function mentorshipTopicCoverage(contacts: MentorshipContact[]): number {
   return new Set(contacts.filter((contact) => contact.status !== "archived").flatMap((contact) => contact.topics || [])).size;
 }
+
+export function mentorshipAverageCadenceDays(contacts: MentorshipContact[]): number {
+  const activeContacts = contacts.filter((contact) => contact.status !== "archived" && contact.cadenceDays > 0);
+  return activeContacts.length ? Math.round(activeContacts.reduce((total, contact) => total + contact.cadenceDays, 0) / activeContacts.length) : 0;
+}
