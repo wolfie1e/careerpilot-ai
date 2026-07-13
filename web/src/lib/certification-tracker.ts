@@ -215,3 +215,7 @@ export function mergeCertificationRecords(current: CertificationRecord[], incomi
   incoming.map(normalizeCertificationRecord).forEach((record) => byId.set(record.id, record));
   return sortCertificationRecords([...byId.values()]);
 }
+
+export function earnedCertificationCount(records: CertificationRecord[]): number {
+  return records.filter((record) => record.status === "earned").length;
+}
