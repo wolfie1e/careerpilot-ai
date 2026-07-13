@@ -146,3 +146,7 @@ export function networkingRecentlyContactedCount(contacts: NetworkingContact[], 
 export function networkingEmailCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => !contact.archived && Boolean(contact.email)).length;
 }
+
+export function networkingLinkedInCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => !contact.archived && Boolean(contact.linkedin)).length;
+}
