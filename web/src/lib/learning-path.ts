@@ -262,3 +262,9 @@ export function learningProviderCounts(resources: LearningResource[]): Record<st
 export function learningCompletedHoursTotal(resources: LearningResource[]): number {
   return resources.filter((resource) => resource.status !== "archived").reduce((total, resource) => total + Math.max(0, resource.completedHours || 0), 0);
 }
+
+export function learningPriorityCounts(resources: LearningResource[]): Record<LearningResourcePriority, number> {
+  const counts: Record<LearningResourcePriority, number> = { low: 0, medium: 0, high: 0 };
+  resources.filter((resource) => resource.status !== "archived").forEach((resource) => { counts[resource.priority] += 1; });
+  return counts;
+}
