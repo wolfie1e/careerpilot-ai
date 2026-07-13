@@ -219,3 +219,7 @@ export function mergeCertificationRecords(current: CertificationRecord[], incomi
 export function earnedCertificationCount(records: CertificationRecord[]): number {
   return records.filter((record) => record.status === "earned").length;
 }
+
+export function expiredCertificationCount(records: CertificationRecord[]): number {
+  return records.filter((record) => isCertificationExpired(record)).length;
+}
