@@ -204,3 +204,8 @@ export function averageOfferTotalCompensation(offers: OfferComparison[]): number
 export function remoteOfferCount(offers: OfferComparison[]): number {
   return offers.filter((offer) => offer.status !== "archived" && offer.workMode === "remote").length;
 }
+
+export function averageOfferCommuteMinutes(offers: OfferComparison[]): number {
+  const commuteOffers = offers.filter((offer) => offer.status !== "archived" && offer.commuteMinutes > 0);
+  return commuteOffers.length ? Math.round(commuteOffers.reduce((total, offer) => total + offer.commuteMinutes, 0) / commuteOffers.length) : 0;
+}
