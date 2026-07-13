@@ -81,3 +81,12 @@ export function averageWeeklyReviewCompletion(reviews: WeeklyReview[]): number {
 export function lowConfidenceWeeklyReviewCount(reviews: WeeklyReview[], threshold = 5): number {
   return reviews.filter((review) => review.confidence <= threshold).length;
 }
+
+export function weeklyReviewsThisQuarter(reviews: WeeklyReview[], today = new Date()): number {
+  const year = today.getFullYear();
+  const quarter = Math.floor(today.getMonth() / 3);
+  return reviews.filter((review) => {
+    const week = new Date(`${review.weekOf}T00:00:00`);
+    return week.getFullYear() === year && Math.floor(week.getMonth() / 3) === quarter;
+  }).length;
+}
