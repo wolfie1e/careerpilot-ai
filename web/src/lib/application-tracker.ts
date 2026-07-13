@@ -227,3 +227,10 @@ export function applicationPriorityCounts(applications: JobApplication[]): Recor
   applications.filter((application) => !application.archived).forEach((application) => { counts[application.priority] += 1; });
   return counts;
 }
+
+export function applicationTagCounts(applications: JobApplication[]): Record<string, number> {
+  return applications.filter((application) => !application.archived).flatMap((application) => application.tags || []).reduce<Record<string, number>>((counts, tag) => {
+    counts[tag] = (counts[tag] || 0) + 1;
+    return counts;
+  }, {});
+}
