@@ -234,3 +234,9 @@ export function applicationTagCounts(applications: JobApplication[]): Record<str
     return counts;
   }, {});
 }
+
+export function applicationOfferRate(applications: JobApplication[]): number {
+  const submitted = applications.filter((application) => !application.archived && application.stage !== "saved");
+  if (!submitted.length) return 0;
+  return Math.round((submitted.filter((application) => application.stage === "offer").length / submitted.length) * 100);
+}
