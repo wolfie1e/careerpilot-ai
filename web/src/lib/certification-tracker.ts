@@ -227,3 +227,8 @@ export function expiredCertificationCount(records: CertificationRecord[]): numbe
 export function expiringCertificationCount(records: CertificationRecord[]): number {
   return records.filter((record) => isCertificationExpiring(record)).length;
 }
+
+export function averageCertificationProgress(records: CertificationRecord[]): number {
+  const visibleRecords = records.filter((record) => record.status !== "archived");
+  return visibleRecords.length ? Math.round(visibleRecords.reduce((total, record) => total + certificationProgress(record), 0) / visibleRecords.length) : 0;
+}
