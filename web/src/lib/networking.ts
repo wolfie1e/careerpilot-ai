@@ -157,3 +157,7 @@ export function isNetworkingFollowUpSoon(contact: NetworkingContact, today = new
   const days = Math.ceil((followUp.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 7;
 }
+
+export function networkingFollowUpSoonCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => isNetworkingFollowUpSoon(contact)).length;
+}
