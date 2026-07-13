@@ -200,3 +200,7 @@ export function averageOfferTotalCompensation(offers: OfferComparison[]): number
   const visibleOffers = offers.filter((offer) => offer.status !== "archived");
   return visibleOffers.length ? Math.round(visibleOffers.reduce((total, offer) => total + offerTotalCompensation(offer), 0) / visibleOffers.length) : 0;
 }
+
+export function remoteOfferCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status !== "archived" && offer.workMode === "remote").length;
+}
