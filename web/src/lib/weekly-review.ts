@@ -77,3 +77,7 @@ export function completedWeeklyReviewCount(reviews: WeeklyReview[]): number {
 export function averageWeeklyReviewCompletion(reviews: WeeklyReview[]): number {
   return reviews.length ? Math.round(reviews.reduce((sum, review) => sum + weeklyReviewCompletion(review), 0) / reviews.length) : 0;
 }
+
+export function lowConfidenceWeeklyReviewCount(reviews: WeeklyReview[], threshold = 5): number {
+  return reviews.filter((review) => review.confidence <= threshold).length;
+}
