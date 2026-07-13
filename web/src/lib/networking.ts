@@ -142,3 +142,7 @@ export function networkingRecentlyContactedCount(contacts: NetworkingContact[], 
   cutoff.setDate(cutoff.getDate() - days);
   return contacts.filter((contact) => !contact.archived && contact.lastContactedAt && new Date(contact.lastContactedAt) >= cutoff).length;
 }
+
+export function networkingEmailCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => !contact.archived && Boolean(contact.email)).length;
+}
