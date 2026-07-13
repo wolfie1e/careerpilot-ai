@@ -195,3 +195,8 @@ export function offerTagCounts(offers: OfferComparison[]): Record<string, number
     return counts;
   }, {});
 }
+
+export function averageOfferTotalCompensation(offers: OfferComparison[]): number {
+  const visibleOffers = offers.filter((offer) => offer.status !== "archived");
+  return visibleOffers.length ? Math.round(visibleOffers.reduce((total, offer) => total + offerTotalCompensation(offer), 0) / visibleOffers.length) : 0;
+}
