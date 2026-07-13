@@ -268,3 +268,7 @@ export function learningPriorityCounts(resources: LearningResource[]): Record<Le
   resources.filter((resource) => resource.status !== "archived").forEach((resource) => { counts[resource.priority] += 1; });
   return counts;
 }
+
+export function pausedLearningCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => resource.status === "paused").length;
+}
