@@ -161,3 +161,7 @@ export function isNetworkingFollowUpSoon(contact: NetworkingContact, today = new
 export function networkingFollowUpSoonCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => isNetworkingFollowUpSoon(contact)).length;
 }
+
+export function nextNetworkingFollowUp(contacts: NetworkingContact[]): NetworkingContact | null {
+  return [...contacts].filter((contact) => !contact.archived && contact.nextFollowUpAt).sort((a, b) => a.nextFollowUpAt.localeCompare(b.nextFollowUpAt))[0] || null;
+}
