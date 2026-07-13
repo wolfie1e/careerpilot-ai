@@ -221,3 +221,9 @@ export function mergeJobApplications(current: JobApplication[], incoming: JobApp
   incoming.map(normalizeJobApplication).forEach((application) => byId.set(application.id, application));
   return sortApplications([...byId.values()]);
 }
+
+export function applicationPriorityCounts(applications: JobApplication[]): Record<JobApplication["priority"], number> {
+  const counts: Record<JobApplication["priority"], number> = { low: 0, medium: 0, high: 0 };
+  applications.filter((application) => !application.archived).forEach((application) => { counts[application.priority] += 1; });
+  return counts;
+}
