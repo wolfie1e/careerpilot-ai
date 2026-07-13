@@ -225,3 +225,7 @@ export function contactableMentorshipCount(contacts: MentorshipContact[]): numbe
 export function mentorshipFollowUpSoonCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => isMentorshipFollowUpSoon(contact)).length;
 }
+
+export function mentorshipTopicCoverage(contacts: MentorshipContact[]): number {
+  return new Set(contacts.filter((contact) => contact.status !== "archived").flatMap((contact) => contact.topics || [])).size;
+}
