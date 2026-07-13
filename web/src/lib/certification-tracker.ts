@@ -223,3 +223,7 @@ export function earnedCertificationCount(records: CertificationRecord[]): number
 export function expiredCertificationCount(records: CertificationRecord[]): number {
   return records.filter((record) => isCertificationExpired(record)).length;
 }
+
+export function expiringCertificationCount(records: CertificationRecord[]): number {
+  return records.filter((record) => isCertificationExpiring(record)).length;
+}
