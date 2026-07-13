@@ -201,3 +201,7 @@ export function careerGoalCategoryCoverage(goals: CareerGoal[]): number {
 export function highProgressCareerGoalCount(goals: CareerGoal[], threshold = 75): number {
   return goals.filter((goal) => goal.status !== "archived" && careerGoalProgress(goal) >= threshold).length;
 }
+
+export function careerGoalTargetValueTotal(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status !== "archived").reduce((total, goal) => total + Math.max(0, goal.targetValue || 0), 0);
+}
