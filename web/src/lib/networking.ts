@@ -150,3 +150,10 @@ export function networkingEmailCount(contacts: NetworkingContact[]): number {
 export function networkingLinkedInCount(contacts: NetworkingContact[]): number {
   return contacts.filter((contact) => !contact.archived && Boolean(contact.linkedin)).length;
 }
+
+export function isNetworkingFollowUpSoon(contact: NetworkingContact, today = new Date()): boolean {
+  if (!contact.nextFollowUpAt || contact.archived) return false;
+  const followUp = new Date(`${contact.nextFollowUpAt}T00:00:00`);
+  const days = Math.ceil((followUp.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
