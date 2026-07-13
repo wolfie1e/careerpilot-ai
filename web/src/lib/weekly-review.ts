@@ -65,3 +65,7 @@ export function mergeWeeklyReviews(current: WeeklyReview[], incoming: WeeklyRevi
   incoming.map(normalizeWeeklyReview).forEach((review) => byWeek.set(review.weekOf, review));
   return sortWeeklyReviews([...byWeek.values()]);
 }
+
+export function latestWeeklyReview(reviews: WeeklyReview[]): WeeklyReview | null {
+  return sortWeeklyReviews(reviews)[0] || null;
+}
