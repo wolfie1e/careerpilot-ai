@@ -193,3 +193,7 @@ export function careerGoalCompletionRate(goals: CareerGoal[]): number {
   const visibleGoals = goals.filter((goal) => goal.status !== "archived");
   return visibleGoals.length ? Math.round((visibleGoals.filter((goal) => goal.status === "completed").length / visibleGoals.length) * 100) : 0;
 }
+
+export function careerGoalCategoryCoverage(goals: CareerGoal[]): number {
+  return new Set(goals.filter((goal) => goal.status !== "archived").map((goal) => goal.category)).size;
+}
