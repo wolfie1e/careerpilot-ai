@@ -188,3 +188,8 @@ export function careerGoalHorizonCounts(goals: CareerGoal[]): Record<CareerGoalH
   goals.filter((goal) => goal.status !== "archived").forEach((goal) => { counts[goal.horizon] += 1; });
   return counts;
 }
+
+export function careerGoalCompletionRate(goals: CareerGoal[]): number {
+  const visibleGoals = goals.filter((goal) => goal.status !== "archived");
+  return visibleGoals.length ? Math.round((visibleGoals.filter((goal) => goal.status === "completed").length / visibleGoals.length) * 100) : 0;
+}
