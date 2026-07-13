@@ -240,3 +240,7 @@ export function applicationOfferRate(applications: JobApplication[]): number {
   if (!submitted.length) return 0;
   return Math.round((submitted.filter((application) => application.stage === "offer").length / submitted.length) * 100);
 }
+
+export function applicationsMissingSalaryCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !application.archived && !["rejected", "withdrawn"].includes(application.stage) && !application.salary.trim()).length;
+}
