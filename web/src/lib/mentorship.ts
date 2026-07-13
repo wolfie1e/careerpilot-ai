@@ -234,3 +234,7 @@ export function mentorshipAverageCadenceDays(contacts: MentorshipContact[]): num
   const activeContacts = contacts.filter((contact) => contact.status !== "archived" && contact.cadenceDays > 0);
   return activeContacts.length ? Math.round(activeContacts.reduce((total, contact) => total + contact.cadenceDays, 0) / activeContacts.length) : 0;
 }
+
+export function lowConfidenceMentorshipCount(contacts: MentorshipContact[], threshold = 5): number {
+  return contacts.filter((contact) => contact.status !== "archived" && contact.confidence <= threshold).length;
+}
