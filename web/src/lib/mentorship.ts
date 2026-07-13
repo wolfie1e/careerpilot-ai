@@ -221,3 +221,7 @@ export function mentorshipCompanyCounts(contacts: MentorshipContact[]): Record<s
 export function contactableMentorshipCount(contacts: MentorshipContact[]): number {
   return contacts.filter((contact) => contact.status !== "archived" && Boolean(contact.email || contact.linkedInUrl)).length;
 }
+
+export function mentorshipFollowUpSoonCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => isMentorshipFollowUpSoon(contact)).length;
+}
