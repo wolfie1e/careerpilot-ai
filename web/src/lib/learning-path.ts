@@ -272,3 +272,7 @@ export function learningPriorityCounts(resources: LearningResource[]): Record<Le
 export function pausedLearningCount(resources: LearningResource[]): number {
   return resources.filter((resource) => resource.status === "paused").length;
 }
+
+export function highPriorityActiveLearningCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => !["completed", "archived"].includes(resource.status) && resource.priority === "high").length;
+}
