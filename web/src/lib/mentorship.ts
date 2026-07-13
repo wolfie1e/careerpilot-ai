@@ -238,3 +238,7 @@ export function mentorshipAverageCadenceDays(contacts: MentorshipContact[]): num
 export function lowConfidenceMentorshipCount(contacts: MentorshipContact[], threshold = 5): number {
   return contacts.filter((contact) => contact.status !== "archived" && contact.confidence <= threshold).length;
 }
+
+export function mentorshipRelationshipCoverage(contacts: MentorshipContact[]): number {
+  return new Set(contacts.filter((contact) => contact.status !== "archived").map((contact) => contact.relationship)).size;
+}
