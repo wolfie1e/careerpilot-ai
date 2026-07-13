@@ -73,3 +73,7 @@ export function latestWeeklyReview(reviews: WeeklyReview[]): WeeklyReview | null
 export function completedWeeklyReviewCount(reviews: WeeklyReview[]): number {
   return reviews.filter((review) => weeklyReviewCompletion(review) === 100).length;
 }
+
+export function averageWeeklyReviewCompletion(reviews: WeeklyReview[]): number {
+  return reviews.length ? Math.round(reviews.reduce((sum, review) => sum + weeklyReviewCompletion(review), 0) / reviews.length) : 0;
+}
