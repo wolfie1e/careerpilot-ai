@@ -69,3 +69,7 @@ export function mergeWeeklyReviews(current: WeeklyReview[], incoming: WeeklyRevi
 export function latestWeeklyReview(reviews: WeeklyReview[]): WeeklyReview | null {
   return sortWeeklyReviews(reviews)[0] || null;
 }
+
+export function completedWeeklyReviewCount(reviews: WeeklyReview[]): number {
+  return reviews.filter((review) => weeklyReviewCompletion(review) === 100).length;
+}
