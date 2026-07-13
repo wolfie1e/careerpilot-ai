@@ -197,3 +197,7 @@ export function careerGoalCompletionRate(goals: CareerGoal[]): number {
 export function careerGoalCategoryCoverage(goals: CareerGoal[]): number {
   return new Set(goals.filter((goal) => goal.status !== "archived").map((goal) => goal.category)).size;
 }
+
+export function highProgressCareerGoalCount(goals: CareerGoal[], threshold = 75): number {
+  return goals.filter((goal) => goal.status !== "archived" && careerGoalProgress(goal) >= threshold).length;
+}
