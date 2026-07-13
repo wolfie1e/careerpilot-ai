@@ -276,3 +276,8 @@ export function pausedLearningCount(resources: LearningResource[]): number {
 export function highPriorityActiveLearningCount(resources: LearningResource[]): number {
   return resources.filter((resource) => !["completed", "archived"].includes(resource.status) && resource.priority === "high").length;
 }
+
+export function learningAverageCost(resources: LearningResource[]): number {
+  const visibleResources = resources.filter((resource) => resource.status !== "archived");
+  return visibleResources.length ? Math.round(visibleResources.reduce((total, resource) => total + Math.max(0, resource.cost || 0), 0) / visibleResources.length) : 0;
+}
