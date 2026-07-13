@@ -232,3 +232,10 @@ export function averageCertificationProgress(records: CertificationRecord[]): nu
   const visibleRecords = records.filter((record) => record.status !== "archived");
   return visibleRecords.length ? Math.round(visibleRecords.reduce((total, record) => total + certificationProgress(record), 0) / visibleRecords.length) : 0;
 }
+
+export function certificationProviderCounts(records: CertificationRecord[]): Record<string, number> {
+  return records.filter((record) => record.provider && record.status !== "archived").reduce<Record<string, number>>((counts, record) => {
+    counts[record.provider] = (counts[record.provider] || 0) + 1;
+    return counts;
+  }, {});
+}
