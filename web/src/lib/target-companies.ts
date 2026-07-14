@@ -196,3 +196,7 @@ export function companyAverageReadinessScore(companies: TargetCompany[]): number
 export function companyWebsiteCount(companies: TargetCompany[]): number {
   return companies.filter((company) => company.stage !== "archived" && Boolean(company.website)).length;
 }
+
+export function companiesWithoutContactsCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage !== "archived" && company.contactCount === 0).length;
+}
