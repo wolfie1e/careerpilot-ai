@@ -251,3 +251,7 @@ export function studyingCertificationCount(records: CertificationRecord[]): numb
 export function favoriteCertificationCount(records: CertificationRecord[]): number {
   return records.filter((record) => record.favorite && record.status !== "archived").length;
 }
+
+export function certificationCredentialCount(records: CertificationRecord[]): number {
+  return records.filter((record) => record.status !== "archived" && Boolean(record.credentialUrl)).length;
+}
