@@ -66,3 +66,10 @@ export function averageQuestionPracticeCount(items: QuestionBankItem[]): number 
 export function highDifficultyQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && item.difficulty >= 8).length; }
 export function sourcedQuestionCount(items: QuestionBankItem[]): number { return items.filter((item) => item.status !== "archived" && Boolean(item.sourceUrl)).length; }
 export function questionKeyPointCoverage(items: QuestionBankItem[]): number { return new Set(items.filter((item) => item.status !== "archived").flatMap((item) => item.keyPoints)).size; }
+
+export function isQuestionReviewSoon(item: QuestionBankItem, today = new Date()): boolean {
+  if (!item.nextReviewAt || item.status === "archived") return false;
+  const review = new Date(item.nextReviewAt + "T00:00:00");
+  const days = Math.ceil((review.getTime() - today.getTime()) / 86_400_000);
+  return days >= 0 && days <= 7;
+}
