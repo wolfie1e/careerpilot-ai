@@ -159,3 +159,7 @@ export function achievementCompanyCounts(stories: AchievementStory[]): Record<st
     return counts;
   }, {});
 }
+
+export function draftAchievementCount(stories: AchievementStory[]): number {
+  return stories.filter((story) => story.status === "draft").length;
+}
