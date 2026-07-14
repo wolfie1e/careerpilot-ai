@@ -169,3 +169,7 @@ export function referenceReadinessScore(reference: ProfessionalReference): numbe
 export function favoriteReferenceCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.favorite && reference.status !== "archived").length;
 }
+
+export function archivedReferenceCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status === "archived").length;
+}
