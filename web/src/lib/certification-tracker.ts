@@ -260,3 +260,7 @@ export function certificationAverageCost(records: CertificationRecord[]): number
   const visibleRecords = records.filter((record) => record.status !== "archived");
   return visibleRecords.length ? Math.round(visibleRecords.reduce((total, record) => total + Math.max(0, record.cost || 0), 0) / visibleRecords.length) : 0;
 }
+
+export function certificationCompletedStudyHoursTotal(records: CertificationRecord[]): number {
+  return records.filter((record) => record.status !== "archived").reduce((total, record) => total + Math.max(0, record.completedHours || 0), 0);
+}
