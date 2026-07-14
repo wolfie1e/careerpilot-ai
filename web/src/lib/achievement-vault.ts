@@ -168,3 +168,7 @@ export function averageAchievementCompletion(stories: AchievementStory[]): numbe
   const activeStories = stories.filter((story) => story.status !== "archived");
   return activeStories.length ? Math.round(activeStories.reduce((total, story) => total + achievementCompletion(story), 0) / activeStories.length) : 0;
 }
+
+export function achievementMetricCount(stories: AchievementStory[]): number {
+  return stories.filter((story) => story.status !== "archived" && Boolean(story.metric)).length;
+}
