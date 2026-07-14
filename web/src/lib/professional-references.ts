@@ -186,3 +186,7 @@ export function referenceAverageReadinessScore(references: ProfessionalReference
   const active = references.filter((reference) => reference.status !== "archived");
   return active.length ? Math.round(active.reduce((sum, reference) => sum + referenceReadinessScore(reference), 0) / active.length) : 0;
 }
+
+export function referenceEmailCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status !== "archived" && Boolean(reference.email)).length;
+}
