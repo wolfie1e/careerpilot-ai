@@ -239,3 +239,7 @@ export function certificationProviderCounts(records: CertificationRecord[]): Rec
     return counts;
   }, {});
 }
+
+export function plannedCertificationCount(records: CertificationRecord[]): number {
+  return records.filter((record) => record.status === "planned").length;
+}
