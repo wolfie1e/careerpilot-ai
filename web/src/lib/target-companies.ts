@@ -148,3 +148,7 @@ export function companyPlanText(companies: TargetCompany[]): string {
     company.researchNotes ? `Research: ${company.researchNotes}` : "",
   ].filter(Boolean).join("\n")).join("\n\n");
 }
+
+export function favoriteTargetCompanyCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.favorite && company.stage !== "archived").length;
+}
