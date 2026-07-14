@@ -173,3 +173,7 @@ export function favoriteReferenceCount(references: ProfessionalReference[]): num
 export function archivedReferenceCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status === "archived").length;
 }
+
+export function referenceActionDueCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => isReferenceActionDue(reference)).length;
+}
