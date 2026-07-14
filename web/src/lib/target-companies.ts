@@ -160,3 +160,7 @@ export function companyActionDueCount(companies: TargetCompany[]): number {
 export function companyActionSoonCount(companies: TargetCompany[]): number {
   return companies.filter((company) => isCompanyActionSoon(company)).length;
 }
+
+export function readyTargetCompanyCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage === "ready").length;
+}
