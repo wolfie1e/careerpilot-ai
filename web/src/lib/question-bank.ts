@@ -97,3 +97,8 @@ export function lowConfidenceQuestionCount(items: QuestionBankItem[], threshold 
 export function unpracticedQuestionCount(items: QuestionBankItem[]): number {
   return items.filter((item) => item.status !== "archived" && item.practiceCount === 0).length;
 }
+
+export function averageQuestionAnswerCompletion(items: QuestionBankItem[]): number {
+  const active = items.filter((item) => item.status !== "archived");
+  return active.length ? Math.round(active.reduce((sum, item) => sum + questionAnswerCompletion(item), 0) / active.length) : 0;
+}
