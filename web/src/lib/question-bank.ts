@@ -106,3 +106,7 @@ export function averageQuestionAnswerCompletion(items: QuestionBankItem[]): numb
 export function questionTargetRoleCoverage(items: QuestionBankItem[]): number {
   return new Set(items.filter((item) => item.status !== "archived" && item.targetRole.trim()).map((item) => item.targetRole.trim())).size;
 }
+
+export function questionCompanyCoverage(items: QuestionBankItem[]): number {
+  return new Set(items.filter((item) => item.status !== "archived" && item.company.trim()).map((item) => item.company.trim())).size;
+}
