@@ -198,3 +198,7 @@ export function referencePhoneCount(references: ProfessionalReference[]): number
 export function referenceLinkedInCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status !== "archived" && Boolean(reference.linkedInUrl)).length;
 }
+
+export function referencesMissingContactCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status !== "archived" && !reference.email && !reference.phone && !reference.linkedInUrl).length;
+}
