@@ -183,3 +183,7 @@ export function companyTargetRoleCounts(companies: TargetCompany[]): Record<stri
     return counts;
   }, {});
 }
+
+export function companiesMissingNextActionCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage !== "archived" && !company.nextAction.trim()).length;
+}
