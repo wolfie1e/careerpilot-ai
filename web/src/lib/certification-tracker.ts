@@ -255,3 +255,8 @@ export function favoriteCertificationCount(records: CertificationRecord[]): numb
 export function certificationCredentialCount(records: CertificationRecord[]): number {
   return records.filter((record) => record.status !== "archived" && Boolean(record.credentialUrl)).length;
 }
+
+export function certificationAverageCost(records: CertificationRecord[]): number {
+  const visibleRecords = records.filter((record) => record.status !== "archived");
+  return visibleRecords.length ? Math.round(visibleRecords.reduce((total, record) => total + Math.max(0, record.cost || 0), 0) / visibleRecords.length) : 0;
+}
