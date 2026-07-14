@@ -268,3 +268,7 @@ export function certificationCompletedStudyHoursTotal(records: CertificationReco
 export function certificationCategoryCoverage(records: CertificationRecord[]): number {
   return new Set(records.filter((record) => record.status !== "archived").map((record) => record.category)).size;
 }
+
+export function certificationsMissingCredentialCount(records: CertificationRecord[]): number {
+  return records.filter((record) => record.status === "earned" && !record.credentialUrl.trim()).length;
+}
