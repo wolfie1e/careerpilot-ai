@@ -176,3 +176,10 @@ export function researchingTargetCompanyCount(companies: TargetCompany[]): numbe
 export function companiesWithCareersUrlCount(companies: TargetCompany[]): number {
   return companies.filter((company) => company.stage !== "archived" && Boolean(company.careersUrl)).length;
 }
+
+export function companyTargetRoleCounts(companies: TargetCompany[]): Record<string, number> {
+  return companies.filter((company) => company.targetRole && company.stage !== "archived").reduce<Record<string, number>>((counts, company) => {
+    counts[company.targetRole] = (counts[company.targetRole] || 0) + 1;
+    return counts;
+  }, {});
+}
