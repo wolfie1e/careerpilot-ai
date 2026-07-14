@@ -202,3 +202,10 @@ export function referenceLinkedInCount(references: ProfessionalReference[]): num
 export function referencesMissingContactCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status !== "archived" && !reference.email && !reference.phone && !reference.linkedInUrl).length;
 }
+
+export function referenceTitleCounts(references: ProfessionalReference[]): Record<string, number> {
+  return references.filter((reference) => reference.title && reference.status !== "archived").reduce<Record<string, number>>((counts, reference) => {
+    counts[reference.title] = (counts[reference.title] || 0) + 1;
+    return counts;
+  }, {});
+}
