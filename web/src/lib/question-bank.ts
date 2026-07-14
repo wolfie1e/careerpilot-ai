@@ -89,3 +89,7 @@ export function practicingQuestionCount(items: QuestionBankItem[]): number {
 export function archivedQuestionCount(items: QuestionBankItem[]): number {
   return items.filter((item) => item.status === "archived").length;
 }
+
+export function lowConfidenceQuestionCount(items: QuestionBankItem[], threshold = 5): number {
+  return items.filter((item) => item.status !== "archived" && item.confidence <= threshold).length;
+}
