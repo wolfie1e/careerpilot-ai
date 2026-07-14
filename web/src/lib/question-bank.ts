@@ -102,3 +102,7 @@ export function averageQuestionAnswerCompletion(items: QuestionBankItem[]): numb
   const active = items.filter((item) => item.status !== "archived");
   return active.length ? Math.round(active.reduce((sum, item) => sum + questionAnswerCompletion(item), 0) / active.length) : 0;
 }
+
+export function questionTargetRoleCoverage(items: QuestionBankItem[]): number {
+  return new Set(items.filter((item) => item.status !== "archived" && item.targetRole.trim()).map((item) => item.targetRole.trim())).size;
+}
