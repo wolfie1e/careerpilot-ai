@@ -85,3 +85,7 @@ export function favoriteQuestionCount(items: QuestionBankItem[]): number {
 export function practicingQuestionCount(items: QuestionBankItem[]): number {
   return items.filter((item) => item.status === "practicing").length;
 }
+
+export function archivedQuestionCount(items: QuestionBankItem[]): number {
+  return items.filter((item) => item.status === "archived").length;
+}
