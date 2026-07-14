@@ -172,3 +172,7 @@ export function averageAchievementCompletion(stories: AchievementStory[]): numbe
 export function achievementMetricCount(stories: AchievementStory[]): number {
   return stories.filter((story) => story.status !== "archived" && Boolean(story.metric)).length;
 }
+
+export function lowConfidenceAchievementCount(stories: AchievementStory[], threshold = 5): number {
+  return stories.filter((story) => story.status !== "archived" && story.confidence <= threshold).length;
+}
