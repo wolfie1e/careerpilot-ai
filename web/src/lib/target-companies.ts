@@ -156,3 +156,7 @@ export function favoriteTargetCompanyCount(companies: TargetCompany[]): number {
 export function companyActionDueCount(companies: TargetCompany[]): number {
   return companies.filter((company) => isCompanyActionDue(company)).length;
 }
+
+export function companyActionSoonCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => isCompanyActionSoon(company)).length;
+}
