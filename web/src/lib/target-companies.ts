@@ -164,3 +164,7 @@ export function companyActionSoonCount(companies: TargetCompany[]): number {
 export function readyTargetCompanyCount(companies: TargetCompany[]): number {
   return companies.filter((company) => company.stage === "ready").length;
 }
+
+export function networkingTargetCompanyCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage === "networking").length;
+}
