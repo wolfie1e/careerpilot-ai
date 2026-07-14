@@ -152,3 +152,7 @@ export function companyPlanText(companies: TargetCompany[]): string {
 export function favoriteTargetCompanyCount(companies: TargetCompany[]): number {
   return companies.filter((company) => company.favorite && company.stage !== "archived").length;
 }
+
+export function companyActionDueCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => isCompanyActionDue(company)).length;
+}
