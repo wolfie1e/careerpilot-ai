@@ -172,3 +172,7 @@ export function networkingTargetCompanyCount(companies: TargetCompany[]): number
 export function researchingTargetCompanyCount(companies: TargetCompany[]): number {
   return companies.filter((company) => company.stage === "researching").length;
 }
+
+export function companiesWithCareersUrlCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage !== "archived" && Boolean(company.careersUrl)).length;
+}
