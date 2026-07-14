@@ -247,3 +247,7 @@ export function plannedCertificationCount(records: CertificationRecord[]): numbe
 export function studyingCertificationCount(records: CertificationRecord[]): number {
   return records.filter((record) => record.status === "studying").length;
 }
+
+export function favoriteCertificationCount(records: CertificationRecord[]): number {
+  return records.filter((record) => record.favorite && record.status !== "archived").length;
+}
