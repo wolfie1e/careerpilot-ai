@@ -190,3 +190,7 @@ export function referenceAverageReadinessScore(references: ProfessionalReference
 export function referenceEmailCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => reference.status !== "archived" && Boolean(reference.email)).length;
 }
+
+export function referencePhoneCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.status !== "archived" && Boolean(reference.phone)).length;
+}
