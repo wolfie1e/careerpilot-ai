@@ -177,3 +177,7 @@ export function archivedReferenceCount(references: ProfessionalReference[]): num
 export function referenceActionDueCount(references: ProfessionalReference[]): number {
   return references.filter((reference) => isReferenceActionDue(reference)).length;
 }
+
+export function referenceActionSoonCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => isReferenceActionSoon(reference)).length;
+}
