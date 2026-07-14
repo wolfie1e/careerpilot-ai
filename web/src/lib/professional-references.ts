@@ -165,3 +165,7 @@ export function referenceReadinessScore(reference: ProfessionalReference): numbe
   const statusScore = reference.status === "confirmed" ? 30 : reference.status === "permission_requested" ? 15 : 0;
   return Math.min(100, statusScore + reference.confidence * 4 + Math.round(referenceProfileCompletion(reference) * 0.3));
 }
+
+export function favoriteReferenceCount(references: ProfessionalReference[]): number {
+  return references.filter((reference) => reference.favorite && reference.status !== "archived").length;
+}
