@@ -176,3 +176,8 @@ export function achievementMetricCount(stories: AchievementStory[]): number {
 export function lowConfidenceAchievementCount(stories: AchievementStory[], threshold = 5): number {
   return stories.filter((story) => story.status !== "archived" && story.confidence <= threshold).length;
 }
+
+export function achievementReadyRate(stories: AchievementStory[]): number {
+  const activeStories = stories.filter((story) => story.status !== "archived");
+  return activeStories.length ? Math.round((activeStories.filter((story) => isAchievementReady(story)).length / activeStories.length) * 100) : 0;
+}
