@@ -77,3 +77,7 @@ export function isQuestionReviewSoon(item: QuestionBankItem, today = new Date())
 export function questionReviewSoonCount(items: QuestionBankItem[]): number {
   return items.filter((item) => isQuestionReviewSoon(item)).length;
 }
+
+export function favoriteQuestionCount(items: QuestionBankItem[]): number {
+  return items.filter((item) => item.favorite && item.status !== "archived").length;
+}
