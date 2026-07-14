@@ -163,3 +163,8 @@ export function achievementCompanyCounts(stories: AchievementStory[]): Record<st
 export function draftAchievementCount(stories: AchievementStory[]): number {
   return stories.filter((story) => story.status === "draft").length;
 }
+
+export function averageAchievementCompletion(stories: AchievementStory[]): number {
+  const activeStories = stories.filter((story) => story.status !== "archived");
+  return activeStories.length ? Math.round(activeStories.reduce((total, story) => total + achievementCompletion(story), 0) / activeStories.length) : 0;
+}
