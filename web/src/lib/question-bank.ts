@@ -73,3 +73,7 @@ export function isQuestionReviewSoon(item: QuestionBankItem, today = new Date())
   const days = Math.ceil((review.getTime() - today.getTime()) / 86_400_000);
   return days >= 0 && days <= 7;
 }
+
+export function questionReviewSoonCount(items: QuestionBankItem[]): number {
+  return items.filter((item) => isQuestionReviewSoon(item)).length;
+}
