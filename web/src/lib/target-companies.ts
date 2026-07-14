@@ -192,3 +192,7 @@ export function companyAverageReadinessScore(companies: TargetCompany[]): number
   const active = companies.filter((company) => company.stage !== "archived");
   return active.length ? Math.round(active.reduce((sum, company) => sum + companyReadinessScore(company), 0) / active.length) : 0;
 }
+
+export function companyWebsiteCount(companies: TargetCompany[]): number {
+  return companies.filter((company) => company.stage !== "archived" && Boolean(company.website)).length;
+}
