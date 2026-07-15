@@ -4,7 +4,7 @@ WORKDIR /app
 
 # System deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential libpq-dev ffmpeg \
+    build-essential libpq-dev ffmpeg curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

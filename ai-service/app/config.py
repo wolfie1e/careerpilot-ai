@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     rate_limit_ai_per_minute: int = 10
 
     # App
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
     environment: Literal["development", "staging", "production"] = "development"
     log_level: str = "INFO"
 
@@ -57,6 +58,10 @@ class Settings(BaseSettings):
     @property
     def max_upload_size_bytes(self) -> int:
         return self.max_upload_size_mb * 1024 * 1024
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 settings = Settings()
