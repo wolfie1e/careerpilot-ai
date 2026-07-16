@@ -281,3 +281,23 @@ export function learningAverageCost(resources: LearningResource[]): number {
   const visibleResources = resources.filter((resource) => resource.status !== "archived");
   return visibleResources.length ? Math.round(visibleResources.reduce((total, resource) => total + Math.max(0, resource.cost || 0), 0) / visibleResources.length) : 0;
 }
+
+export function learningCompletionRate(resources: LearningResource[]): number {
+  const visibleResources = resources.filter((resource) => resource.status !== "archived");
+  return visibleResources.length ? Math.round((visibleResources.filter((resource) => resource.status === "completed").length / visibleResources.length) * 100) : 0;
+}
+
+export function learningTargetRoleCounts(resources: LearningResource[]): Record<string, number> {
+  return resources.filter((resource) => resource.targetRole && resource.status !== "archived").reduce<Record<string, number>>((counts, resource) => {
+    counts[resource.targetRole] = (counts[resource.targetRole] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+export function learningTargetRoleCoverage(resources: LearningResource[]): number {
+  return new Set(resources.filter((resource) => resource.status !== "archived" && resource.targetRole.trim()).map((resource) => resource.targetRole.trim())).size;
+}
+
+export function learningUnscheduledCount(resources: LearningResource[]): number {
+  return resources.filter((resource) => !resource.targetDate && !["completed", "archived"].includes(resource.status)).length;
+}
