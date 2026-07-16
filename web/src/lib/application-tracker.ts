@@ -244,3 +244,20 @@ export function applicationOfferRate(applications: JobApplication[]): number {
 export function applicationsMissingSalaryCount(applications: JobApplication[]): number {
   return applications.filter((application) => !application.archived && !["rejected", "withdrawn"].includes(application.stage) && !application.salary.trim()).length;
 }
+
+export function submittedApplicationCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !application.archived && application.stage !== "saved").length;
+}
+
+export function applicationRejectionRate(applications: JobApplication[]): number {
+  const submitted = applications.filter((application) => !application.archived && application.stage !== "saved");
+  return submitted.length ? Math.round((submitted.filter((application) => application.stage === "rejected").length / submitted.length) * 100) : 0;
+}
+
+export function scheduledApplicationInterviewCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !application.archived && Boolean(application.interviewAt)).length;
+}
+
+export function applicationUrlCount(applications: JobApplication[]): number {
+  return applications.filter((application) => !application.archived && Boolean(application.url)).length;
+}
