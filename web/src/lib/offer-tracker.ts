@@ -209,3 +209,20 @@ export function averageOfferCommuteMinutes(offers: OfferComparison[]): number {
   const commuteOffers = offers.filter((offer) => offer.status !== "archived" && offer.commuteMinutes > 0);
   return commuteOffers.length ? Math.round(commuteOffers.reduce((total, offer) => total + offer.commuteMinutes, 0) / commuteOffers.length) : 0;
 }
+
+export function averageOfferQualityScore(offers: OfferComparison[]): number {
+  const visibleOffers = offers.filter((offer) => offer.status !== "archived");
+  return visibleOffers.length ? Math.round(visibleOffers.reduce((total, offer) => total + offerQualityScore(offer), 0) / visibleOffers.length) : 0;
+}
+
+export function offersMissingDeadlineCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status) && !offer.decisionDeadline).length;
+}
+
+export function offersMissingCompensationCount(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status !== "archived" && offerTotalCompensation(offer) <= 0).length;
+}
+
+export function highestOfferCompensation(offers: OfferComparison[]): number {
+  return offers.filter((offer) => offer.status !== "archived").reduce((highest, offer) => Math.max(highest, offerTotalCompensation(offer)), 0);
+}
