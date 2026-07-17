@@ -205,3 +205,20 @@ export function highProgressCareerGoalCount(goals: CareerGoal[], threshold = 75)
 export function careerGoalTargetValueTotal(goals: CareerGoal[]): number {
   return goals.filter((goal) => goal.status !== "archived").reduce((total, goal) => total + Math.max(0, goal.targetValue || 0), 0);
 }
+
+export function careerGoalUnscheduledCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => !["completed", "archived"].includes(goal.status) && !goal.targetDate).length;
+}
+
+export function careerGoalMetricCount(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status !== "archived" && Boolean(goal.metricLabel.trim())).length;
+}
+
+export function careerGoalCurrentValueTotal(goals: CareerGoal[]): number {
+  return goals.filter((goal) => goal.status !== "archived").reduce((total, goal) => total + Math.max(0, goal.currentValue || 0), 0);
+}
+
+export function careerGoalCompletedThisMonthCount(goals: CareerGoal[], today = new Date()): number {
+  const monthKey = today.toISOString().slice(0, 7);
+  return goals.filter((goal) => goal.status !== "archived" && goal.completedAt?.startsWith(monthKey)).length;
+}
