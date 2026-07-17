@@ -181,3 +181,21 @@ export function nextPlannerTask(tasks: PlannerTask[]): PlannerTask | null {
 export function plannerResourceCount(tasks: PlannerTask[]): number {
   return tasks.filter((task) => !task.archived && Boolean(task.resourceUrl)).length;
 }
+
+export function plannerInProgressCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => !task.archived && task.status === "in_progress").length;
+}
+
+export function plannerDueTodayCount(tasks: PlannerTask[], today = new Date()): number {
+  const dateKey = today.toISOString().slice(0, 10);
+  return tasks.filter((task) => !task.archived && task.status !== "done" && task.dueDate === dateKey).length;
+}
+
+export function plannerUnscheduledOpenCount(tasks: PlannerTask[]): number {
+  return tasks.filter((task) => !task.archived && task.status !== "done" && !task.dueDate).length;
+}
+
+export function plannerCompletedTodayCount(tasks: PlannerTask[], today = new Date()): number {
+  const dateKey = today.toISOString().slice(0, 10);
+  return tasks.filter((task) => !task.archived && task.completedAt?.startsWith(dateKey)).length;
+}
