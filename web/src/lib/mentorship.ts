@@ -242,3 +242,20 @@ export function lowConfidenceMentorshipCount(contacts: MentorshipContact[], thre
 export function mentorshipRelationshipCoverage(contacts: MentorshipContact[]): number {
   return new Set(contacts.filter((contact) => contact.status !== "archived").map((contact) => contact.relationship)).size;
 }
+
+export function mentorshipEmailCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status !== "archived" && Boolean(contact.email)).length;
+}
+
+export function mentorshipLinkedInCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status !== "archived" && Boolean(contact.linkedInUrl)).length;
+}
+
+export function mentorshipGoalCount(contacts: MentorshipContact[]): number {
+  return contacts.filter((contact) => contact.status !== "archived" && Boolean(contact.goals.trim())).length;
+}
+
+export function mentorshipAverageConversationCount(contacts: MentorshipContact[]): number {
+  const activeContacts = contacts.filter((contact) => contact.status !== "archived");
+  return activeContacts.length ? Math.round(activeContacts.reduce((total, contact) => total + Math.max(0, contact.conversationCount || 0), 0) / activeContacts.length) : 0;
+}
