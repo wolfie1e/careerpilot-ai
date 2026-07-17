@@ -165,3 +165,26 @@ export function networkingFollowUpSoonCount(contacts: NetworkingContact[]): numb
 export function nextNetworkingFollowUp(contacts: NetworkingContact[]): NetworkingContact | null {
   return [...contacts].filter((contact) => !contact.archived && contact.nextFollowUpAt).sort((a, b) => a.nextFollowUpAt.localeCompare(b.nextFollowUpAt))[0] || null;
 }
+
+export function networkingSourceCounts(contacts: NetworkingContact[]): Record<string, number> {
+  return contacts.filter((contact) => contact.source && !contact.archived).reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.source] = (counts[contact.source] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+export function networkingRoleCounts(contacts: NetworkingContact[]): Record<string, number> {
+  return contacts.filter((contact) => contact.role && !contact.archived).reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.role] = (counts[contact.role] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+export function networkingUnscheduledFollowUpCount(contacts: NetworkingContact[]): number {
+  return contacts.filter((contact) => !contact.archived && !contact.nextFollowUpAt).length;
+}
+
+export function averageNetworkingStrength(contacts: NetworkingContact[]): number {
+  const activeContacts = contacts.filter((contact) => !contact.archived);
+  return activeContacts.length ? Math.round(activeContacts.reduce((total, contact) => total + networkingStrengthWeight(contact.strength), 0) / activeContacts.length) : 0;
+}
