@@ -9,12 +9,20 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   ACHIEVEMENT_CATEGORIES,
   ACHIEVEMENT_STATUSES,
+  achievementCompanyCounts,
   achievementCategoryCounts,
   achievementCompletion,
+  achievementMetricCount,
   achievementPipelineText,
+  achievementReadyRate,
+  achievementRoleCounts,
   achievementTagCounts,
+  averageAchievementCompletion,
+  averageAchievementConfidence,
   createAchievementStory,
+  draftAchievementCount,
   favoriteAchievementCount,
+  lowConfidenceAchievementCount,
   mergeAchievementStories,
   readyAchievementCount,
   sortAchievementStories,
@@ -39,6 +47,8 @@ export default function AchievementsPage() {
     return !query || `${story.title} ${story.situation} ${story.action} ${story.result} ${story.metric} ${story.tags.join(" ")}`.toLowerCase().includes(query);
   });
   const categoryRows = Object.entries(achievementCategoryCounts(visibleStories)).map(([category, count]) => ({ category, count }));
+  const roleRows = Object.entries(achievementRoleCounts(visibleStories)).map(([role, count]) => ({ role, count }));
+  const companyRows = Object.entries(achievementCompanyCounts(visibleStories)).map(([company, count]) => ({ company, count }));
   const tagRows = Object.entries(achievementTagCounts(visibleStories)).map(([tag, count]) => ({ tag, count }));
 
   function addStory() {
@@ -100,12 +110,17 @@ export default function AchievementsPage() {
         <p className="mt-1 text-sm text-gray-400">Capture STAR stories for resumes, interviews, and performance reviews.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Stories", stories.filter((story) => story.status !== "archived").length],
           ["Ready", readyAchievementCount(stories)],
+          ["Drafts", draftAchievementCount(stories)],
+          ["Ready rate", `${achievementReadyRate(stories)}%`],
+          ["Avg completion", `${averageAchievementCompletion(stories)}%`],
           ["Favorites", favoriteAchievementCount(stories)],
-          ["Average confidence", stories.length ? Math.round(stories.reduce((sum, story) => sum + story.confidence, 0) / stories.length) : 0],
+          ["With metrics", achievementMetricCount(stories)],
+          ["Low confidence", lowConfidenceAchievementCount(stories)],
+          ["Avg confidence", `${averageAchievementConfidence(stories)}/10`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
 
@@ -127,8 +142,10 @@ export default function AchievementsPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importStories} className="sr-only" /></label>
         <CopyButton value={achievementPipelineText(visibleStories) || "No achievement stories yet"} label="Copy stories" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-achievement-stories.json", { stories })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
-        <button onClick={() => downloadCsv("careerpilot-achievement-stories.csv", visibleStories.map((story) => ({ title: story.title, category: story.category, status: story.status, metric: story.metric, confidence: story.confidence, completion: achievementCompletion(story), tags: story.tags.join(", ") })))} disabled={!visibleStories.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-stories.csv", visibleStories.map((story) => ({ title: story.title, category: story.category, status: story.status, role: story.role, company: story.company, date: story.date, metric: story.metric, confidence: story.confidence, completion: achievementCompletion(story), tags: story.tags.join(", ") })))} disabled={!visibleStories.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
         <button onClick={() => downloadCsv("careerpilot-achievement-categories.csv", categoryRows)} disabled={!categoryRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Categories</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-roles.csv", roleRows)} disabled={!roleRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Roles</button>
+        <button onClick={() => downloadCsv("careerpilot-achievement-companies.csv", companyRows)} disabled={!companyRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Companies</button>
         <button onClick={() => downloadCsv("careerpilot-achievement-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
@@ -172,6 +189,27 @@ export default function AchievementsPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(categoryRows.some((row) => row.count > 0) || roleRows.length > 0 || companyRows.length > 0 || tagRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Categories</h3>
+            <div className="mt-3 space-y-2">{categoryRows.filter((row) => row.count > 0).map((row) => <div key={row.category} className="flex justify-between text-sm text-gray-400"><span>{ACHIEVEMENT_CATEGORIES.find((option) => option.value === row.category)?.label}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Roles</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{roleRows.slice(0, 8).map((row) => <span key={row.role} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.role} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Companies</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{companyRows.slice(0, 8).map((row) => <span key={row.company} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.company} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Themes</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 10).map((row) => <span key={row.tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.tag} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
