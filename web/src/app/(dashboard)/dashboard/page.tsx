@@ -19,11 +19,11 @@ import type { WeeklyReview } from "@/lib/weekly-review";
 import type { NetworkingContact } from "@/lib/networking";
 import type { CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
-import type { AchievementStory } from "@/lib/achievement-vault";
-import { certificationRemainingStudyHours, certificationTotalCost, isCertificationActive, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
+import { achievementMetricCount, achievementReadyRate, averageAchievementCompletion, averageAchievementConfidence, draftAchievementCount, lowConfidenceAchievementCount, readyAchievementCount, type AchievementStory } from "@/lib/achievement-vault";
+import { averageCertificationProgress, certificationCategoryCoverage, certificationCompletedStudyHoursTotal, certificationCredentialCount, certificationRemainingStudyHours, certificationTotalCost, certificationsMissingCredentialCount, earnedCertificationCount, isCertificationActive, isCertificationExpiring, plannedCertificationCount, studyingCertificationCount, type CertificationRecord } from "@/lib/certification-tracker";
 import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
 import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFollowUpDueCount, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
-import { companyAverageFit, companyOpenRoleTotal, isCompanyActionDue, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
+import { companiesMissingNextActionCount, companiesWithCareersUrlCount, companiesWithoutContactsCount, companyActionDueCount, companyActionSoonCount, companyAverageFit, companyAverageReadinessScore, companyContactTotal, companyOpenRoleTotal, companyWebsiteCount, favoriteTargetCompanyCount, isCompanyActionDue, networkingTargetCompanyCount, readyTargetCompanyCount, researchingTargetCompanyCount, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
 import { confirmedReferenceCount, isReferenceActionDue, referenceAverageConfidence, type ProfessionalReference } from "@/lib/professional-references";
 import { averageQuestionConfidence, questionReviewDueCount, readyQuestionCount, type QuestionBankItem } from "@/lib/question-bank";
 import { portfolioActiveCount, portfolioAverageProgress, portfolioOverdueCount, portfolioPublishedCount, type PortfolioProject } from "@/lib/portfolio-projects";
@@ -280,6 +280,18 @@ export default function DashboardPage() {
       mentorship_conversations: mentorshipConversationTotal(mentorshipContacts),
       mentorship_average_confidence: mentorshipAverageConfidence(mentorshipContacts),
       target_companies: targetCompanies.filter((company) => company.stage !== "archived").length,
+      target_companies_ready: readyTargetCompanyCount(targetCompanies),
+      target_companies_researching: researchingTargetCompanyCount(targetCompanies),
+      target_companies_networking: networkingTargetCompanyCount(targetCompanies),
+      target_company_actions_due: companyActionDueCount(targetCompanies),
+      target_company_actions_due_this_week: companyActionSoonCount(targetCompanies),
+      target_companies_missing_next_action: companiesMissingNextActionCount(targetCompanies),
+      target_company_contacts: companyContactTotal(targetCompanies),
+      target_companies_without_contacts: companiesWithoutContactsCount(targetCompanies),
+      target_company_websites: companyWebsiteCount(targetCompanies),
+      target_company_careers_urls: companiesWithCareersUrlCount(targetCompanies),
+      target_company_average_readiness: companyAverageReadinessScore(targetCompanies),
+      favorite_target_companies: favoriteTargetCompanyCount(targetCompanies),
       professional_references: professionalReferences.filter((reference) => reference.status !== "archived").length,
       interview_questions: questionBank.filter((item) => item.status !== "archived").length,
       portfolio_projects: portfolioProjects.filter((project) => project.status !== "archived").length,
@@ -293,7 +305,6 @@ export default function DashboardPage() {
       confirmed_references: confirmedReferenceCount(professionalReferences),
       reference_actions_due: professionalReferences.filter((reference) => isReferenceActionDue(reference)).length,
       reference_average_confidence: referenceAverageConfidence(professionalReferences),
-      target_company_actions_due: targetCompanies.filter((company) => isCompanyActionDue(company)).length,
       target_company_open_roles: companyOpenRoleTotal(targetCompanies),
       top_target_company: topTargetCompany(targetCompanies),
       next_mentorship_contact: nextMentorship,
@@ -302,12 +313,25 @@ export default function DashboardPage() {
       active_offers: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
       negotiating_offers: offerComparisons.filter((offer) => offer.status === "negotiating").length,
       achievement_stories: achievementStories.filter((story) => story.status !== "archived").length,
-      ready_achievement_stories: achievementStories.filter((story) => story.status === "ready").length,
+      ready_achievement_stories: readyAchievementCount(achievementStories),
+      draft_achievement_stories: draftAchievementCount(achievementStories),
+      achievement_ready_rate: achievementReadyRate(achievementStories),
+      achievement_average_completion: averageAchievementCompletion(achievementStories),
+      achievement_average_confidence: averageAchievementConfidence(achievementStories),
+      achievement_stories_with_metrics: achievementMetricCount(achievementStories),
+      low_confidence_achievement_stories: lowConfidenceAchievementCount(achievementStories),
       certification_records: certificationRecords.filter((record) => record.status !== "archived").length,
-      earned_certifications: certificationRecords.filter((record) => record.status === "earned").length,
+      planned_certifications: plannedCertificationCount(certificationRecords),
+      studying_certifications: studyingCertificationCount(certificationRecords),
+      earned_certifications: earnedCertificationCount(certificationRecords),
       expiring_certifications: certificationRecords.filter((record) => isCertificationExpiring(record)).length,
+      certification_average_progress: averageCertificationProgress(certificationRecords),
       certification_study_hours_remaining: certificationRemainingStudyHours(certificationRecords),
+      certification_study_hours_completed: certificationCompletedStudyHoursTotal(certificationRecords),
       certification_budget_total: certificationTotalCost(certificationRecords),
+      certification_credential_urls: certificationCredentialCount(certificationRecords),
+      certifications_missing_credentials: certificationsMissingCredentialCount(certificationRecords),
+      certification_category_coverage: certificationCategoryCoverage(certificationRecords),
       recommended_next_step: nextStep,
       priority_focus: focusItems,
     });
