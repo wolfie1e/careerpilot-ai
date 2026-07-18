@@ -11,20 +11,31 @@ import type { PlannerTask } from "@/lib/career-planner";
 import {
   CERTIFICATION_CATEGORIES,
   CERTIFICATION_STATUSES,
+  averageCertificationProgress,
+  certificationAverageCost,
   certificationCategoryCounts,
+  certificationCategoryCoverage,
+  certificationCompletedStudyHoursTotal,
+  certificationCredentialCount,
   certificationPlanText,
+  certificationProviderCounts,
   certificationProgress,
   certificationRemainingStudyHours,
   certificationSkillCounts,
   certificationStatusCounts,
   certificationTotalCost,
+  certificationsMissingCredentialCount,
   createCertificationRecord,
+  earnedCertificationCount,
+  favoriteCertificationCount,
   isCertificationActive,
   isCertificationExpired,
   isCertificationExpiring,
   mergeCertificationRecords,
   nextCertificationDate,
+  plannedCertificationCount,
   sortCertificationRecords,
+  studyingCertificationCount,
   type CertificationCategory,
   type CertificationRecord,
   type CertificationStatus,
@@ -48,9 +59,11 @@ export default function CertificationsPage() {
   const activeRecords = records.filter((record) => isCertificationActive(record));
   const expiringRecords = records.filter((record) => isCertificationExpiring(record));
   const categoryRows = Object.entries(certificationCategoryCounts(visibleRecords)).map(([category, count]) => ({ category, count }));
+  const providerRows = Object.entries(certificationProviderCounts(visibleRecords)).map(([provider, count]) => ({ provider, count }));
   const skillRows = Object.entries(certificationSkillCounts(visibleRecords)).map(([skill, count]) => ({ skill, count }));
   const statusRows = Object.entries(certificationStatusCounts(visibleRecords)).map(([status, count]) => ({ status, count }));
   const certificationBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(certificationTotalCost(records));
+  const averageCertificationBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(certificationAverageCost(records));
   const nextDate = nextCertificationDate(records);
 
   function addRecord() {
@@ -153,11 +166,20 @@ export default function CertificationsPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         {[
           ["Tracked", records.filter((record) => record.status !== "archived").length],
-          ["Studying", records.filter((record) => record.status === "studying").length],
+          ["Planned", plannedCertificationCount(records)],
+          ["Studying", studyingCertificationCount(records)],
+          ["Earned", earnedCertificationCount(records)],
           ["Active", activeRecords.length],
           ["Renewals", expiringRecords.length],
+          ["Avg progress", `${averageCertificationProgress(records)}%`],
           ["Study left", `${certificationRemainingStudyHours(records)}h`],
+          ["Study done", `${certificationCompletedStudyHoursTotal(records)}h`],
+          ["Credential URLs", certificationCredentialCount(records)],
+          ["Missing proof", certificationsMissingCredentialCount(records)],
+          ["Categories", certificationCategoryCoverage(records)],
+          ["Favorites", favoriteCertificationCount(records)],
           ["Budget", certificationBudget],
+          ["Avg cost", averageCertificationBudget],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
@@ -225,9 +247,13 @@ export default function CertificationsPage() {
           category: record.category,
           status: record.status,
           progress: certificationProgress(record),
+          study_hours: record.studyHours,
+          completed_hours: record.completedHours,
           target_date: record.targetDate,
           issued_at: record.issuedAt,
           expires_at: record.expiresAt,
+          credential_url: record.credentialUrl,
+          cost: record.cost,
           skills: record.skills.join(", "),
         })))} disabled={!visibleRecords.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
@@ -236,6 +262,10 @@ export default function CertificationsPage() {
         <button onClick={() => downloadCsv("careerpilot-certification-categories.csv", categoryRows)} disabled={!categoryRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Categories
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-certification-providers.csv", providerRows)} disabled={!providerRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Providers
         </button>
         <button onClick={() => downloadCsv("careerpilot-certification-skills.csv", skillRows)} disabled={!skillRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
@@ -315,6 +345,23 @@ export default function CertificationsPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(statusRows.some((row) => row.count > 0) || providerRows.length > 0 || skillRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Credential status</h3>
+            <div className="mt-3 space-y-2">{statusRows.filter((row) => row.count > 0).map((row) => <div key={row.status} className="flex justify-between text-sm text-gray-400"><span>{CERTIFICATION_STATUSES.find((option) => option.value === row.status)?.label}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Providers</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{providerRows.slice(0, 10).map((row) => <span key={row.provider} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.provider} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Skill coverage</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{skillRows.slice(0, 10).map((row) => <span key={row.skill} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.skill} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
