@@ -9,9 +9,9 @@ import type { PlannerTask } from "@/lib/career-planner";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import {
-  COMPANY_PRIORITIES, COMPANY_STAGES, companyAverageFit, companyAverageInterest, companyContactTotal, companyOpenRoleTotal, companyPlanText, companyReadinessScore, companyResearchCompletion,
+  COMPANY_PRIORITIES, COMPANY_STAGES, companiesMissingNextActionCount, companiesWithCareersUrlCount, companiesWithoutContactsCount, companyActionDueCount, companyActionSoonCount, companyAverageFit, companyAverageInterest, companyAverageReadinessScore, companyContactTotal, companyOpenRoleTotal, companyPlanText, companyReadinessScore, companyResearchCompletion,
   companyIndustryCounts, companyLocationCounts, companyPriorityCounts, companyStageCounts, companyTagCounts, createTargetCompany, isCompanyActionDue, mergeTargetCompanies,
-  sortTargetCompanies, isCompanyActionSoon, nextCompanyAction, topTargetCompany, type CompanyPriority, type CompanyStage, type TargetCompany,
+  sortTargetCompanies, isCompanyActionSoon, nextCompanyAction, readyTargetCompanyCount, researchingTargetCompanyCount, networkingTargetCompanyCount, topTargetCompany, favoriteTargetCompanyCount, companyTargetRoleCounts, companyWebsiteCount, type CompanyPriority, type CompanyStage, type TargetCompany,
 } from "@/lib/target-companies";
 
 export default function CompaniesPage() {
@@ -36,6 +36,7 @@ export default function CompaniesPage() {
   const tagRows = Object.entries(companyTagCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const industryRows = Object.entries(companyIndustryCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const locationRows = Object.entries(companyLocationCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
+  const targetRoleRows = Object.entries(companyTargetRoleCounts(visibleCompanies)).sort((a, b) => b[1] - a[1]);
   const topCompany = topTargetCompany(companies);
   const nextAction = nextCompanyAction(companies);
 
@@ -108,15 +109,24 @@ export default function CompaniesPage() {
         <p className="mt-1 text-sm text-gray-400">Build a focused company shortlist and turn research into deliberate action.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Active", activeCompanies.length],
-          ["Ready", companies.filter((company) => company.stage === "ready").length],
-          ["Actions due", companies.filter((company) => isCompanyActionDue(company)).length],
+          ["Ready", readyTargetCompanyCount(companies)],
+          ["Researching", researchingTargetCompanyCount(companies)],
+          ["Networking", networkingTargetCompanyCount(companies)],
+          ["Actions due", companyActionDueCount(companies)],
+          ["Due this week", companyActionSoonCount(companies)],
+          ["Missing next", companiesMissingNextActionCount(companies)],
           ["Open roles", companyOpenRoleTotal(companies)],
           ["Contacts", companyContactTotal(companies)],
+          ["No contacts", companiesWithoutContactsCount(companies)],
+          ["Websites", companyWebsiteCount(companies)],
+          ["Careers URLs", companiesWithCareersUrlCount(companies)],
+          ["Avg readiness", `${companyAverageReadinessScore(companies)}%`],
           ["Average fit", `${companyAverageFit(companies)}/10`],
           ["Avg interest", `${companyAverageInterest(companies)}/10`],
+          ["Favorites", favoriteTargetCompanyCount(companies)],
         ].map(([label, value]) => <div key={label} className="rounded-lg border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
 
@@ -142,7 +152,8 @@ export default function CompaniesPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importCompanies} className="sr-only" /></label>
         <CopyButton value={companyPlanText(visibleCompanies) || "No target companies yet"} label="Copy plan" className="rounded-lg px-3" />
         <button onClick={() => downloadJson("careerpilot-target-companies.json", { companies })} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Download className="h-4 w-4" />JSON</button>
-        <button onClick={() => downloadCsv("careerpilot-target-companies.csv", visibleCompanies.map((company) => ({ name: company.name, industry: company.industry, location: company.location, stage: company.stage, priority: company.priority, fit_score: company.fitScore, interest_score: company.interestScore, target_role: company.targetRole, open_roles: company.openRoles, contacts: company.contactCount, next_action: company.nextAction, next_action_date: company.nextActionDate, tags: company.tags.join(", ") })))} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-target-companies.csv", visibleCompanies.map((company) => ({ name: company.name, industry: company.industry, location: company.location, stage: company.stage, priority: company.priority, fit_score: company.fitScore, interest_score: company.interestScore, readiness: companyReadinessScore(company), research_completion: companyResearchCompletion(company), target_role: company.targetRole, open_roles: company.openRoles, contacts: company.contactCount, website: company.website, careers_url: company.careersUrl, next_action: company.nextAction, next_action_date: company.nextActionDate, tags: company.tags.join(", ") })))} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-target-company-roles.csv", targetRoleRows.map(([role, count]) => ({ role, count })))} disabled={!targetRoleRows.length} className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 text-sm text-gray-300 disabled:opacity-40"><Download className="h-4 w-4" />Roles</button>
       </div>
 
       {visibleCompanies.length === 0 ? (
@@ -192,7 +203,7 @@ export default function CompaniesPage() {
         </article>
       ))}</div>}
 
-      {(stageRows.some(([, count]) => count > 0) || tagRows.length > 0) && <div className="grid gap-4 md:grid-cols-2"><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Pipeline stages</h3><div className="mt-3 space-y-2">{stageRows.filter(([, count]) => count > 0).map(([stage, count]) => <div key={stage} className="flex justify-between text-sm text-gray-400"><span>{COMPANY_STAGES.find((item) => item.value === stage)?.label}</span><span className="text-white">{count}</span></div>)}</div></div><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Research themes</h3><div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map(([tag, count]) => <span key={tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{tag} · {count}</span>)}</div></div></div>}
+      {(stageRows.some(([, count]) => count > 0) || targetRoleRows.length > 0 || tagRows.length > 0) && <div className="grid gap-4 md:grid-cols-3"><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Pipeline stages</h3><div className="mt-3 space-y-2">{stageRows.filter(([, count]) => count > 0).map(([stage, count]) => <div key={stage} className="flex justify-between text-sm text-gray-400"><span>{COMPANY_STAGES.find((item) => item.value === stage)?.label}</span><span className="text-white">{count}</span></div>)}</div></div><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Target roles</h3><div className="mt-3 flex flex-wrap gap-2">{targetRoleRows.slice(0, 12).map(([role, count]) => <span key={role} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{role} · {count}</span>)}</div></div><div className="rounded-lg border border-gray-800 bg-gray-900 p-5"><h3 className="text-sm font-semibold text-white">Research themes</h3><div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map(([tag, count]) => <span key={tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{tag} · {count}</span>)}</div></div></div>}
       {priorityRows.some(([, count]) => count > 0) && <div className="text-xs capitalize text-gray-500">Priorities: {priorityRows.map(([priority, count]) => priority + " " + count).join(" · ")}</div>}
       {industryRows.length > 0 && <div className="text-xs text-gray-500">Top industries: {industryRows.slice(0, 5).map(([industry, count]) => industry + " (" + count + ")").join(" · ")}</div>}
       {locationRows.length > 0 && <div className="text-xs text-gray-500">Top locations: {locationRows.slice(0, 5).map(([location, count]) => location + " (" + count + ")").join(" · ")}</div>}
