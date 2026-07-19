@@ -13,13 +13,28 @@ import {
   activeCareerGoalCount,
   averageCareerGoalProgress,
   careerGoalCategoryCounts,
+  careerGoalCategoryCoverage,
+  careerGoalCompletedThisMonthCount,
+  careerGoalCompletionRate,
+  careerGoalCurrentValueTotal,
+  careerGoalHorizonCounts,
+  careerGoalMetricCount,
   careerGoalProgress,
   careerGoalPipelineText,
+  careerGoalTargetValueTotal,
   createCareerGoal,
   careerGoalTagCounts,
+  careerGoalUnscheduledCount,
+  completedCareerGoalCount,
+  dueSoonCareerGoalCount,
+  highPriorityActiveCareerGoalCount,
+  highProgressCareerGoalCount,
   isCareerGoalDueSoon,
   isCareerGoalOverdue,
   mergeCareerGoals,
+  nextCareerGoalFocus,
+  overdueCareerGoalCount,
+  pausedCareerGoalCount,
   sortCareerGoals,
   type CareerGoal,
   type CareerGoalStatus,
@@ -46,7 +61,9 @@ export default function GoalsPage() {
 
   const categoryOptions: Array<CareerGoal["category"]> = ["resume", "interview", "networking", "applications", "learning", "portfolio", "other"];
   const categoryRows = Object.entries(careerGoalCategoryCounts(visibleGoals)).map(([category, count]) => ({ category, count }));
+  const horizonRows = Object.entries(careerGoalHorizonCounts(visibleGoals)).map(([horizon, count]) => ({ horizon, count }));
   const tagRows = Object.entries(careerGoalTagCounts(visibleGoals)).map(([tag, count]) => ({ tag, count }));
+  const nextFocus = nextCareerGoalFocus(goals);
 
   function addGoal() {
     if (!title.trim()) return;
@@ -134,12 +151,29 @@ export default function GoalsPage() {
         <p className="mt-1 text-sm text-gray-400">Define outcomes, deadlines, and measurable progress for your job search.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {nextFocus && (
+        <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">
+          Next goal focus: <span className="font-semibold">{nextFocus.title}</span>{nextFocus.targetDate ? ` by ${nextFocus.targetDate}` : ""}.
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Active goals", activeCareerGoalCount(goals)],
           ["Average progress", `${averageCareerGoalProgress(goals)}%`],
-          ["Completed", goals.filter((goal) => goal.status === "completed").length],
-          ["High priority", goals.filter((goal) => goal.priority === "high" && goal.status !== "archived").length],
+          ["Completed", completedCareerGoalCount(goals)],
+          ["Completed month", careerGoalCompletedThisMonthCount(goals)],
+          ["Completion rate", `${careerGoalCompletionRate(goals)}%`],
+          ["Paused", pausedCareerGoalCount(goals)],
+          ["Overdue", overdueCareerGoalCount(goals)],
+          ["Due soon", dueSoonCareerGoalCount(goals)],
+          ["High priority", highPriorityActiveCareerGoalCount(goals)],
+          ["High progress", highProgressCareerGoalCount(goals)],
+          ["Unscheduled", careerGoalUnscheduledCount(goals)],
+          ["With metrics", careerGoalMetricCount(goals)],
+          ["Category coverage", careerGoalCategoryCoverage(goals)],
+          ["Current total", careerGoalCurrentValueTotal(goals)],
+          ["Target total", careerGoalTargetValueTotal(goals)],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
 
@@ -163,8 +197,9 @@ export default function GoalsPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importGoals} className="sr-only" /></label>
         <CopyButton value={careerGoalPipelineText(visibleGoals) || "No career goals yet"} label="Copy goals" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-career-goals.json", { goals })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
-        <button onClick={() => downloadCsv("careerpilot-career-goals.csv", visibleGoals.map((goal) => ({ title: goal.title, status: goal.status, category: goal.category, priority: goal.priority, target_date: goal.targetDate, progress: careerGoalProgress(goal), tags: goal.tags.join(", ") })))} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-career-goals.csv", visibleGoals.map((goal) => ({ title: goal.title, status: goal.status, horizon: goal.horizon, category: goal.category, priority: goal.priority, metric: goal.metricLabel, current_value: goal.currentValue, target_value: goal.targetValue, target_date: goal.targetDate, completed_at: goal.completedAt || "", progress: careerGoalProgress(goal), tags: goal.tags.join(", ") })))} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
         <button onClick={() => downloadCsv("careerpilot-career-goal-categories.csv", categoryRows)} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Categories</button>
+        <button onClick={() => downloadCsv("careerpilot-career-goal-horizons.csv", horizonRows)} disabled={!visibleGoals.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Horizons</button>
         <button onClick={() => downloadCsv("careerpilot-career-goal-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
@@ -208,6 +243,23 @@ export default function GoalsPage() {
               <input value={(goal.tags || []).join(", ")} onChange={(event) => updateGoal(goal.id, { tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="Tags, comma separated" className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-xs text-gray-300 outline-none" />
             </article>
           ))}
+        </div>
+      )}
+
+      {(categoryRows.some((row) => row.count > 0) || horizonRows.some((row) => row.count > 0) || tagRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Goal categories</h3>
+            <div className="mt-3 space-y-2">{categoryRows.filter((row) => row.count > 0).map((row) => <div key={row.category} className="flex justify-between text-sm text-gray-400"><span>{row.category}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Horizons</h3>
+            <div className="mt-3 space-y-2">{horizonRows.filter((row) => row.count > 0).map((row) => <div key={row.horizon} className="flex justify-between text-sm text-gray-400"><span>{CAREER_GOAL_HORIZONS.find((option) => option.value === row.horizon)?.label}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Themes</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map((row) => <span key={row.tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.tag} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
