@@ -17,15 +17,15 @@ import type { PlannerTask } from "@/lib/career-planner";
 import type { JobApplication } from "@/lib/application-tracker";
 import type { WeeklyReview } from "@/lib/weekly-review";
 import type { NetworkingContact } from "@/lib/networking";
-import type { CareerGoal } from "@/lib/career-goals";
+import { activeCareerGoalCount, averageCareerGoalProgress, careerGoalCategoryCoverage, careerGoalCompletedThisMonthCount, careerGoalCompletionRate, careerGoalCurrentValueTotal, careerGoalMetricCount, careerGoalTargetValueTotal, careerGoalUnscheduledCount, completedCareerGoalCount, dueSoonCareerGoalCount, highPriorityActiveCareerGoalCount, highProgressCareerGoalCount, nextCareerGoalFocus, overdueCareerGoalCount, pausedCareerGoalCount, type CareerGoal } from "@/lib/career-goals";
 import type { OfferComparison } from "@/lib/offer-tracker";
 import { achievementMetricCount, achievementReadyRate, averageAchievementCompletion, averageAchievementConfidence, draftAchievementCount, lowConfidenceAchievementCount, readyAchievementCount, type AchievementStory } from "@/lib/achievement-vault";
 import { averageCertificationProgress, certificationCategoryCoverage, certificationCompletedStudyHoursTotal, certificationCredentialCount, certificationRemainingStudyHours, certificationTotalCost, certificationsMissingCredentialCount, earnedCertificationCount, isCertificationActive, isCertificationExpiring, plannedCertificationCount, studyingCertificationCount, type CertificationRecord } from "@/lib/certification-tracker";
 import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
 import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFollowUpDueCount, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
 import { companiesMissingNextActionCount, companiesWithCareersUrlCount, companiesWithoutContactsCount, companyActionDueCount, companyActionSoonCount, companyAverageFit, companyAverageReadinessScore, companyContactTotal, companyOpenRoleTotal, companyWebsiteCount, favoriteTargetCompanyCount, isCompanyActionDue, networkingTargetCompanyCount, readyTargetCompanyCount, researchingTargetCompanyCount, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
-import { confirmedReferenceCount, isReferenceActionDue, referenceAverageConfidence, type ProfessionalReference } from "@/lib/professional-references";
-import { averageQuestionConfidence, questionReviewDueCount, readyQuestionCount, type QuestionBankItem } from "@/lib/question-bank";
+import { confirmedReferenceCount, contactableReferenceCount, favoriteReferenceCount, isReferenceActionDue, pendingReferencePermissionCount, recentlyUsedReferenceCount, referenceActionDueCount, referenceActionSoonCount, referenceAverageConfidence, referenceAverageReadinessScore, referenceEmailCount, referenceLinkedInCount, referencePhoneCount, referenceStrengthCoverage, referenceThankYouDueCount, referencesMissingContactCount, strongestProfessionalReference, type ProfessionalReference } from "@/lib/professional-references";
+import { averageQuestionAnswerCompletion, averageQuestionConfidence, averageQuestionDifficulty, averageQuestionPracticeCount, favoriteQuestionCount, highDifficultyQuestionCount, lowConfidenceQuestionCount, practicingQuestionCount, questionCompanyCoverage, questionKeyPointCoverage, questionPracticeTotal, questionReviewDueCount, questionReviewSoonCount, questionTargetRoleCoverage, readyQuestionCount, sourcedQuestionCount, type QuestionBankItem, unpracticedQuestionCount } from "@/lib/question-bank";
 import { portfolioActiveCount, portfolioAverageProgress, portfolioOverdueCount, portfolioPublishedCount, type PortfolioProject } from "@/lib/portfolio-projects";
 
 interface AnalyticsData {
@@ -300,16 +300,58 @@ export default function DashboardPage() {
       portfolio_projects_overdue: portfolioOverdueCount(portfolioProjects),
       portfolio_average_progress: portfolioAverageProgress(portfolioProjects),
       interview_questions_ready: readyQuestionCount(questionBank),
+      interview_questions_practicing: practicingQuestionCount(questionBank),
       question_reviews_due: questionReviewDueCount(questionBank),
+      question_reviews_due_this_week: questionReviewSoonCount(questionBank),
       question_average_confidence: averageQuestionConfidence(questionBank),
+      question_average_difficulty: averageQuestionDifficulty(questionBank),
+      question_average_practice_count: averageQuestionPracticeCount(questionBank),
+      question_average_answer_completion: averageQuestionAnswerCompletion(questionBank),
+      question_practice_reps: questionPracticeTotal(questionBank),
+      low_confidence_questions: lowConfidenceQuestionCount(questionBank),
+      high_difficulty_questions: highDifficultyQuestionCount(questionBank),
+      unpracticed_questions: unpracticedQuestionCount(questionBank),
+      sourced_questions: sourcedQuestionCount(questionBank),
+      favorite_questions: favoriteQuestionCount(questionBank),
+      question_key_point_coverage: questionKeyPointCoverage(questionBank),
+      question_target_role_coverage: questionTargetRoleCoverage(questionBank),
+      question_company_coverage: questionCompanyCoverage(questionBank),
       confirmed_references: confirmedReferenceCount(professionalReferences),
-      reference_actions_due: professionalReferences.filter((reference) => isReferenceActionDue(reference)).length,
+      pending_reference_permissions: pendingReferencePermissionCount(professionalReferences),
+      recently_used_references: recentlyUsedReferenceCount(professionalReferences),
+      reference_thank_yous_due: referenceThankYouDueCount(professionalReferences),
+      contactable_references: contactableReferenceCount(professionalReferences),
+      references_missing_contact: referencesMissingContactCount(professionalReferences),
+      reference_actions_due: referenceActionDueCount(professionalReferences),
+      reference_actions_due_this_week: referenceActionSoonCount(professionalReferences),
       reference_average_confidence: referenceAverageConfidence(professionalReferences),
+      reference_average_readiness: referenceAverageReadinessScore(professionalReferences),
+      reference_strength_coverage: referenceStrengthCoverage(professionalReferences),
+      reference_email_count: referenceEmailCount(professionalReferences),
+      reference_phone_count: referencePhoneCount(professionalReferences),
+      reference_linkedin_count: referenceLinkedInCount(professionalReferences),
+      favorite_references: favoriteReferenceCount(professionalReferences),
+      strongest_reference: strongestProfessionalReference(professionalReferences),
       target_company_open_roles: companyOpenRoleTotal(targetCompanies),
       top_target_company: topTargetCompany(targetCompanies),
       next_mentorship_contact: nextMentorship,
       career_goals: careerGoals.filter((goal) => goal.status !== "archived").length,
-      completed_career_goals: careerGoals.filter((goal) => goal.status === "completed").length,
+      active_career_goals: activeCareerGoalCount(careerGoals),
+      completed_career_goals: completedCareerGoalCount(careerGoals),
+      paused_career_goals: pausedCareerGoalCount(careerGoals),
+      overdue_career_goals: overdueCareerGoalCount(careerGoals),
+      career_goals_due_soon: dueSoonCareerGoalCount(careerGoals),
+      high_priority_active_career_goals: highPriorityActiveCareerGoalCount(careerGoals),
+      high_progress_career_goals: highProgressCareerGoalCount(careerGoals),
+      career_goal_average_progress: averageCareerGoalProgress(careerGoals),
+      career_goal_completion_rate: careerGoalCompletionRate(careerGoals),
+      career_goals_completed_this_month: careerGoalCompletedThisMonthCount(careerGoals),
+      career_goal_category_coverage: careerGoalCategoryCoverage(careerGoals),
+      unscheduled_career_goals: careerGoalUnscheduledCount(careerGoals),
+      career_goals_with_metrics: careerGoalMetricCount(careerGoals),
+      career_goal_current_value_total: careerGoalCurrentValueTotal(careerGoals),
+      career_goal_target_value_total: careerGoalTargetValueTotal(careerGoals),
+      next_career_goal_focus: nextCareerGoalFocus(careerGoals),
       active_offers: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
       negotiating_offers: offerComparisons.filter((offer) => offer.status === "negotiating").length,
       achievement_stories: achievementStories.filter((story) => story.status !== "archived").length,
