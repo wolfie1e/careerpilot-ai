@@ -51,7 +51,7 @@ import {
 
 export default function LearningPage() {
   const [resources, setResources] = useLocalStorage<LearningResource[]>(LOCAL_STORAGE_KEYS.learningResources, []);
-  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<LearningResourceType | "all">("all");
@@ -145,7 +145,7 @@ export default function LearningPage() {
       tags: ["learning", ...resource.tags.slice(0, 5)],
       recurrence: "none",
     };
-    setPlannerTasks([task, ...plannerTasks]);
+    setPlannerTasks((current) => [task, ...current]);
     toast.success("Learning task added to planner");
   }
 
