@@ -13,15 +13,15 @@ import { api } from "@/lib/api-client";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import { downloadJson } from "@/lib/export-utils";
 import { formatDelta, formatRelativeTime, scoreColor, cn } from "@/lib/utils";
-import type { PlannerTask } from "@/lib/career-planner";
-import type { JobApplication } from "@/lib/application-tracker";
+import { nextPlannerTask, plannerArchivedCount, plannerAverageEstimateMinutes, plannerCompletedThisWeek, plannerCompletedTodayCount, plannerCompletionRate, plannerDueSoonCount, plannerDueTodayCount, plannerHighPriorityOpenCount, plannerInProgressCount, plannerOpenMinutes, plannerOpenTaskCount, plannerOverdueCount, plannerResourceCount, plannerUnscheduledOpenCount, recurringPlannerTaskCount, type PlannerTask } from "@/lib/career-planner";
+import { applicationActiveCount, applicationContactCount, applicationFollowUpDueCount, applicationInterviewRate, applicationNextActionCount, applicationOfferRate, applicationRejectionRate, applicationResponseRate, applicationUrlCount, applicationsMissingNextActionCount, applicationsMissingSalaryCount, applicationsThisMonth, applicationsWithoutContactCount, archivedApplicationCount, favoriteApplicationCount, highPriorityApplicationCount, nextApplicationFollowUp, scheduledApplicationInterviewCount, staleApplicationCount, submittedApplicationCount, upcomingInterviewCount, type JobApplication } from "@/lib/application-tracker";
 import type { WeeklyReview } from "@/lib/weekly-review";
 import type { NetworkingContact } from "@/lib/networking";
 import { activeCareerGoalCount, averageCareerGoalProgress, careerGoalCategoryCoverage, careerGoalCompletedThisMonthCount, careerGoalCompletionRate, careerGoalCurrentValueTotal, careerGoalMetricCount, careerGoalTargetValueTotal, careerGoalUnscheduledCount, completedCareerGoalCount, dueSoonCareerGoalCount, highPriorityActiveCareerGoalCount, highProgressCareerGoalCount, nextCareerGoalFocus, overdueCareerGoalCount, pausedCareerGoalCount, type CareerGoal } from "@/lib/career-goals";
-import type { OfferComparison } from "@/lib/offer-tracker";
+import { acceptedOfferCount, activeOfferCount, averageOfferCommuteMinutes, averageOfferDecisionScore, averageOfferQualityScore, averageOfferTotalCompensation, bestOffer, highestOfferCompensation, negotiatingOfferCount, offerDeadlineOverdueCount, offerDeadlineSoonCount, offersMissingCompensationCount, offersMissingDeadlineCount, remoteOfferCount, totalAcceptedOfferCompensation, type OfferComparison } from "@/lib/offer-tracker";
 import { achievementMetricCount, achievementReadyRate, averageAchievementCompletion, averageAchievementConfidence, draftAchievementCount, lowConfidenceAchievementCount, readyAchievementCount, type AchievementStory } from "@/lib/achievement-vault";
 import { averageCertificationProgress, certificationCategoryCoverage, certificationCompletedStudyHoursTotal, certificationCredentialCount, certificationRemainingStudyHours, certificationTotalCost, certificationsMissingCredentialCount, earnedCertificationCount, isCertificationActive, isCertificationExpiring, plannedCertificationCount, studyingCertificationCount, type CertificationRecord } from "@/lib/certification-tracker";
-import { learningRemainingHours, learningTotalCost, type LearningResource } from "@/lib/learning-path";
+import { activeLearningCount, completedLearningCount, favoriteLearningCount, highPriorityActiveLearningCount, learningAverageCost, learningAverageProgress, learningAverageRating, learningCompletedHoursTotal, learningCompletionRate, learningDueSoonCount, learningOverdueCount, learningRemainingHours, learningTargetRoleCoverage, learningTotalCost, learningUnscheduledCount, pausedLearningCount, type LearningResource } from "@/lib/learning-path";
 import { mentorshipAverageConfidence, mentorshipConversationTotal, mentorshipFollowUpDueCount, nextMentorshipContact, type MentorshipContact } from "@/lib/mentorship";
 import { companiesMissingNextActionCount, companiesWithCareersUrlCount, companiesWithoutContactsCount, companyActionDueCount, companyActionSoonCount, companyAverageFit, companyAverageReadinessScore, companyContactTotal, companyOpenRoleTotal, companyWebsiteCount, favoriteTargetCompanyCount, isCompanyActionDue, networkingTargetCompanyCount, readyTargetCompanyCount, researchingTargetCompanyCount, topTargetCompany, type TargetCompany } from "@/lib/target-companies";
 import { confirmedReferenceCount, contactableReferenceCount, favoriteReferenceCount, isReferenceActionDue, pendingReferencePermissionCount, recentlyUsedReferenceCount, referenceActionDueCount, referenceActionSoonCount, referenceAverageConfidence, referenceAverageReadinessScore, referenceEmailCount, referenceLinkedInCount, referencePhoneCount, referenceStrengthCoverage, referenceThankYouDueCount, referencesMissingContactCount, strongestProfessionalReference, type ProfessionalReference } from "@/lib/professional-references";
@@ -265,13 +265,60 @@ export default function DashboardPage() {
       resumes_uploaded: resumes.length,
       interviews_completed: analytics?.total_interviews ?? sessions.length,
       practice_streak_days: practiceStreak,
-      open_planner_actions: plannerTasks.filter((task) => task.status !== "done").length,
+      open_planner_actions: plannerOpenTaskCount(plannerTasks),
+      planner_in_progress: plannerInProgressCount(plannerTasks),
+      planner_completion_rate: plannerCompletionRate(plannerTasks),
+      planner_due_today: plannerDueTodayCount(plannerTasks),
+      planner_due_soon: plannerDueSoonCount(plannerTasks),
+      planner_overdue: plannerOverdueCount(plannerTasks),
+      planner_high_priority_open: plannerHighPriorityOpenCount(plannerTasks),
+      planner_completed_this_week: plannerCompletedThisWeek(plannerTasks),
+      planner_completed_today: plannerCompletedTodayCount(plannerTasks),
+      planner_open_minutes: plannerOpenMinutes(plannerTasks),
+      planner_average_estimate_minutes: plannerAverageEstimateMinutes(plannerTasks),
+      planner_resources: plannerResourceCount(plannerTasks),
+      planner_recurring_tasks: recurringPlannerTaskCount(plannerTasks),
+      planner_archived_tasks: plannerArchivedCount(plannerTasks),
+      planner_unscheduled_open: plannerUnscheduledOpenCount(plannerTasks),
+      next_planner_task: nextPlannerTask(plannerTasks),
       learning_resources: learningResources.filter((resource) => resource.status !== "archived").length,
-      learning_in_progress: learningResources.filter((resource) => resource.status === "in_progress").length,
-      learning_completed: learningResources.filter((resource) => resource.status === "completed").length,
+      learning_active: activeLearningCount(learningResources),
+      learning_paused: pausedLearningCount(learningResources),
+      learning_completed: completedLearningCount(learningResources),
+      learning_completion_rate: learningCompletionRate(learningResources),
+      learning_due_soon: learningDueSoonCount(learningResources),
+      learning_overdue: learningOverdueCount(learningResources),
+      learning_high_priority_active: highPriorityActiveLearningCount(learningResources),
+      learning_unscheduled: learningUnscheduledCount(learningResources),
       learning_hours_remaining: learningRemainingHours(learningResources),
+      learning_hours_completed: learningCompletedHoursTotal(learningResources),
+      learning_average_progress: learningAverageProgress(learningResources),
+      learning_average_rating: learningAverageRating(learningResources),
+      learning_target_role_coverage: learningTargetRoleCoverage(learningResources),
+      learning_favorites: favoriteLearningCount(learningResources),
       learning_budget_total: learningTotalCost(learningResources),
-      active_job_applications: jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length,
+      learning_average_cost: learningAverageCost(learningResources),
+      active_job_applications: applicationActiveCount(jobApplications),
+      submitted_job_applications: submittedApplicationCount(jobApplications),
+      job_applications_this_month: applicationsThisMonth(jobApplications),
+      job_application_response_rate: applicationResponseRate(jobApplications),
+      job_application_interview_rate: applicationInterviewRate(jobApplications),
+      job_application_offer_rate: applicationOfferRate(jobApplications),
+      job_application_rejection_rate: applicationRejectionRate(jobApplications),
+      high_priority_job_applications: highPriorityApplicationCount(jobApplications),
+      application_follow_ups_due: applicationFollowUpDueCount(jobApplications),
+      upcoming_application_interviews: upcomingInterviewCount(jobApplications),
+      scheduled_application_interviews: scheduledApplicationInterviewCount(jobApplications),
+      application_contacts: applicationContactCount(jobApplications),
+      applications_without_contacts: applicationsWithoutContactCount(jobApplications),
+      applications_missing_next_action: applicationsMissingNextActionCount(jobApplications),
+      applications_with_next_action: applicationNextActionCount(jobApplications),
+      applications_missing_salary: applicationsMissingSalaryCount(jobApplications),
+      application_urls: applicationUrlCount(jobApplications),
+      favorite_applications: favoriteApplicationCount(jobApplications),
+      stale_applications: staleApplicationCount(jobApplications),
+      archived_applications: archivedApplicationCount(jobApplications),
+      next_application_follow_up: nextApplicationFollowUp(jobApplications),
       weekly_reviews_completed: weeklyReviews.length,
       networking_contacts: networkingContacts.filter((contact) => !contact.archived).length,
       networking_follow_ups_due: networkingFollowUpsDue,
@@ -352,8 +399,21 @@ export default function DashboardPage() {
       career_goal_current_value_total: careerGoalCurrentValueTotal(careerGoals),
       career_goal_target_value_total: careerGoalTargetValueTotal(careerGoals),
       next_career_goal_focus: nextCareerGoalFocus(careerGoals),
-      active_offers: offerComparisons.filter((offer) => !["accepted", "declined", "archived"].includes(offer.status)).length,
-      negotiating_offers: offerComparisons.filter((offer) => offer.status === "negotiating").length,
+      active_offers: activeOfferCount(offerComparisons),
+      accepted_offers: acceptedOfferCount(offerComparisons),
+      negotiating_offers: negotiatingOfferCount(offerComparisons),
+      offer_deadlines_due_soon: offerDeadlineSoonCount(offerComparisons),
+      offer_deadlines_overdue: offerDeadlineOverdueCount(offerComparisons),
+      offer_average_decision_score: averageOfferDecisionScore(offerComparisons),
+      offer_average_quality_score: averageOfferQualityScore(offerComparisons),
+      offer_average_total_compensation: averageOfferTotalCompensation(offerComparisons),
+      offer_highest_compensation: highestOfferCompensation(offerComparisons),
+      offer_accepted_total_compensation: totalAcceptedOfferCompensation(offerComparisons),
+      remote_offers: remoteOfferCount(offerComparisons),
+      offer_average_commute_minutes: averageOfferCommuteMinutes(offerComparisons),
+      offers_missing_deadline: offersMissingDeadlineCount(offerComparisons),
+      offers_missing_compensation: offersMissingCompensationCount(offerComparisons),
+      best_offer: bestOffer(offerComparisons),
       achievement_stories: achievementStories.filter((story) => story.status !== "archived").length,
       ready_achievement_stories: readyAchievementCount(achievementStories),
       draft_achievement_stories: draftAchievementCount(achievementStories),
