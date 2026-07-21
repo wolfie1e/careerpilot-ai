@@ -32,7 +32,7 @@ const STRENGTH_OPTIONS: Array<{ value: ContactStrength; label: string }> = [
 
 export default function NetworkingPage() {
   const [contacts, setContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
-  const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [strengthFilter, setStrengthFilter] = useState<ContactStrength | "all">("all");
@@ -103,7 +103,7 @@ export default function NetworkingPage() {
       tags: ["networking"],
       recurrence: "none",
     };
-    window.localStorage.setItem(LOCAL_STORAGE_KEYS.plannerTasks, JSON.stringify([task, ...plannerTasks]));
+    setPlannerTasks((current) => [task, ...current]);
     toast.success("Follow-up added to planner");
   }
 
