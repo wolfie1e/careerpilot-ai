@@ -33,7 +33,7 @@ import { portfolioActiveCount, portfolioOverdueCount, portfolioPublishedCount, t
 
 export default function WeeklyReviewPage() {
   const [reviews, setReviews] = useLocalStorage<WeeklyReview[]>(LOCAL_STORAGE_KEYS.weeklyReviews, []);
-  const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [applications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
   const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const [careerGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
@@ -94,7 +94,7 @@ export default function WeeklyReviewPage() {
       priority: "high", category: "other", estimateMinutes: 30, resourceUrl: "", status: "todo", dueDate: "",
       createdAt: new Date().toISOString(), completedAt: null, archived: false, tags: ["weekly-focus"], recurrence: "none",
     };
-    window.localStorage.setItem(LOCAL_STORAGE_KEYS.plannerTasks, JSON.stringify([task, ...plannerTasks]));
+    setPlannerTasks((current) => [task, ...current]);
     toast.success("Next focus added to planner");
   }
 
