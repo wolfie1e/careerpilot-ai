@@ -10,13 +10,27 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import type { PlannerTask } from "@/lib/career-planner";
 import {
   createNetworkingContact,
+  averageNetworkingStrength,
   isNetworkingFollowUpDue,
   markNetworkingContacted,
   mergeNetworkingContacts,
   networkingActiveCount,
+  networkingCompanyCounts,
+  networkingContactableCount,
+  networkingEmailCount,
   networkingFollowUpCount,
+  networkingFollowUpSoonCount,
+  networkingLinkedInCount,
+  networkingLocationCounts,
   networkingPipelineText,
+  networkingRecentlyContactedCount,
+  networkingRoleCounts,
+  networkingSourceCounts,
+  networkingStaleCount,
+  networkingStrengthCounts,
   networkingTagCounts,
+  networkingUnscheduledFollowUpCount,
+  nextNetworkingFollowUp,
   scheduleNetworkingFollowUp,
   sortNetworkingContacts,
   type ContactStrength,
@@ -46,6 +60,7 @@ export default function NetworkingPage() {
   const availableCompanies = [...new Set(contacts.map((contact) => contact.company).filter(Boolean))].sort();
   const followUpContacts = contacts.filter((contact) => contact.nextFollowUpAt && !contact.archived);
   const dueFollowUpContacts = contacts.filter((contact) => isNetworkingFollowUpDue(contact));
+  const nextFollowUp = nextNetworkingFollowUp(contacts);
   const followUpText = followUpContacts.map((contact) => `${contact.nextFollowUpAt}: ${contact.name}${contact.company ? ` at ${contact.company}` : ""}`).join("\n");
   const visibleContacts = useMemo(() => sortNetworkingContacts(contacts).filter((contact) => {
     if (!showArchived && contact.archived) return false;
@@ -58,6 +73,11 @@ export default function NetworkingPage() {
   }), [companyFilter, contacts, search, showArchived, sourceFilter, strengthFilter, tagFilter]);
   const emailContacts = visibleContacts.filter((contact) => contact.email);
   const strongContacts = contacts.filter((contact) => contact.strength === "strong" && !contact.archived);
+  const strengthRows = Object.entries(networkingStrengthCounts(visibleContacts)).map(([strength, count]) => ({ strength, count }));
+  const companyRows = Object.entries(networkingCompanyCounts(visibleContacts)).map(([company, count]) => ({ company, count }));
+  const locationRows = Object.entries(networkingLocationCounts(visibleContacts)).map(([location, count]) => ({ location, count }));
+  const sourceRows = Object.entries(networkingSourceCounts(visibleContacts)).map(([source, count]) => ({ source, count }));
+  const roleRows = Object.entries(networkingRoleCounts(visibleContacts)).map(([role, count]) => ({ role, count }));
   const tagRows = Object.entries(networkingTagCounts(visibleContacts)).map(([tag, count]) => ({ tag, count }));
   const emailListText = emailContacts.map((contact) => `${contact.name} <${contact.email}>`).join(", ");
 
@@ -169,17 +189,31 @@ export default function NetworkingPage() {
         <p className="mt-1 text-sm text-gray-400">Track relationships, follow-ups, and warm introductions.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Active contacts", networkingActiveCount(contacts)],
           ["Follow-ups due", networkingFollowUpCount(contacts)],
+          ["Due soon", networkingFollowUpSoonCount(contacts)],
+          ["Unscheduled", networkingUnscheduledFollowUpCount(contacts)],
           ["Warm contacts", contacts.filter((contact) => contact.strength === "warm").length],
           ["Strong contacts", contacts.filter((contact) => contact.strength === "strong").length],
+          ["Contactable", networkingContactableCount(contacts)],
+          ["Email", networkingEmailCount(contacts)],
+          ["LinkedIn", networkingLinkedInCount(contacts)],
+          ["Recent", networkingRecentlyContactedCount(contacts)],
+          ["Stale", networkingStaleCount(contacts)],
           ["Tagged", contacts.filter((contact) => contact.tags?.length).length],
           ["Sources", availableSources.length],
           ["Companies", availableCompanies.length],
+          ["Avg strength", `${averageNetworkingStrength(contacts)}/3`],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
+
+      {nextFollowUp && (
+        <div className="rounded-2xl border border-amber-800/50 bg-amber-950/20 p-4 text-sm text-amber-100">
+          Next networking follow-up: <span className="font-semibold">{nextFollowUp.name}</span> on {nextFollowUp.nextFollowUpAt}
+        </div>
+      )}
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
         <div className="flex gap-2">
@@ -213,6 +247,11 @@ export default function NetworkingPage() {
         <button onClick={() => downloadCsv("careerpilot-networking-emails.csv", emailContacts.map((contact) => ({ name: contact.name, email: contact.email, company: contact.company, role: contact.role, strength: contact.strength })))} disabled={!emailContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Emails</button>
         <button onClick={() => downloadCsv("careerpilot-networking-strong-contacts.csv", strongContacts.map((contact) => ({ name: contact.name, company: contact.company, role: contact.role, email: contact.email, linkedin: contact.linkedin, tags: contact.tags.join(", ") })))} disabled={!strongContacts.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Strong</button>
         <button onClick={() => downloadCsv("careerpilot-networking-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-strengths.csv", strengthRows)} disabled={!strengthRows.some((row) => row.count > 0)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Strengths</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-companies.csv", companyRows)} disabled={!companyRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Companies</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-locations.csv", locationRows)} disabled={!locationRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Locations</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-sources.csv", sourceRows)} disabled={!sourceRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Sources</button>
+        <button onClick={() => downloadCsv("careerpilot-networking-roles.csv", roleRows)} disabled={!roleRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Roles</button>
       </div>
 
       {visibleContacts.length === 0 ? (
