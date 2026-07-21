@@ -8,17 +8,34 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   OFFER_STATUSES,
+  acceptedOfferCount,
   activeOfferCount,
+  averageOfferCommuteMinutes,
+  averageOfferDecisionScore,
+  averageOfferQualityScore,
+  averageOfferTotalCompensation,
   bestOffer,
   createOfferComparison,
+  highestOfferCompensation,
   isOfferDeadlineSoon,
   isOfferDeadlineOverdue,
   mergeOfferComparisons,
+  negotiatingOfferCount,
+  offerCurrencyCounts,
+  offerDeadlineOverdueCount,
+  offerDeadlineSoonCount,
   offerDecisionScore,
+  offerQualityScore,
   offerPipelineText,
+  offerStatusCounts,
   offerTagCounts,
   offerTotalCompensation,
+  offerWorkModeCounts,
+  offersMissingCompensationCount,
+  offersMissingDeadlineCount,
+  remoteOfferCount,
   sortOffers,
+  totalAcceptedOfferCompensation,
   type OfferComparison,
   type OfferStatus,
 } from "@/lib/offer-tracker";
@@ -39,7 +56,11 @@ export default function OffersPage() {
     return !query || `${offer.company} ${offer.role} ${offer.location} ${offer.notes} ${offer.tags.join(" ")}`.toLowerCase().includes(query);
   });
   const topOffer = bestOffer(offers);
+  const statusRows = Object.entries(offerStatusCounts(visibleOffers)).map(([status, count]) => ({ status, count }));
+  const currencyRows = Object.entries(offerCurrencyCounts(visibleOffers)).map(([currency, count]) => ({ currency, count }));
+  const workModeRows = Object.entries(offerWorkModeCounts(visibleOffers)).map(([workMode, count]) => ({ work_mode: workMode, count }));
   const tagRows = Object.entries(offerTagCounts(visibleOffers)).map(([tag, count]) => ({ tag, count }));
+  const topCompensation = highestOfferCompensation(offers);
 
   function addOffer() {
     if (!company.trim()) return;
@@ -106,12 +127,30 @@ export default function OffersPage() {
         <p className="mt-1 text-sm text-gray-400">Compare compensation, decision deadlines, and role quality.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {topOffer && (
+        <div className="rounded-2xl border border-emerald-800/50 bg-emerald-950/20 p-4 text-sm text-emerald-100">
+          Strongest offer: <span className="font-semibold">{topOffer.company}</span> with decision score {offerDecisionScore(topOffer)} and quality {offerQualityScore(topOffer)}.
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Active offers", activeOfferCount(offers)],
+          ["Accepted", acceptedOfferCount(offers)],
           ["Best score", topOffer ? offerDecisionScore(topOffer) : 0],
+          ["Avg decision", averageOfferDecisionScore(offers)],
+          ["Avg quality", averageOfferQualityScore(offers)],
           ["Top comp", topOffer ? `${topOffer.currency} ${offerTotalCompensation(topOffer).toLocaleString()}` : "—"],
-          ["Negotiating", offers.filter((offer) => offer.status === "negotiating").length],
+          ["Highest comp", topCompensation ? topCompensation.toLocaleString() : "—"],
+          ["Avg comp", averageOfferTotalCompensation(offers).toLocaleString()],
+          ["Accepted comp", totalAcceptedOfferCompensation(offers).toLocaleString()],
+          ["Negotiating", negotiatingOfferCount(offers)],
+          ["Deadline soon", offerDeadlineSoonCount(offers)],
+          ["Overdue", offerDeadlineOverdueCount(offers)],
+          ["Remote", remoteOfferCount(offers)],
+          ["Avg commute", `${averageOfferCommuteMinutes(offers)}m`],
+          ["Missing deadline", offersMissingDeadlineCount(offers)],
+          ["Missing comp", offersMissingCompensationCount(offers)],
         ].map(([label, value]) => <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4"><div className="text-xs text-gray-500">{label}</div><div className="mt-1 text-xl font-bold text-white">{value}</div></div>)}
       </div>
 
@@ -134,7 +173,10 @@ export default function OffersPage() {
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import<input type="file" accept=".json,application/json" onChange={importOffers} className="sr-only" /></label>
         <CopyButton value={offerPipelineText(visibleOffers) || "No offers yet"} label="Copy offers" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-offers.json", { offers })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
-        <button onClick={() => downloadCsv("careerpilot-offers.csv", visibleOffers.map((offer) => ({ company: offer.company, role: offer.role, status: offer.status, total_compensation: offerTotalCompensation(offer), decision_score: offerDecisionScore(offer), deadline: offer.decisionDeadline, work_mode: offer.workMode, tags: offer.tags.join(", ") })))} disabled={!visibleOffers.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-offers.csv", visibleOffers.map((offer) => ({ company: offer.company, role: offer.role, status: offer.status, currency: offer.currency, base_salary: offer.baseSalary, bonus: offer.bonus, equity: offer.equity, signing_bonus: offer.signingBonus, benefits_value: offer.benefitsValue, total_compensation: offerTotalCompensation(offer), quality_score: offerQualityScore(offer), decision_score: offerDecisionScore(offer), deadline: offer.decisionDeadline, start_date: offer.startDate, work_mode: offer.workMode, commute_minutes: offer.commuteMinutes, location: offer.location, tags: offer.tags.join(", ") })))} disabled={!visibleOffers.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-offer-statuses.csv", statusRows)} disabled={!statusRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Statuses</button>
+        <button onClick={() => downloadCsv("careerpilot-offer-currencies.csv", currencyRows)} disabled={!currencyRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Currencies</button>
+        <button onClick={() => downloadCsv("careerpilot-offer-work-modes.csv", workModeRows)} disabled={!workModeRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Work modes</button>
         <button onClick={() => downloadCsv("careerpilot-offer-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
       </div>
 
@@ -186,6 +228,27 @@ export default function OffersPage() {
               <div className="mt-3 text-xs text-gray-500">Decision score {offerDecisionScore(offer)} · Total comp {offer.currency} {offerTotalCompensation(offer).toLocaleString()}{isOfferDeadlineOverdue(offer) ? " · deadline overdue" : isOfferDeadlineSoon(offer) ? " · deadline soon" : ""}</div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(statusRows.some((row) => row.count > 0) || currencyRows.length > 0 || workModeRows.length > 0 || tagRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Statuses</h3>
+            <div className="mt-3 space-y-2">{statusRows.filter((row) => row.count > 0).map((row) => <div key={row.status} className="flex justify-between text-sm text-gray-400"><span>{OFFER_STATUSES.find((status) => status.value === row.status)?.label}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Currencies</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{currencyRows.slice(0, 8).map((row) => <span key={row.currency} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.currency} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Work modes</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{workModeRows.slice(0, 8).map((row) => <span key={row.work_mode} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.work_mode || "unset"} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Tags</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 10).map((row) => <span key={row.tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.tag} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
