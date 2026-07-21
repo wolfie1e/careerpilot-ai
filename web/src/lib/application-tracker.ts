@@ -80,7 +80,7 @@ export function applicationStageCounts(applications: JobApplication[]): Record<A
 }
 
 export function applicationResponseRate(applications: JobApplication[]): number {
-  const submitted = applications.filter((application) => application.stage !== "saved");
+  const submitted = applications.filter((application) => !application.archived && application.stage !== "saved");
   if (!submitted.length) return 0;
   const responses = submitted.filter((application) => ["screening", "interview", "offer"].includes(application.stage));
   return Math.round((responses.length / submitted.length) * 100);
@@ -114,11 +114,11 @@ export function applicationSummary(application: JobApplication): string {
 }
 
 export function applicationActiveCount(applications: JobApplication[]): number {
-  return applications.filter((application) => !["offer", "rejected", "withdrawn"].includes(application.stage)).length;
+  return applications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length;
 }
 
 export function applicationInterviewRate(applications: JobApplication[]): number {
-  const submitted = applications.filter((application) => application.stage !== "saved");
+  const submitted = applications.filter((application) => !application.archived && application.stage !== "saved");
   if (!submitted.length) return 0;
   const interviews = submitted.filter((application) => ["interview", "offer"].includes(application.stage));
   return Math.round((interviews.length / submitted.length) * 100);

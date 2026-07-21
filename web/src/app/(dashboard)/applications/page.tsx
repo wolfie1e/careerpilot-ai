@@ -8,17 +8,38 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import {
   APPLICATION_STAGES,
   applicationActiveCount,
+  applicationContactCount,
+  applicationEmploymentTypeCounts,
   applicationInterviewRate,
-  highPriorityApplicationCount,
+  applicationFollowUpDueCount,
+  applicationLocationCounts,
+  applicationNextActionCount,
+  applicationOfferRate,
   applicationPipelineText,
+  applicationPriorityCounts,
+  applicationRejectionRate,
   applicationResponseRate,
+  applicationSourceCounts,
   applicationStageCounts,
+  applicationTagCounts,
+  applicationUrlCount,
+  applicationsMissingNextActionCount,
+  applicationsMissingSalaryCount,
   applicationsThisMonth,
+  applicationsWithoutContactCount,
+  archivedApplicationCount,
+  companyApplicationCounts,
   createJobApplication,
+  favoriteApplicationCount,
+  highPriorityApplicationCount,
   isApplicationFollowUpDue,
   isApplicationInterviewUpcoming,
   mergeJobApplications,
+  nextApplicationFollowUp,
+  scheduledApplicationInterviewCount,
   sortApplications,
+  staleApplicationCount,
+  submittedApplicationCount,
   updateApplicationStage,
   upcomingInterviewCount,
   type ApplicationStage,
@@ -51,11 +72,18 @@ export default function ApplicationsPage() {
   const availableTags = [...new Set(applications.flatMap((application) => application.tags || []))].sort();
 
   const stageCounts = applicationStageCounts(applications);
-  const followUpCount = applications.filter((application) => isApplicationFollowUpDue(application)).length;
+  const followUpCount = applicationFollowUpDueCount(applications);
   const followUpApplications = applications.filter((application) => application.followUpAt);
   const contactApplications = applications.filter((application) => application.contactName || application.contactEmail);
   const favoriteApplications = applications.filter((application) => application.favorite);
   const interviewApplications = applications.filter((application) => application.interviewAt);
+  const nextFollowUp = nextApplicationFollowUp(applications);
+  const companyRows = Object.entries(companyApplicationCounts(visibleApplications)).map(([company, count]) => ({ company, count }));
+  const priorityRows = Object.entries(applicationPriorityCounts(visibleApplications)).map(([priority, count]) => ({ priority, count }));
+  const sourceRows = Object.entries(applicationSourceCounts(visibleApplications)).map(([source, count]) => ({ source, count }));
+  const locationRows = Object.entries(applicationLocationCounts(visibleApplications)).map(([location, count]) => ({ location, count }));
+  const employmentRows = Object.entries(applicationEmploymentTypeCounts(visibleApplications)).map(([employmentType, count]) => ({ employment_type: employmentType, count }));
+  const tagRows = Object.entries(applicationTagCounts(visibleApplications)).map(([tag, count]) => ({ tag, count }));
   const followUpText = followUpApplications.map((application) => `${application.followUpAt}: ${application.company} — ${application.role}`).join("\n");
 
   function addApplication() {
@@ -148,15 +176,34 @@ export default function ApplicationsPage() {
         <p className="mt-1 text-sm text-gray-400">Track every opportunity, conversation, and follow-up in one place.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-7">
+      {nextFollowUp && (
+        <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">
+          Next application follow-up: <span className="font-semibold">{nextFollowUp.company}</span> for {nextFollowUp.role} on {nextFollowUp.followUpAt}.
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Active", applicationActiveCount(applications)],
+          ["Submitted", submittedApplicationCount(applications)],
           ["This month", applicationsThisMonth(applications)],
           ["Response rate", `${applicationResponseRate(applications)}%`],
           ["Interview rate", `${applicationInterviewRate(applications)}%`],
+          ["Offer rate", `${applicationOfferRate(applications)}%`],
+          ["Rejection rate", `${applicationRejectionRate(applications)}%`],
           ["High priority", highPriorityApplicationCount(applications)],
           ["Follow-ups due", followUpCount],
           ["Upcoming interviews", upcomingInterviewCount(applications)],
+          ["Scheduled interviews", scheduledApplicationInterviewCount(applications)],
+          ["Contacts", applicationContactCount(applications)],
+          ["Missing contact", applicationsWithoutContactCount(applications)],
+          ["Next actions", applicationNextActionCount(applications)],
+          ["Missing next", applicationsMissingNextActionCount(applications)],
+          ["Missing comp", applicationsMissingSalaryCount(applications)],
+          ["Posting URLs", applicationUrlCount(applications)],
+          ["Favorites", favoriteApplicationCount(applications)],
+          ["Stale", staleApplicationCount(applications)],
+          ["Archived", archivedApplicationCount(applications)],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
@@ -201,7 +248,13 @@ export default function ApplicationsPage() {
         <CopyButton value={applicationPipelineText(visibleApplications) || "No applications yet"} label="Copy pipeline" className="rounded-xl px-3" />
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Upload className="h-4 w-4" />Import JSON<input type="file" accept="application/json,.json" onChange={importApplications} className="sr-only" /></label>
         <button onClick={() => downloadJson("careerpilot-applications.json", { exported_at: new Date().toISOString(), applications })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />JSON</button>
-        <button onClick={() => downloadCsv("careerpilot-applications.csv", visibleApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, location: application.location, salary: application.salary, applied_at: application.appliedAt, follow_up_at: application.followUpAt, contact: application.contactName, contact_email: application.contactEmail, url: application.url, notes: application.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-applications.csv", visibleApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, priority: application.priority, location: application.location, salary: application.salary, source: application.source || "", employment_type: application.employmentType || "", applied_at: application.appliedAt, follow_up_at: application.followUpAt, interview_at: application.interviewAt || "", next_action: application.nextAction || "", contact: application.contactName, contact_email: application.contactEmail, url: application.url, tags: (application.tags || []).join(", "), notes: application.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Download className="h-4 w-4" />CSV</button>
+        <button onClick={() => downloadCsv("careerpilot-application-companies.csv", companyRows)} disabled={!companyRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Companies</button>
+        <button onClick={() => downloadCsv("careerpilot-application-priorities.csv", priorityRows)} disabled={!priorityRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Priorities</button>
+        <button onClick={() => downloadCsv("careerpilot-application-sources.csv", sourceRows)} disabled={!sourceRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Sources</button>
+        <button onClick={() => downloadCsv("careerpilot-application-locations.csv", locationRows)} disabled={!locationRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Locations</button>
+        <button onClick={() => downloadCsv("careerpilot-application-employment-types.csv", employmentRows)} disabled={!employmentRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Employment</button>
+        <button onClick={() => downloadCsv("careerpilot-application-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40"><Download className="h-4 w-4" />Tags</button>
         <button onClick={() => downloadCsv("careerpilot-application-follow-ups.csv", followUpApplications.map((application) => ({ company: application.company, role: application.role, stage: application.stage, follow_up_at: application.followUpAt, contact: application.contactName, email: application.contactEmail })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><CalendarClock className="h-4 w-4" />Follow-ups</button>
         <CopyButton value={followUpText || "No follow-ups scheduled"} label="Copy follow-ups" className="rounded-xl px-3" />
         <button onClick={() => downloadCsv("careerpilot-application-contacts.csv", contactApplications.map((application) => ({ company: application.company, role: application.role, contact: application.contactName, email: application.contactEmail, stage: application.stage })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"><Mail className="h-4 w-4" />Contacts</button>
@@ -275,6 +328,23 @@ export default function ApplicationsPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(companyRows.length > 0 || sourceRows.length > 0 || tagRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Companies</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{companyRows.slice(0, 10).map((row) => <span key={row.company} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.company} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Sources</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{sourceRows.slice(0, 10).map((row) => <span key={row.source} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.source} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Tags</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map((row) => <span key={row.tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.tag} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
