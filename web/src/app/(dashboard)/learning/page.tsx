@@ -12,18 +12,36 @@ import {
   LEARNING_RESOURCE_STATUSES,
   LEARNING_RESOURCE_PRIORITIES,
   LEARNING_RESOURCE_TYPES,
+  activeLearningCount,
   createLearningResource,
+  completedLearningCount,
+  favoriteLearningCount,
+  highPriorityActiveLearningCount,
   isLearningResourceDueSoon,
   isLearningResourceOverdue,
+  learningAverageCost,
+  learningAverageProgress,
+  learningAverageRating,
+  learningCompletedHoursTotal,
+  learningCompletionRate,
+  learningDueSoonCount,
+  learningOverdueCount,
   learningProgress,
+  learningPriorityCounts,
+  learningProviderCounts,
   learningRemainingHours,
+  learningSkillAreaCounts,
   learningStatusCounts,
   learningTagCounts,
+  learningTargetRoleCounts,
+  learningTargetRoleCoverage,
   learningTotalCost,
   learningTypeCounts,
   learningPlanText,
+  learningUnscheduledCount,
   mergeLearningResources,
   nextLearningDate,
+  pausedLearningCount,
   sortLearningResources,
   type LearningResource,
   type LearningResourcePriority,
@@ -46,11 +64,15 @@ export default function LearningPage() {
     const query = search.trim().toLowerCase();
     return !query || `${resource.title} ${resource.provider} ${resource.skillArea} ${resource.targetRole} ${resource.notes} ${resource.tags.join(" ")}`.toLowerCase().includes(query);
   });
-  const activeResources = resources.filter((resource) => !["completed", "archived"].includes(resource.status));
   const typeRows = Object.entries(learningTypeCounts(visibleResources)).map(([type, count]) => ({ type, count }));
   const statusRows = Object.entries(learningStatusCounts(visibleResources)).map(([status, count]) => ({ status, count }));
+  const priorityRows = Object.entries(learningPriorityCounts(visibleResources)).map(([priority, count]) => ({ priority, count }));
+  const skillRows = Object.entries(learningSkillAreaCounts(visibleResources)).map(([skillArea, count]) => ({ skill_area: skillArea, count }));
+  const providerRows = Object.entries(learningProviderCounts(visibleResources)).map(([provider, count]) => ({ provider, count }));
+  const roleRows = Object.entries(learningTargetRoleCounts(visibleResources)).map(([targetRole, count]) => ({ target_role: targetRole, count }));
   const tagRows = Object.entries(learningTagCounts(visibleResources)).map(([tag, count]) => ({ tag, count }));
   const learningBudget = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(learningTotalCost(resources));
+  const averageLearningCost = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(learningAverageCost(resources));
   const nextDate = nextLearningDate(resources);
 
   function addResource() {
@@ -134,14 +156,25 @@ export default function LearningPage() {
         <p className="mt-1 text-sm text-gray-400">Plan courses, projects, and practice resources for your next career move.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
-          ["Active", activeResources.length],
+          ["Active", activeLearningCount(resources)],
           ["In progress", resources.filter((resource) => resource.status === "in_progress").length],
-          ["Completed", resources.filter((resource) => resource.status === "completed").length],
-          ["Due soon", resources.filter((resource) => isLearningResourceDueSoon(resource) || isLearningResourceOverdue(resource)).length],
+          ["Paused", pausedLearningCount(resources)],
+          ["Completed", completedLearningCount(resources)],
+          ["Completion rate", `${learningCompletionRate(resources)}%`],
+          ["Due soon", learningDueSoonCount(resources)],
+          ["Overdue", learningOverdueCount(resources)],
+          ["High priority", highPriorityActiveLearningCount(resources)],
+          ["Unscheduled", learningUnscheduledCount(resources)],
           ["Hours left", `${learningRemainingHours(resources)}h`],
+          ["Hours done", `${learningCompletedHoursTotal(resources)}h`],
+          ["Avg progress", `${learningAverageProgress(resources)}%`],
+          ["Avg rating", `${learningAverageRating(resources)}/5`],
+          ["Role coverage", learningTargetRoleCoverage(resources)],
+          ["Favorites", favoriteLearningCount(resources)],
           ["Budget", learningBudget],
+          ["Avg cost", averageLearningCost],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
             <div className="text-xs text-gray-500">{label}</div>
@@ -202,8 +235,15 @@ export default function LearningPage() {
           status: resource.status,
           priority: resource.priority,
           progress: learningProgress(resource),
+          estimated_hours: resource.estimatedHours,
+          completed_hours: resource.completedHours,
+          cost: resource.cost,
+          rating: resource.rating,
           skill_area: resource.skillArea,
           target_role: resource.targetRole,
+          url: resource.url,
+          started_at: resource.startedAt,
+          completed_at: resource.completedAt,
           target_date: resource.targetDate,
           tags: resource.tags.join(", "),
         })))} disabled={!visibleResources.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
@@ -213,6 +253,22 @@ export default function LearningPage() {
         <button onClick={() => downloadCsv("careerpilot-learning-types.csv", typeRows)} disabled={!typeRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Types
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-priorities.csv", priorityRows)} disabled={!priorityRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Priorities
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-skills.csv", skillRows)} disabled={!skillRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Skills
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-providers.csv", providerRows)} disabled={!providerRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Providers
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-learning-target-roles.csv", roleRows)} disabled={!roleRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Roles
         </button>
         <button onClick={() => downloadCsv("careerpilot-learning-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
@@ -289,6 +345,27 @@ export default function LearningPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(typeRows.some((row) => row.count > 0) || skillRows.length > 0 || providerRows.length > 0 || roleRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Resource types</h3>
+            <div className="mt-3 space-y-2">{typeRows.filter((row) => row.count > 0).map((row) => <div key={row.type} className="flex justify-between text-sm text-gray-400"><span>{LEARNING_RESOURCE_TYPES.find((type) => type.value === row.type)?.label}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Skill areas</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{skillRows.slice(0, 10).map((row) => <span key={row.skill_area} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.skill_area} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Providers</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{providerRows.slice(0, 10).map((row) => <span key={row.provider} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.provider} · {row.count}</span>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Target roles</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{roleRows.slice(0, 10).map((row) => <span key={row.target_role} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.target_role} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
