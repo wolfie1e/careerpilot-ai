@@ -11,14 +11,29 @@ import type { PlannerTask } from "@/lib/career-planner";
 import {
   MENTORSHIP_RELATIONSHIPS,
   MENTORSHIP_STATUSES,
+  activeMentorshipCount,
+  contactableMentorshipCount,
   createMentorshipContact,
+  dormantMentorshipCount,
+  favoriteMentorshipCount,
   isMentorshipFollowUpDue,
   isMentorshipFollowUpSoon,
+  lowConfidenceMentorshipCount,
+  mentorshipAverageCadenceDays,
   mentorshipAverageConfidence,
+  mentorshipAverageConversationCount,
+  mentorshipCompanyCounts,
   mentorshipConversationTotal,
+  mentorshipEmailCount,
+  mentorshipFollowUpDueCount,
+  mentorshipFollowUpSoonCount,
+  mentorshipGoalCount,
+  mentorshipLinkedInCount,
   mentorshipPlanText,
   mentorshipRelationshipCounts,
+  mentorshipRelationshipCoverage,
   mentorshipStatusCounts,
+  mentorshipTopicCoverage,
   mentorshipTopicCounts,
   mergeMentorshipContacts,
   nextMentorshipContact,
@@ -43,10 +58,10 @@ export default function MentorshipPage() {
     const query = search.trim().toLowerCase();
     return !query || `${contact.name} ${contact.role} ${contact.company} ${contact.email} ${contact.goals} ${contact.notes} ${contact.topics.join(" ")}`.toLowerCase().includes(query);
   });
-  const activeContacts = contacts.filter((contact) => contact.status === "active");
   const nextContact = nextMentorshipContact(contacts);
   const relationshipRows = Object.entries(mentorshipRelationshipCounts(visibleContacts)).map(([relationship, count]) => ({ relationship, count }));
   const statusRows = Object.entries(mentorshipStatusCounts(visibleContacts)).map(([status, count]) => ({ status, count }));
+  const companyRows = Object.entries(mentorshipCompanyCounts(visibleContacts)).map(([company, count]) => ({ company, count }));
   const topicRows = Object.entries(mentorshipTopicCounts(visibleContacts)).map(([topic, count]) => ({ topic, count }));
 
   function addContact() {
@@ -130,12 +145,23 @@ export default function MentorshipPage() {
         <p className="mt-1 text-sm text-gray-400">Track mentors, advisors, peers, and recurring career conversations.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
-          ["Active", activeContacts.length],
-          ["Follow-ups", contacts.filter((contact) => isMentorshipFollowUpDue(contact)).length],
+          ["Active", activeMentorshipCount(contacts)],
+          ["Dormant", dormantMentorshipCount(contacts)],
+          ["Follow-ups", mentorshipFollowUpDueCount(contacts)],
+          ["Due soon", mentorshipFollowUpSoonCount(contacts)],
           ["Conversations", mentorshipConversationTotal(contacts)],
-          ["Favorites", contacts.filter((contact) => contact.favorite && contact.status !== "archived").length],
+          ["Avg conversations", mentorshipAverageConversationCount(contacts)],
+          ["Favorites", favoriteMentorshipCount(contacts)],
+          ["Contactable", contactableMentorshipCount(contacts)],
+          ["Email", mentorshipEmailCount(contacts)],
+          ["LinkedIn", mentorshipLinkedInCount(contacts)],
+          ["Goals", mentorshipGoalCount(contacts)],
+          ["Topic coverage", mentorshipTopicCoverage(contacts)],
+          ["Relationship mix", mentorshipRelationshipCoverage(contacts)],
+          ["Avg cadence", `${mentorshipAverageCadenceDays(contacts)}d`],
+          ["Low confidence", lowConfidenceMentorshipCount(contacts)],
           ["Avg confidence", `${mentorshipAverageConfidence(contacts)}/10`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -215,6 +241,10 @@ export default function MentorshipPage() {
         <button onClick={() => downloadCsv("careerpilot-mentorship-statuses.csv", statusRows)} disabled={!statusRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           Statuses
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-mentorship-companies.csv", companyRows)} disabled={!companyRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          Companies
         </button>
       </div>
 
