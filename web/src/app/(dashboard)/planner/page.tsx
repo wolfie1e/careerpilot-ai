@@ -12,11 +12,26 @@ import {
   mergePlannerTasks,
   isPlannerTaskDueSoon,
   isPlannerTaskOverdue,
+  nextPlannerTask,
+  plannerArchivedCount,
+  plannerAverageEstimateMinutes,
+  plannerCategoryCounts,
   plannerCompletionRate,
+  plannerCompletedTodayCount,
   plannerCompletedThisWeek,
+  plannerDueSoonCount,
+  plannerDueTodayCount,
+  plannerHighPriorityOpenCount,
+  plannerInProgressCount,
+  plannerOpenTaskCount,
   plannerOpenMinutes,
+  plannerOverdueCount,
+  plannerResourceCount,
+  plannerTagCounts,
   plannerTaskSummary,
+  plannerUnscheduledOpenCount,
   PLANNER_TEMPLATES,
+  recurringPlannerTaskCount,
   sortPlannerTasks,
   updatePlannerTaskStatus,
   type PlannerCategory,
@@ -55,11 +70,16 @@ export default function PlannerPage() {
   const availableTags = [...new Set(tasks.flatMap((task) => task.tags || []))].sort();
 
   const completionRate = plannerCompletionRate(tasks);
-  const overdueCount = tasks.filter((task) => isPlannerTaskOverdue(task)).length;
-  const dueSoonCount = tasks.filter((task) => isPlannerTaskDueSoon(task)).length;
+  const overdueCount = plannerOverdueCount(tasks);
+  const dueSoonCount = plannerDueSoonCount(tasks);
   const openMinutes = plannerOpenMinutes(tasks);
   const completedThisWeek = plannerCompletedThisWeek(tasks);
   const summary = sortPlannerTasks(tasks).map(plannerTaskSummary).join("\n\n");
+  const nextTask = nextPlannerTask(tasks);
+  const categoryRows = Object.entries(plannerCategoryCounts(visibleTasks)).map(([category, count]) => ({ category, count }));
+  const tagRows = Object.entries(plannerTagCounts(visibleTasks)).map(([tag, count]) => ({ tag, count }));
+  const statusRows = STATUS_OPTIONS.map((option) => ({ status: option.value, count: visibleTasks.filter((task) => task.status === option.value).length }));
+  const priorityRows = (["high", "medium", "low"] as const).map((priority) => ({ priority, count: visibleTasks.filter((task) => task.priority === priority).length }));
 
   function addTask(taskTitle = title) {
     if (!taskTitle.trim()) return;
@@ -152,13 +172,29 @@ export default function PlannerPage() {
         <p className="mt-1 text-sm text-gray-400">Keep the next important career actions visible and moving.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+      {nextTask && (
+        <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-4 text-sm text-blue-100">
+          Next planner action: <span className="font-semibold">{nextTask.title}</span>{nextTask.dueDate ? ` by ${nextTask.dueDate}` : ""}.
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-8">
         {[
           ["Actions", tasks.length],
+          ["Open", plannerOpenTaskCount(tasks)],
+          ["In progress", plannerInProgressCount(tasks)],
           ["Completed", `${completionRate}%`],
+          ["Due today", plannerDueTodayCount(tasks)],
           ["Due soon", dueSoonCount],
           ["Overdue", overdueCount],
+          ["High priority", plannerHighPriorityOpenCount(tasks)],
           ["Done this week", completedThisWeek],
+          ["Done today", plannerCompletedTodayCount(tasks)],
+          ["Unscheduled", plannerUnscheduledOpenCount(tasks)],
+          ["Resources", plannerResourceCount(tasks)],
+          ["Recurring", recurringPlannerTaskCount(tasks)],
+          ["Archived", plannerArchivedCount(tasks)],
+          ["Avg estimate", `${plannerAverageEstimateMinutes(tasks)}m`],
           ["Open effort", `${Math.floor(openMinutes / 60)}h ${openMinutes % 60}m`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -228,8 +264,20 @@ export default function PlannerPage() {
         <button onClick={() => downloadJson("careerpilot-action-plan.json", { exported_at: new Date().toISOString(), tasks })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
           <Download className="h-4 w-4" /> JSON
         </button>
-        <button onClick={() => downloadCsv("careerpilot-action-plan.csv", visibleTasks.map((task) => ({ title: task.title, status: task.status, priority: task.priority, due_date: task.dueDate, notes: task.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
+        <button onClick={() => downloadCsv("careerpilot-action-plan.csv", visibleTasks.map((task) => ({ title: task.title, status: task.status, priority: task.priority, category: task.category, due_date: task.dueDate, estimate_minutes: task.estimateMinutes, recurrence: task.recurrence, resource_url: task.resourceUrl || "", archived: task.archived ? "yes" : "no", tags: (task.tags || []).join(", "), notes: task.notes })))} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white">
           <Download className="h-4 w-4" /> CSV
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-action-plan-statuses.csv", statusRows)} disabled={!statusRows.some((row) => row.count > 0)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" /> Statuses
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-action-plan-priorities.csv", priorityRows)} disabled={!priorityRows.some((row) => row.count > 0)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" /> Priorities
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-action-plan-categories.csv", categoryRows)} disabled={!categoryRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" /> Categories
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-action-plan-tags.csv", tagRows)} disabled={!tagRows.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 transition hover:bg-gray-900 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" /> Tags
         </button>
       </div>
 
@@ -288,6 +336,19 @@ export default function PlannerPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {(categoryRows.some((row) => row.count > 0) || tagRows.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Categories</h3>
+            <div className="mt-3 space-y-2">{categoryRows.filter((row) => row.count > 0).map((row) => <div key={row.category} className="flex justify-between text-sm text-gray-400"><span>{row.category}</span><span className="text-white">{row.count}</span></div>)}</div>
+          </div>
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <h3 className="text-sm font-semibold text-white">Tags</h3>
+            <div className="mt-3 flex flex-wrap gap-2">{tagRows.slice(0, 12).map((row) => <span key={row.tag} className="rounded-full bg-gray-800 px-2.5 py-1 text-xs text-gray-300">{row.tag} · {row.count}</span>)}</div>
+          </div>
         </div>
       )}
     </div>
