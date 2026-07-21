@@ -270,6 +270,14 @@ export default function SettingsPage() {
     });
   }
 
+  function exportWorkspaceInventory() {
+    downloadCsv("careerpilot-workspace-inventory.csv", workspaceSnapshot.map(([area, active, total]) => ({
+      area,
+      active,
+      total,
+    })));
+  }
+
   async function importLocalPreferences(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -318,7 +326,11 @@ export default function SettingsPage() {
         </motion.div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-2">
+        <button onClick={exportWorkspaceInventory} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-gray-900 hover:text-white">
+          <Download className="h-4 w-4" />
+          Export workspace inventory
+        </button>
         <button onClick={exportAccountSummary} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-gray-900 hover:text-white">
           <Download className="h-4 w-4" />
           Export account summary
