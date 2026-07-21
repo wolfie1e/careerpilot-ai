@@ -81,6 +81,14 @@ export default function WeeklyReviewPage() {
   const questionBankReviewText = "Ready interview questions: " + readyQuestions + "\nQuestion reviews due: " + questionReviewsDue + "\n" + referenceReviewText;
 
   const portfolioReviewText = "Active portfolio projects: " + activePortfolioProjects + "\nPublished projects: " + publishedPortfolioProjects + "\nOverdue projects: " + overduePortfolioProjects + "\n" + questionBankReviewText;
+  const focusSuggestions = [
+    networkingFollowUpsDue ? `Clear ${networkingFollowUpsDue} networking follow-up${networkingFollowUpsDue === 1 ? "" : "s"}` : "",
+    mentorshipFollowUpsDue ? `Reconnect with ${mentorshipFollowUpsDue} mentorship contact${mentorshipFollowUpsDue === 1 ? "" : "s"}` : "",
+    targetCompanyActionsDue ? `Advance ${targetCompanyActionsDue} target compan${targetCompanyActionsDue === 1 ? "y" : "ies"}` : "",
+    overduePortfolioProjects ? `Unblock ${overduePortfolioProjects} portfolio project${overduePortfolioProjects === 1 ? "" : "s"}` : "",
+    questionReviewsDue ? `Review ${questionReviewsDue} interview question${questionReviewsDue === 1 ? "" : "s"}` : "",
+    certificationRenewalsDue ? `Handle ${certificationRenewalsDue} certification renewal${certificationRenewalsDue === 1 ? "" : "s"}` : "",
+  ].filter(Boolean).slice(0, 4);
 
   function saveReview(patch: Partial<WeeklyReview>) {
     const next = { ...currentReview, ...patch, updatedAt: new Date().toISOString() };
@@ -96,6 +104,11 @@ export default function WeeklyReviewPage() {
     };
     setPlannerTasks((current) => [task, ...current]);
     toast.success("Next focus added to planner");
+  }
+
+  function applySuggestedFocus(focus: string) {
+    saveReview({ nextFocus: focus });
+    toast.success("Suggested focus applied");
   }
 
   async function importReviews(event: ChangeEvent<HTMLInputElement>) {
@@ -167,6 +180,15 @@ export default function WeeklyReviewPage() {
           <label key={key} className="block"><span className="mb-1.5 block text-sm font-medium text-gray-300">{label}</span><textarea value={currentReview[key as keyof WeeklyReview] as string} onChange={(event) => saveReview({ [key]: event.target.value })} maxLength={2000} rows={3} placeholder={placeholder} className="w-full resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white outline-none focus:border-blue-500" /></label>
         ))}
         <label className="block"><span className="mb-2 block text-sm font-medium text-gray-300">Career confidence: {currentReview.confidence}/10</span><input type="range" min={1} max={10} value={currentReview.confidence} onChange={(event) => saveReview({ confidence: Number(event.target.value) })} className="w-full accent-blue-500" /></label>
+        {focusSuggestions.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {focusSuggestions.map((focus) => (
+              <button key={focus} onClick={() => applySuggestedFocus(focus)} className="rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-300 hover:text-blue-200">
+                {focus}
+              </button>
+            ))}
+          </div>
+        )}
         <button onClick={addFocusToPlanner} disabled={!currentReview.nextFocus.trim()} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"><Plus className="h-4 w-4" />Add next focus to planner</button>
       </div>
 
