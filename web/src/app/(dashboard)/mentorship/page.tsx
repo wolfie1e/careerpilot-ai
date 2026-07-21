@@ -45,7 +45,7 @@ import {
 
 export default function MentorshipPage() {
   const [contacts, setContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
-  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [relationshipFilter, setRelationshipFilter] = useState<MentorshipRelationship | "all">("all");
@@ -134,7 +134,7 @@ export default function MentorshipPage() {
       tags: ["mentorship", ...contact.topics.slice(0, 5)],
       recurrence: "none",
     };
-    setPlannerTasks([task, ...plannerTasks]);
+    setPlannerTasks((current) => [task, ...current]);
     toast.success("Mentorship follow-up added to planner");
   }
 
