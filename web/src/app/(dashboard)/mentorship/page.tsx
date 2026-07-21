@@ -138,6 +138,19 @@ export default function MentorshipPage() {
     toast.success("Mentorship follow-up added to planner");
   }
 
+  function logMentorshipTouchpoint(contact: MentorshipContact) {
+    const today = new Date();
+    const nextContact = new Date(today);
+    nextContact.setDate(nextContact.getDate() + Math.max(1, contact.cadenceDays || 30));
+    updateContact(contact.id, {
+      lastContactAt: today.toISOString().slice(0, 10),
+      nextContactAt: nextContact.toISOString().slice(0, 10),
+      conversationCount: contact.conversationCount + 1,
+      status: "active",
+    });
+    toast.success("Mentorship touchpoint logged");
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -274,6 +287,9 @@ export default function MentorshipPage() {
               </div>
               <button onClick={() => addContactToPlanner(contact)} className="mt-3 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
                 Add planner task
+              </button>
+              <button onClick={() => logMentorshipTouchpoint(contact)} className="ml-2 mt-3 rounded-lg border border-emerald-700/60 px-3 py-1.5 text-xs font-medium text-emerald-300 hover:text-emerald-200">
+                Log touchpoint
               </button>
               {contact.linkedInUrl && (
                 <a href={contact.linkedInUrl} target="_blank" rel="noreferrer" className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-white">
