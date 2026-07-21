@@ -90,6 +90,16 @@ export default function SettingsPage() {
     `Email: ${user?.email || "Not set"}`,
     `Plan: ${user?.plan || "free"}`,
   ].join("\n");
+  const workspaceSnapshot = [
+    ["Planner", plannerTasks.filter((task) => !task.archived && task.status !== "done").length, plannerTasks.length],
+    ["Applications", jobApplications.filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage)).length, jobApplications.length],
+    ["Goals", careerGoals.filter((goal) => goal.status === "active").length, careerGoals.length],
+    ["Learning", learningResources.filter((resource) => resource.status !== "completed" && resource.status !== "archived").length, learningResources.length],
+    ["Networking", networkingContacts.filter((contact) => !contact.archived).length, networkingContacts.length],
+    ["Mentorship", mentorshipContacts.filter((contact) => contact.status === "active").length, mentorshipContacts.length],
+    ["References", professionalReferences.filter((reference) => reference.status !== "archived").length, professionalReferences.length],
+    ["Portfolio", portfolioProjects.filter((project) => project.status !== "archived").length, portfolioProjects.length],
+  ] as const;
 
   async function submitProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -313,6 +323,16 @@ export default function SettingsPage() {
           <Download className="h-4 w-4" />
           Export account summary
         </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {workspaceSnapshot.map(([label, active, total]) => (
+          <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+            <div className="text-xs text-gray-500">{label}</div>
+            <div className="mt-1 text-lg font-bold text-white">{active} active</div>
+            <div className="mt-1 text-xs text-gray-500">{total} total saved</div>
+          </div>
+        ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
