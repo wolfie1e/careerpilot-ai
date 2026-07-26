@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, MessageSquare, BarChart2, Download, ListChecks, BriefcaseBusiness, NotebookPen, UsersRound, Medal, Award, BookOpen, Handshake, Building2, UserCheck, Library, FolderKanban,
-  Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus, Target
+  Zap, ChevronLeft, ChevronRight, LogOut, Settings, Plus, Target, Command
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,7 @@ import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Overview" },
+  { href: "/command-center", icon: Command, label: "Command Center" },
   { href: "/resume", icon: FileText, label: "Resume" },
   { href: "/interview", icon: MessageSquare, label: "Interview" },
   { href: "/question-bank", icon: Library, label: "Question Bank" },
