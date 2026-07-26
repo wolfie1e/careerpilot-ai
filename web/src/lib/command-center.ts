@@ -400,3 +400,23 @@ export function commandCenterSourceCounts(actions: CommandCenterAction[]): Recor
     return counts;
   }, {} as Record<CommandCenterSource, number>);
 }
+
+export function commandActionToPlannerTask(action: CommandCenterAction): PlannerTask {
+  const now = new Date().toISOString();
+  return {
+    id: crypto.randomUUID(),
+    title: action.title,
+    notes: `${action.detail}\nSource: ${action.source}`,
+    priority: action.priority === "critical" || action.priority === "high" ? "high" : action.priority === "medium" ? "medium" : "low",
+    category: action.source === "applications" ? "application" : action.source === "learning" || action.source === "portfolio" || action.source === "certifications" ? "learning" : action.source === "networking" || action.source === "mentorship" || action.source === "references" ? "networking" : "other",
+    estimateMinutes: action.priority === "critical" ? 45 : 30,
+    resourceUrl: action.href,
+    status: "todo",
+    dueDate: action.dueDate,
+    createdAt: now,
+    completedAt: null,
+    archived: false,
+    tags: ["command-center", action.source, ...action.tags.slice(0, 5)],
+    recurrence: "none",
+  };
+}
