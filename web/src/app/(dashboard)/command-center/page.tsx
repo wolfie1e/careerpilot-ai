@@ -6,6 +6,8 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   buildCommandCenterActions,
+  commandCenterPriorityCounts,
+  commandCenterSourceCounts,
   type CommandCenterPreferences,
   DEFAULT_COMMAND_CENTER_PREFERENCES,
 } from "@/lib/command-center";
@@ -51,6 +53,9 @@ export default function CommandCenterPage() {
     offers,
     certifications,
   }), [applications, careerGoals, certifications, learningResources, mentorshipContacts, networkingContacts, offers, plannerTasks, portfolioProjects, professionalReferences, questionBank, targetCompanies]);
+  const priorityCounts = commandCenterPriorityCounts(actions);
+  const sourceCounts = commandCenterSourceCounts(actions);
+  const activeSources = Object.keys(sourceCounts).length;
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -62,10 +67,20 @@ export default function CommandCenterPage() {
         <p className="mt-1 text-sm text-gray-400">One prioritized queue for the next career actions across every tracker.</p>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-        <div className="text-sm text-gray-500">Total command actions</div>
-        <div className="mt-1 text-3xl font-bold text-white">{actions.length}</div>
-        <div className="mt-2 text-xs text-gray-600">Saved source filter: {preferences.source}</div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
+        {[
+          ["Total", actions.length],
+          ["Critical", priorityCounts.critical],
+          ["High", priorityCounts.high],
+          ["Medium", priorityCounts.medium],
+          ["Low", priorityCounts.low],
+          ["Sources", activeSources],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+            <div className="text-xs text-gray-500">{label}</div>
+            <div className="mt-1 text-2xl font-bold text-white">{value}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
