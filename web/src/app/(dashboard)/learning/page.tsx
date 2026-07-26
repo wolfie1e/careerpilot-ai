@@ -56,7 +56,7 @@ export default function LearningPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<LearningResourceType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<LearningResourceStatus | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.learningShowArchived, false);
   const visibleResources = sortLearningResources(resources).filter((resource) => {
     if (!showArchived && resource.status === "archived") return false;
     if (typeFilter !== "all" && resource.type !== typeFilter) return false;
