@@ -8,7 +8,10 @@ import {
   buildCommandCenterActions,
   commandCenterPriorityCounts,
   commandCenterSourceCounts,
+  filterCommandCenterActions,
   type CommandCenterPreferences,
+  type CommandCenterPriority,
+  type CommandCenterSource,
   DEFAULT_COMMAND_CENTER_PREFERENCES,
 } from "@/lib/command-center";
 import type { PlannerTask } from "@/lib/career-planner";
@@ -37,7 +40,7 @@ export default function CommandCenterPage() {
   const [portfolioProjects] = useLocalStorage<PortfolioProject[]>(LOCAL_STORAGE_KEYS.portfolioProjects, []);
   const [offers] = useLocalStorage<OfferComparison[]>(LOCAL_STORAGE_KEYS.offerComparisons, []);
   const [certifications] = useLocalStorage<CertificationRecord[]>(LOCAL_STORAGE_KEYS.certificationRecords, []);
-  const [preferences] = useLocalStorage<CommandCenterPreferences>(LOCAL_STORAGE_KEYS.commandCenterPreferences, DEFAULT_COMMAND_CENTER_PREFERENCES);
+  const [preferences, setPreferences] = useLocalStorage<CommandCenterPreferences>(LOCAL_STORAGE_KEYS.commandCenterPreferences, DEFAULT_COMMAND_CENTER_PREFERENCES);
 
   const actions = useMemo(() => buildCommandCenterActions({
     plannerTasks,
@@ -56,6 +59,7 @@ export default function CommandCenterPage() {
   const priorityCounts = commandCenterPriorityCounts(actions);
   const sourceCounts = commandCenterSourceCounts(actions);
   const activeSources = Object.keys(sourceCounts).length;
+  const visibleActions = filterCommandCenterActions(actions, preferences);
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -81,6 +85,39 @@ export default function CommandCenterPage() {
             <div className="mt-1 text-2xl font-bold text-white">{value}</div>
           </div>
         ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <select
+          aria-label="Filter command actions by source"
+          value={preferences.source}
+          onChange={(event) => setPreferences((current) => ({ ...current, source: event.target.value as CommandCenterSource | "all" }))}
+          className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"
+        >
+          <option value="all">All sources</option>
+          {Object.keys(sourceCounts).sort().map((source) => <option key={source} value={source}>{source}</option>)}
+        </select>
+        <select
+          aria-label="Filter command actions by priority"
+          value={preferences.priority}
+          onChange={(event) => setPreferences((current) => ({ ...current, priority: event.target.value as CommandCenterPriority | "all" }))}
+          className="rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-300"
+        >
+          <option value="all">All priorities</option>
+          {(["critical", "high", "medium", "low"] as const).map((priority) => <option key={priority} value={priority}>{priority}</option>)}
+        </select>
+        <button
+          onClick={() => setPreferences((current) => ({ ...current, showLowPriority: !current.showLowPriority }))}
+          className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white"
+        >
+          {preferences.showLowPriority ? "Hide low priority" : "Show low priority"}
+        </button>
+        <button onClick={() => setPreferences(DEFAULT_COMMAND_CENTER_PREFERENCES)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          Reset filters
+        </button>
+        <div className="rounded-xl border border-gray-800 px-3 py-2.5 text-sm text-gray-500">
+          Showing {visibleActions.length} actions
+        </div>
       </div>
     </div>
   );
