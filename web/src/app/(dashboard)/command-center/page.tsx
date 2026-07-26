@@ -73,6 +73,11 @@ export default function CommandCenterPage() {
   function addActionToPlanner(actionId: string) {
     const action = actions.find((item) => item.id === actionId);
     if (!action) return;
+    const commandTag = `command:${action.id}`;
+    if (plannerTasks.some((task) => task.tags.includes(commandTag) && !task.archived && task.status !== "done")) {
+      toast.info("This command action is already in the planner");
+      return;
+    }
     setPlannerTasks((current) => [commandActionToPlannerTask(action), ...current]);
     toast.success("Command action added to planner");
   }
