@@ -49,7 +49,7 @@ export default function GoalsPage() {
   const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<CareerGoal["category"] | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<CareerGoal["priority"] | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.goalsShowArchived, false);
   const visibleGoals = sortCareerGoals(goals).filter((goal) => {
     if (!showArchived && goal.status === "archived") return false;
     if (statusFilter !== "all" && goal.status !== statusFilter) return false;
