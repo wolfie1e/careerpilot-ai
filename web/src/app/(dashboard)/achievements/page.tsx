@@ -38,7 +38,7 @@ export default function AchievementsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | "all">("all");
   const [statusFilter, setStatusFilter] = useState<AchievementStatus | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.achievementsShowArchived, false);
   const visibleStories = sortAchievementStories(stories).filter((story) => {
     if (!showArchived && story.status === "archived") return false;
     if (categoryFilter !== "all" && story.category !== categoryFilter) return false;
