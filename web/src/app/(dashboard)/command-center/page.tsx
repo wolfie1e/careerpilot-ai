@@ -172,6 +172,23 @@ export default function CommandCenterPage() {
         </div>
       )}
 
+      {Object.keys(sourceCounts).length > 0 && (
+        <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <h3 className="text-sm font-semibold text-white">Source breakdown</h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Object.entries(sourceCounts).sort((a, b) => b[1] - a[1]).map(([source, count]) => (
+              <button
+                key={source}
+                onClick={() => setPreferences((current) => ({ ...current, source: source as CommandCenterSource }))}
+                className="rounded-full bg-gray-800 px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700"
+              >
+                {source} · {count}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {visibleActions.length === 0 && (
           <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center">
