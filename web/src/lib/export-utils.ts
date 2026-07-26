@@ -37,3 +37,17 @@ export function downloadJson(filename: string, data: unknown) {
   link.click();
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
+
+export function downloadText(filename: string, text: string, type = "text/plain;charset=utf-8") {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+export function downloadMarkdown(filename: string, markdown: string) {
+  downloadText(filename.endsWith(".md") ? filename : `${filename}.md`, markdown, "text/markdown;charset=utf-8");
+}
