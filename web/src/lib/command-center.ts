@@ -1,5 +1,6 @@
 import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
+import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
@@ -150,6 +151,27 @@ export function networkingCommandActions(contacts: NetworkingContact[]): Command
         priority: due ? "critical" as const : soon ? "high" as const : contact.strength === "strong" ? "medium" as const : "low" as const,
         score: (due ? 100 : 0) + (soon ? 60 : 0) + (contact.strength === "strong" ? 20 : 0),
         tags: ["networking", contact.strength, ...contact.tags],
+      };
+    });
+}
+
+export function mentorshipCommandActions(contacts: MentorshipContact[]): CommandCenterAction[] {
+  return contacts
+    .filter((contact) => contact.status !== "archived")
+    .filter((contact) => isMentorshipFollowUpDue(contact) || isMentorshipFollowUpSoon(contact) || contact.favorite || contact.confidence <= 5)
+    .map((contact) => {
+      const due = isMentorshipFollowUpDue(contact);
+      const soon = isMentorshipFollowUpSoon(contact);
+      return {
+        id: `mentorship:${contact.id}`,
+        source: "mentorship" as const,
+        title: `Mentorship touchpoint: ${contact.name}`,
+        detail: contact.goals || contact.notes || [contact.relationship, contact.role, contact.company].filter(Boolean).join(" · "),
+        href: "/mentorship",
+        dueDate: contact.nextContactAt || suggestedMentorshipNextContact(contact),
+        priority: due ? "critical" as const : soon || contact.favorite ? "high" as const : contact.confidence <= 5 ? "medium" as const : "low" as const,
+        score: (due ? 100 : 0) + (soon ? 70 : 0) + (contact.favorite ? 30 : 0) + Math.max(0, 10 - contact.confidence),
+        tags: ["mentorship", contact.relationship, contact.status, ...contact.topics],
       };
     });
 }
