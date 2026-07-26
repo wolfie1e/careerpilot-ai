@@ -43,7 +43,7 @@ export default function PortfolioPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<PortfolioProjectStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<PortfolioProjectPriority | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.portfolioShowArchived, false);
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
   const [unscheduledOnly, setUnscheduledOnly] = useState(false);
