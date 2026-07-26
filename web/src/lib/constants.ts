@@ -36,6 +36,14 @@ export const LOCAL_STORAGE_KEYS = {
   reportsView: "careerpilot_reports_view",
   analyticsTimeRange: "careerpilot_analytics_time_range",
   interviewHistoryView: "careerpilot_interview_history_view",
+  applicationsShowArchived: "careerpilot_applications_show_archived",
+  plannerShowArchived: "careerpilot_planner_show_archived",
+  learningShowArchived: "careerpilot_learning_show_archived",
+  goalsShowArchived: "careerpilot_goals_show_archived",
+  achievementsShowArchived: "careerpilot_achievements_show_archived",
+  networkingShowArchived: "careerpilot_networking_show_archived",
+  mentorshipShowArchived: "careerpilot_mentorship_show_archived",
+  portfolioShowArchived: "careerpilot_portfolio_show_archived",
 } as const;
 
 export const MAX_FILE_SIZE_MB = 10;
