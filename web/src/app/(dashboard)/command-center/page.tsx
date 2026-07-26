@@ -15,6 +15,7 @@ import {
   commandCenterSourceCounts,
   commandCenterSummaryText,
   filterCommandCenterActions,
+  topCommandCenterActions,
   type CommandCenterPreferences,
   type CommandCenterPriority,
   type CommandCenterSource,
@@ -67,6 +68,7 @@ export default function CommandCenterPage() {
   const sourceCounts = commandCenterSourceCounts(actions);
   const activeSources = Object.keys(sourceCounts).length;
   const visibleActions = filterCommandCenterActions(actions, preferences);
+  const focusActions = topCommandCenterActions(visibleActions, 5);
 
   function addActionToPlanner(actionId: string) {
     const action = actions.find((item) => item.id === actionId);
@@ -155,6 +157,20 @@ export default function CommandCenterPage() {
           Showing {visibleActions.length} actions
         </div>
       </div>
+
+      {focusActions.length > 0 && (
+        <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-5">
+          <h3 className="text-sm font-semibold text-blue-100">Focus next</h3>
+          <div className="mt-3 grid gap-2 md:grid-cols-5">
+            {focusActions.map((action) => (
+              <button key={action.id} onClick={() => addActionToPlanner(action.id)} className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-left text-xs text-blue-100 hover:border-blue-400/40">
+                <div className="font-semibold">{action.title}</div>
+                <div className="mt-1 text-blue-200/70">{action.source} · {action.priority}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3">
         {visibleActions.length === 0 && (
