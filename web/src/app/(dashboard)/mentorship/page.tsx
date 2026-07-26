@@ -50,7 +50,7 @@ export default function MentorshipPage() {
   const [search, setSearch] = useState("");
   const [relationshipFilter, setRelationshipFilter] = useState<MentorshipRelationship | "all">("all");
   const [statusFilter, setStatusFilter] = useState<MentorshipStatus | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.mentorshipShowArchived, false);
   const visibleContacts = sortMentorshipContacts(contacts).filter((contact) => {
     if (!showArchived && contact.status === "archived") return false;
     if (relationshipFilter !== "all" && contact.relationship !== relationshipFilter) return false;
