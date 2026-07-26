@@ -96,6 +96,7 @@ export const INTERVIEW_PREP_TIPS = {
 
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: "LayoutDashboard" },
+  { href: "/command-center", label: "Command Center", icon: "Command" },
   { href: "/resume", label: "Resume", icon: "FileText" },
   { href: "/interview", label: "Interview", icon: "MessageSquare" },
   { href: "/analytics", label: "Analytics", icon: "BarChart2" },
