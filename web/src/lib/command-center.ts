@@ -1,6 +1,7 @@
 import { careerGoalProgress, isCareerGoalDueSoon, isCareerGoalOverdue, type CareerGoal } from "@/lib/career-goals";
 import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
+import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
 
@@ -195,6 +196,28 @@ export function careerGoalCommandActions(goals: CareerGoal[]): CommandCenterActi
         priority: overdue ? "critical" as const : dueSoon || goal.priority === "high" ? "high" as const : progress < 25 ? "medium" as const : "low" as const,
         score: (overdue ? 100 : 0) + (dueSoon ? 70 : 0) + (goal.priority === "high" ? 30 : 0) + (100 - progress),
         tags: ["goals", goal.category, goal.priority, goal.horizon, ...goal.tags],
+      };
+    });
+}
+
+export function learningCommandActions(resources: LearningResource[]): CommandCenterAction[] {
+  return resources
+    .filter((resource) => !["completed", "archived"].includes(resource.status))
+    .filter((resource) => isLearningResourceOverdue(resource) || isLearningResourceDueSoon(resource) || resource.priority === "high" || learningProgress(resource) < 25)
+    .map((resource) => {
+      const overdue = isLearningResourceOverdue(resource);
+      const dueSoon = isLearningResourceDueSoon(resource);
+      const progress = learningProgress(resource);
+      return {
+        id: `learning:${resource.id}`,
+        source: "learning" as const,
+        title: resource.title,
+        detail: [resource.provider, resource.skillArea, `${progress}% complete`].filter(Boolean).join(" · "),
+        href: "/learning",
+        dueDate: resource.targetDate,
+        priority: overdue ? "critical" as const : dueSoon || resource.priority === "high" ? "high" as const : progress < 25 ? "medium" as const : "low" as const,
+        score: (overdue ? 100 : 0) + (dueSoon ? 60 : 0) + (resource.priority === "high" ? 30 : 0) + (100 - progress),
+        tags: ["learning", resource.type, resource.priority, resource.skillArea, ...resource.tags].filter(Boolean),
       };
     });
 }
