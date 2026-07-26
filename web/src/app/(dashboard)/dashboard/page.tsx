@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Award, BookOpen, Building2, FileText, FolderKanban, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, Library, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
+import { Award, BookOpen, Building2, Command, FileText, FolderKanban, Target, Mic, BarChart2, ArrowRight, Upload, TrendingUp, CheckCircle, X, Flame, Library, ListChecks, RefreshCw, Download, BriefcaseBusiness, NotebookPen, UserCheck, UsersRound, Medal, Handshake } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { CopyButton } from "@/components/shared/CopyButton";
@@ -76,6 +76,7 @@ const ONBOARDING_STEPS = [
 
 const quickActions = [
   { href: "/resume", icon: Upload, label: "Upload Resume", desc: "Add or update your resume", color: "text-blue-400" },
+  { href: "/command-center", icon: Command, label: "Open Command Center", desc: "Work the highest-priority actions first", color: "text-blue-400" },
   { href: "/resume?tab=jd", icon: Target, label: "Match a Job Description", desc: "Compare with a JD", color: "text-violet-400" },
   { href: "/interview/setup", icon: Mic, label: "Start Mock Interview", desc: "Practice your answers", color: "text-emerald-400" },
   { href: "/analytics", icon: BarChart2, label: "View Analytics", desc: "Track your progress", color: "text-amber-400" },
