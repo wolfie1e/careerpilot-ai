@@ -43,7 +43,7 @@ import { downloadCsv, downloadJson } from "@/lib/export-utils";
 
 export default function GoalsPage() {
   const [goals, setGoals] = useLocalStorage<CareerGoal[]>(LOCAL_STORAGE_KEYS.careerGoals, []);
-  const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [title, setTitle] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<CareerGoalStatus | "all">("all");
@@ -126,7 +126,7 @@ export default function GoalsPage() {
       tags: ["goal", ...goal.tags],
       recurrence: "none",
     };
-    window.localStorage.setItem(LOCAL_STORAGE_KEYS.plannerTasks, JSON.stringify([task, ...plannerTasks]));
+    setPlannerTasks((current) => [task, ...current]);
     toast.success("Goal added to planner");
   }
 
