@@ -2,19 +2,23 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Command } from "lucide-react";
+import { Command, Download } from "lucide-react";
+import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   buildCommandCenterActions,
+  commandCenterRows,
   commandCenterPriorityCounts,
   commandCenterSourceCounts,
+  commandCenterSummaryText,
   filterCommandCenterActions,
   type CommandCenterPreferences,
   type CommandCenterPriority,
   type CommandCenterSource,
   DEFAULT_COMMAND_CENTER_PREFERENCES,
 } from "@/lib/command-center";
+import { downloadCsv, downloadJson } from "@/lib/export-utils";
 import type { PlannerTask } from "@/lib/career-planner";
 import type { JobApplication } from "@/lib/application-tracker";
 import type { NetworkingContact } from "@/lib/networking";
@@ -115,6 +119,15 @@ export default function CommandCenterPage() {
         </button>
         <button onClick={() => setPreferences(DEFAULT_COMMAND_CENTER_PREFERENCES)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
           Reset filters
+        </button>
+        <CopyButton value={commandCenterSummaryText(visibleActions) || "No command actions"} label="Copy queue" className="rounded-xl px-3" />
+        <button onClick={() => downloadJson("careerpilot-command-center.json", { exported_at: new Date().toISOString(), actions: visibleActions })} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Download className="h-4 w-4" />
+          JSON
+        </button>
+        <button onClick={() => downloadCsv("careerpilot-command-center.csv", commandCenterRows(visibleActions))} disabled={!visibleActions.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          <Download className="h-4 w-4" />
+          CSV
         </button>
         <div className="rounded-xl border border-gray-800 px-3 py-2.5 text-sm text-gray-500">
           Showing {visibleActions.length} actions
