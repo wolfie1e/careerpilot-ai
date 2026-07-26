@@ -44,6 +44,21 @@ export interface CommandCenterPreferences {
   showLowPriority: boolean;
 }
 
+export interface CommandCenterData {
+  plannerTasks: PlannerTask[];
+  applications: JobApplication[];
+  networkingContacts: NetworkingContact[];
+  mentorshipContacts: MentorshipContact[];
+  careerGoals: CareerGoal[];
+  learningResources: LearningResource[];
+  targetCompanies: TargetCompany[];
+  professionalReferences: ProfessionalReference[];
+  questionBank: QuestionBankItem[];
+  portfolioProjects: PortfolioProject[];
+  offers: OfferComparison[];
+  certifications: CertificationRecord[];
+}
+
 export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   source: "all",
   priority: "all",
@@ -354,4 +369,21 @@ export function certificationCommandActions(records: CertificationRecord[]): Com
         tags: ["certifications", record.category, record.status, record.provider, ...record.skills].filter(Boolean),
       };
     });
+}
+
+export function buildCommandCenterActions(data: CommandCenterData): CommandCenterAction[] {
+  return sortCommandCenterActions([
+    ...plannerCommandActions(data.plannerTasks),
+    ...applicationCommandActions(data.applications),
+    ...networkingCommandActions(data.networkingContacts),
+    ...mentorshipCommandActions(data.mentorshipContacts),
+    ...careerGoalCommandActions(data.careerGoals),
+    ...learningCommandActions(data.learningResources),
+    ...companyCommandActions(data.targetCompanies),
+    ...referenceCommandActions(data.professionalReferences),
+    ...questionCommandActions(data.questionBank),
+    ...portfolioCommandActions(data.portfolioProjects),
+    ...offerCommandActions(data.offers),
+    ...certificationCommandActions(data.certifications),
+  ]);
 }
