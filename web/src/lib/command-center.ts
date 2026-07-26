@@ -1,5 +1,6 @@
 import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
+import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
 export type CommandCenterSource =
@@ -127,6 +128,28 @@ export function applicationCommandActions(applications: JobApplication[]): Comma
         priority: followUpDue || interviewSoon ? "critical" as const : application.priority === "high" ? "high" as const : "medium" as const,
         score: (followUpDue ? 100 : 0) + (interviewSoon ? 90 : 0) + (application.priority === "high" ? 30 : 0),
         tags: ["applications", application.stage, application.priority, ...application.tags],
+      };
+    });
+}
+
+export function networkingCommandActions(contacts: NetworkingContact[]): CommandCenterAction[] {
+  return contacts
+    .filter((contact) => !contact.archived)
+    .filter((contact) => isNetworkingFollowUpDue(contact) || isNetworkingFollowUpSoon(contact) || !contact.nextFollowUpAt || !contact.lastContactedAt)
+    .slice(0, Math.max(10, networkingStaleCount(contacts)))
+    .map((contact) => {
+      const due = isNetworkingFollowUpDue(contact);
+      const soon = isNetworkingFollowUpSoon(contact);
+      return {
+        id: `networking:${contact.id}`,
+        source: "networking" as const,
+        title: `Follow up with ${contact.name}`,
+        detail: [contact.role, contact.company, contact.notes].filter(Boolean).join(" · ") || "Keep this relationship warm",
+        href: "/networking",
+        dueDate: contact.nextFollowUpAt,
+        priority: due ? "critical" as const : soon ? "high" as const : contact.strength === "strong" ? "medium" as const : "low" as const,
+        score: (due ? 100 : 0) + (soon ? 60 : 0) + (contact.strength === "strong" ? 20 : 0),
+        tags: ["networking", contact.strength, ...contact.tags],
       };
     });
 }
