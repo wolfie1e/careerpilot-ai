@@ -424,7 +424,7 @@ export function commandActionToPlannerTask(action: CommandCenterAction): Planner
     createdAt: now,
     completedAt: null,
     archived: false,
-    tags: ["command-center", action.source, ...action.tags.slice(0, 5)],
+    tags: ["command-center", `command:${action.id}`, action.source, ...action.tags.slice(0, 5)],
     recurrence: "none",
   };
 }
