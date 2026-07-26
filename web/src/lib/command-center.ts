@@ -4,6 +4,7 @@ import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/
 import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
+import { isReferenceActionDue, isReferenceActionSoon, referenceProfileCompletion, type ProfessionalReference } from "@/lib/professional-references";
 import { companyReadinessScore, isCompanyActionDue, isCompanyActionSoon, type TargetCompany } from "@/lib/target-companies";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
@@ -241,6 +242,28 @@ export function companyCommandActions(companies: TargetCompany[]): CommandCenter
         priority: due ? "critical" as const : soon || company.stage === "ready" ? "high" as const : readiness < 50 ? "medium" as const : "low" as const,
         score: (due ? 100 : 0) + (soon ? 70 : 0) + (company.stage === "ready" ? 40 : 0) + (100 - readiness),
         tags: ["companies", company.stage, company.priority, company.industry, company.targetRole, ...company.tags].filter(Boolean),
+      };
+    });
+}
+
+export function referenceCommandActions(references: ProfessionalReference[]): CommandCenterAction[] {
+  return references
+    .filter((reference) => reference.status !== "archived")
+    .filter((reference) => isReferenceActionDue(reference) || isReferenceActionSoon(reference) || reference.status === "permission_requested" || (reference.status === "used" && !reference.thankYouSent) || referenceProfileCompletion(reference) < 70)
+    .map((reference) => {
+      const due = isReferenceActionDue(reference);
+      const soon = isReferenceActionSoon(reference);
+      const completion = referenceProfileCompletion(reference);
+      return {
+        id: `references:${reference.id}`,
+        source: "references" as const,
+        title: reference.name,
+        detail: reference.nextAction || reference.supportingStories || `${completion}% profile completion`,
+        href: "/references",
+        dueDate: reference.nextActionDate,
+        priority: due || (reference.status === "used" && !reference.thankYouSent) ? "critical" as const : soon || reference.status === "permission_requested" ? "high" as const : completion < 70 ? "medium" as const : "low" as const,
+        score: (due ? 100 : 0) + (soon ? 60 : 0) + (reference.status === "used" && !reference.thankYouSent ? 80 : 0) + (100 - completion),
+        tags: ["references", reference.relationship, reference.status, ...reference.strengths],
       };
     });
 }
