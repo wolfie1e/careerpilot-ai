@@ -53,7 +53,7 @@ export default function NetworkingPage() {
   const [tagFilter, setTagFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
   const [companyFilter, setCompanyFilter] = useState("");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.networkingShowArchived, false);
 
   const availableTags = [...new Set(contacts.flatMap((contact) => contact.tags || []))].sort();
   const availableSources = [...new Set(contacts.map((contact) => contact.source).filter(Boolean))].sort();
