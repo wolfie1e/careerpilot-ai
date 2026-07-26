@@ -42,6 +42,7 @@ export interface CommandCenterPreferences {
   source: CommandCenterSource | "all";
   priority: CommandCenterPriority | "all";
   showLowPriority: boolean;
+  query: string;
 }
 
 export interface CommandCenterData {
@@ -63,6 +64,7 @@ export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   source: "all",
   priority: "all",
   showLowPriority: true,
+  query: "",
 };
 
 const PRIORITY_WEIGHT: Record<CommandCenterPriority, number> = {
@@ -95,6 +97,8 @@ export function filterCommandCenterActions(
     if (preferences.source !== "all" && action.source !== preferences.source) return false;
     if (preferences.priority !== "all" && action.priority !== preferences.priority) return false;
     if (!preferences.showLowPriority && action.priority === "low") return false;
+    const query = preferences.query.trim().toLowerCase();
+    if (query && !`${action.title} ${action.detail} ${action.tags.join(" ")}`.toLowerCase().includes(query)) return false;
     return true;
   });
 }
