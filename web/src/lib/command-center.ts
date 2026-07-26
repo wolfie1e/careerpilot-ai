@@ -58,3 +58,34 @@ export function sortCommandCenterActions(actions: CommandCenterAction[]): Comman
     return b.score - a.score || a.title.localeCompare(b.title);
   });
 }
+
+export function filterCommandCenterActions(
+  actions: CommandCenterAction[],
+  preferences: CommandCenterPreferences,
+): CommandCenterAction[] {
+  return sortCommandCenterActions(actions).filter((action) => {
+    if (preferences.source !== "all" && action.source !== preferences.source) return false;
+    if (preferences.priority !== "all" && action.priority !== preferences.priority) return false;
+    if (!preferences.showLowPriority && action.priority === "low") return false;
+    return true;
+  });
+}
+
+export function commandCenterSummaryText(actions: CommandCenterAction[]): string {
+  return sortCommandCenterActions(actions)
+    .map((action, index) => `${index + 1}. [${action.priority}] ${action.title}${action.dueDate ? ` (${action.dueDate})` : ""}\n${action.detail}`)
+    .join("\n\n");
+}
+
+export function commandCenterRows(actions: CommandCenterAction[]) {
+  return sortCommandCenterActions(actions).map((action) => ({
+    source: action.source,
+    priority: action.priority,
+    title: action.title,
+    detail: action.detail,
+    due_date: action.dueDate,
+    score: action.score,
+    tags: action.tags.join(", "),
+    href: action.href,
+  }));
+}
