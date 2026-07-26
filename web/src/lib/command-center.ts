@@ -4,6 +4,7 @@ import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/
 import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
+import { isPortfolioProjectOverdue, portfolioProjectReadiness, type PortfolioProject } from "@/lib/portfolio-projects";
 import { isReferenceActionDue, isReferenceActionSoon, referenceProfileCompletion, type ProfessionalReference } from "@/lib/professional-references";
 import { isQuestionReviewDue, questionAnswerCompletion, type QuestionBankItem } from "@/lib/question-bank";
 import { companyReadinessScore, isCompanyActionDue, isCompanyActionSoon, type TargetCompany } from "@/lib/target-companies";
@@ -286,6 +287,27 @@ export function questionCommandActions(items: QuestionBankItem[]): CommandCenter
         priority: due ? "critical" as const : item.confidence <= 5 || item.difficulty >= 8 ? "high" as const : completion < 70 ? "medium" as const : "low" as const,
         score: (due ? 100 : 0) + (item.difficulty >= 8 ? 40 : 0) + (10 - item.confidence) * 5 + (100 - completion),
         tags: ["questions", item.category, item.status, item.targetRole, ...item.tags].filter(Boolean),
+      };
+    });
+}
+
+export function portfolioCommandActions(projects: PortfolioProject[]): CommandCenterAction[] {
+  return projects
+    .filter((project) => !["published", "archived"].includes(project.status))
+    .filter((project) => isPortfolioProjectOverdue(project) || !project.nextAction.trim() || (!project.repositoryUrl && !project.liveUrl && !project.caseStudyUrl) || portfolioProjectReadiness(project) < 70)
+    .map((project) => {
+      const overdue = isPortfolioProjectOverdue(project);
+      const readiness = portfolioProjectReadiness(project);
+      return {
+        id: `portfolio:${project.id}`,
+        source: "portfolio" as const,
+        title: project.name,
+        detail: project.nextAction || project.summary || `${readiness}% portfolio readiness`,
+        href: "/portfolio",
+        dueDate: project.targetDate,
+        priority: overdue ? "critical" as const : project.priority === "high" ? "high" as const : readiness < 70 ? "medium" as const : "low" as const,
+        score: (overdue ? 100 : 0) + (project.priority === "high" ? 40 : 0) + (100 - readiness),
+        tags: ["portfolio", project.status, project.priority, project.targetRole, ...project.skills, ...project.tags].filter(Boolean),
       };
     });
 }
