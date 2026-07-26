@@ -405,6 +405,10 @@ export function commandCenterSourceCounts(actions: CommandCenterAction[]): Recor
   }, {} as Record<CommandCenterSource, number>);
 }
 
+export function topCommandCenterActions(actions: CommandCenterAction[], limit = 5): CommandCenterAction[] {
+  return sortCommandCenterActions(actions).slice(0, limit);
+}
+
 export function commandActionToPlannerTask(action: CommandCenterAction): PlannerTask {
   const now = new Date().toISOString();
   return {
