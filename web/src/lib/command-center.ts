@@ -1,6 +1,7 @@
 import { careerGoalProgress, isCareerGoalDueSoon, isCareerGoalOverdue, type CareerGoal } from "@/lib/career-goals";
 import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
+import { certificationProgress, isCertificationExpiring, type CertificationRecord } from "@/lib/certification-tracker";
 import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
@@ -330,6 +331,27 @@ export function offerCommandActions(offers: OfferComparison[]): CommandCenterAct
         priority: overdue ? "critical" as const : soon || offer.status === "negotiating" ? "high" as const : "medium" as const,
         score: (overdue ? 100 : 0) + (soon ? 70 : 0) + (offer.status === "negotiating" ? 40 : 0) + offerDecisionScore(offer),
         tags: ["offers", offer.status, offer.workMode, offer.currency, ...offer.tags].filter(Boolean),
+      };
+    });
+}
+
+export function certificationCommandActions(records: CertificationRecord[]): CommandCenterAction[] {
+  return records
+    .filter((record) => record.status !== "archived")
+    .filter((record) => isCertificationExpiring(record) || record.status === "studying" || (record.status === "earned" && !record.credentialUrl) || (record.status === "planned" && record.targetDate))
+    .map((record) => {
+      const expiring = isCertificationExpiring(record);
+      const progress = certificationProgress(record);
+      return {
+        id: `certifications:${record.id}`,
+        source: "certifications" as const,
+        title: record.title,
+        detail: record.notes || [record.provider, record.examCode, `${progress}% complete`].filter(Boolean).join(" · "),
+        href: "/certifications",
+        dueDate: record.targetDate || record.expiresAt,
+        priority: expiring ? "critical" as const : record.status === "studying" ? "high" as const : !record.credentialUrl && record.status === "earned" ? "medium" as const : "low" as const,
+        score: (expiring ? 100 : 0) + (record.status === "studying" ? 50 : 0) + (100 - progress),
+        tags: ["certifications", record.category, record.status, record.provider, ...record.skills].filter(Boolean),
       };
     });
 }
