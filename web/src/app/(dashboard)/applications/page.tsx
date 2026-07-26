@@ -56,7 +56,7 @@ export default function ApplicationsPage() {
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState<ApplicationStage | "all">("all");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.applicationsShowArchived, false);
   const [priorityFilter, setPriorityFilter] = useState<JobApplication["priority"] | "all">("all");
   const [tagFilter, setTagFilter] = useState("");
 
