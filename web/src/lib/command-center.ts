@@ -387,3 +387,16 @@ export function buildCommandCenterActions(data: CommandCenterData): CommandCente
     ...certificationCommandActions(data.certifications),
   ]);
 }
+
+export function commandCenterPriorityCounts(actions: CommandCenterAction[]): Record<CommandCenterPriority, number> {
+  const counts: Record<CommandCenterPriority, number> = { critical: 0, high: 0, medium: 0, low: 0 };
+  actions.forEach((action) => { counts[action.priority] += 1; });
+  return counts;
+}
+
+export function commandCenterSourceCounts(actions: CommandCenterAction[]): Record<CommandCenterSource, number> {
+  return actions.reduce<Record<CommandCenterSource, number>>((counts, action) => {
+    counts[action.source] = (counts[action.source] || 0) + 1;
+    return counts;
+  }, {} as Record<CommandCenterSource, number>);
+}
