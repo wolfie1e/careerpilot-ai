@@ -55,7 +55,7 @@ export default function PlannerPage() {
   const [statusFilter, setStatusFilter] = useState<PlannerStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<PlannerPriority | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<PlannerCategory | "all">("all");
-  const [showArchived, setShowArchived] = useState(false);
+  const [showArchived, setShowArchived] = useLocalStorage<boolean>(LOCAL_STORAGE_KEYS.plannerShowArchived, false);
   const [tagFilter, setTagFilter] = useState("");
 
   const visibleTasks = useMemo(() => sortPlannerTasks(tasks).filter((task) => {
