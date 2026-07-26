@@ -122,6 +122,12 @@ export default function CommandCenterPage() {
       </div>
 
       <div className="space-y-3">
+        {visibleActions.length === 0 && (
+          <div role="status" className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/70 p-12 text-center">
+            <Command className="mx-auto mb-3 h-9 w-9 text-gray-600" />
+            <p className="text-sm text-gray-400">No command actions match this view.</p>
+          </div>
+        )}
         {visibleActions.slice(0, 25).map((action) => (
           <article key={action.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
