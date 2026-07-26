@@ -1,3 +1,4 @@
+import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
@@ -107,4 +108,25 @@ export function plannerCommandActions(tasks: PlannerTask[]): CommandCenterAction
       score: (isPlannerTaskOverdue(task) ? 100 : 0) + (task.priority === "high" ? 40 : 0) + Math.max(0, task.estimateMinutes || 0),
       tags: ["planner", task.category, task.priority, ...task.tags],
     }));
+}
+
+export function applicationCommandActions(applications: JobApplication[]): CommandCenterAction[] {
+  return applications
+    .filter((application) => !application.archived && !["offer", "rejected", "withdrawn"].includes(application.stage))
+    .filter((application) => isApplicationFollowUpDue(application) || isApplicationInterviewUpcoming(application) || application.priority === "high" || !application.nextAction.trim())
+    .map((application) => {
+      const interviewSoon = isApplicationInterviewUpcoming(application);
+      const followUpDue = isApplicationFollowUpDue(application);
+      return {
+        id: `applications:${application.id}`,
+        source: "applications" as const,
+        title: `${application.company} — ${application.role}`,
+        detail: application.nextAction || application.notes || `Current stage: ${application.stage}`,
+        href: "/applications",
+        dueDate: application.followUpAt || application.interviewAt.slice(0, 10),
+        priority: followUpDue || interviewSoon ? "critical" as const : application.priority === "high" ? "high" as const : "medium" as const,
+        score: (followUpDue ? 100 : 0) + (interviewSoon ? 90 : 0) + (application.priority === "high" ? 30 : 0),
+        tags: ["applications", application.stage, application.priority, ...application.tags],
+      };
+    });
 }
