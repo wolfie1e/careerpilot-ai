@@ -20,7 +20,7 @@ import {
   type CommandCenterSource,
   DEFAULT_COMMAND_CENTER_PREFERENCES,
 } from "@/lib/command-center";
-import { downloadCsv, downloadJson } from "@/lib/export-utils";
+import { downloadCsv, downloadJson, downloadMarkdown } from "@/lib/export-utils";
 import type { PlannerTask } from "@/lib/career-planner";
 import type { JobApplication } from "@/lib/application-tracker";
 import type { NetworkingContact } from "@/lib/networking";
@@ -137,6 +137,10 @@ export default function CommandCenterPage() {
         <button onClick={() => downloadCsv("careerpilot-command-center.csv", commandCenterRows(visibleActions))} disabled={!visibleActions.length} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
           <Download className="h-4 w-4" />
           CSV
+        </button>
+        <button onClick={() => downloadMarkdown("careerpilot-command-center.md", `# CareerPilot Command Center\n\n${commandCenterSummaryText(visibleActions) || "No command actions."}`)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
+          <Download className="h-4 w-4" />
+          Markdown
         </button>
         <div className="rounded-xl border border-gray-800 px-3 py-2.5 text-sm text-gray-500">
           Showing {visibleActions.length} actions
