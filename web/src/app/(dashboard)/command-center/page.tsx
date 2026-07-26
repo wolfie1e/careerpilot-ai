@@ -2,12 +2,14 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Command, Download } from "lucide-react";
+import { Command, Download, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
 import {
   buildCommandCenterActions,
+  commandActionToPlannerTask,
   commandCenterRows,
   commandCenterPriorityCounts,
   commandCenterSourceCounts,
@@ -33,7 +35,7 @@ import type { OfferComparison } from "@/lib/offer-tracker";
 import type { CertificationRecord } from "@/lib/certification-tracker";
 
 export default function CommandCenterPage() {
-  const [plannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
+  const [plannerTasks, setPlannerTasks] = useLocalStorage<PlannerTask[]>(LOCAL_STORAGE_KEYS.plannerTasks, []);
   const [applications] = useLocalStorage<JobApplication[]>(LOCAL_STORAGE_KEYS.jobApplications, []);
   const [networkingContacts] = useLocalStorage<NetworkingContact[]>(LOCAL_STORAGE_KEYS.networkingContacts, []);
   const [mentorshipContacts] = useLocalStorage<MentorshipContact[]>(LOCAL_STORAGE_KEYS.mentorshipContacts, []);
@@ -65,6 +67,13 @@ export default function CommandCenterPage() {
   const sourceCounts = commandCenterSourceCounts(actions);
   const activeSources = Object.keys(sourceCounts).length;
   const visibleActions = filterCommandCenterActions(actions, preferences);
+
+  function addActionToPlanner(actionId: string) {
+    const action = actions.find((item) => item.id === actionId);
+    if (!action) return;
+    setPlannerTasks((current) => [commandActionToPlannerTask(action), ...current]);
+    toast.success("Command action added to planner");
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -153,9 +162,15 @@ export default function CommandCenterPage() {
                 <h3 className="mt-3 text-base font-semibold text-white">{action.title}</h3>
                 <p className="mt-1 text-sm text-gray-400">{action.detail}</p>
               </div>
-              <Link href={action.href} className="rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 hover:text-white">
-                Open
-              </Link>
+              <div className="flex gap-2">
+                <button onClick={() => addActionToPlanner(action.id)} className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 hover:text-white">
+                  <Plus className="h-4 w-4" />
+                  Planner
+                </button>
+                <Link href={action.href} className="rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 hover:text-white">
+                  Open
+                </Link>
+              </div>
             </div>
             {action.tags.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
