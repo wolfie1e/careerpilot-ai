@@ -1,3 +1,5 @@
+import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
+
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
 export type CommandCenterSource =
   | "planner"
@@ -88,4 +90,21 @@ export function commandCenterRows(actions: CommandCenterAction[]) {
     tags: action.tags.join(", "),
     href: action.href,
   }));
+}
+
+export function plannerCommandActions(tasks: PlannerTask[]): CommandCenterAction[] {
+  return tasks
+    .filter((task) => !task.archived && task.status !== "done")
+    .filter((task) => isPlannerTaskOverdue(task) || isPlannerTaskDueSoon(task) || task.priority === "high" || task.status === "in_progress")
+    .map((task) => ({
+      id: `planner:${task.id}`,
+      source: "planner" as const,
+      title: task.title,
+      detail: task.notes || `${task.category} action`,
+      href: "/planner",
+      dueDate: task.dueDate,
+      priority: isPlannerTaskOverdue(task) ? "critical" as const : task.priority === "high" ? "high" as const : task.status === "in_progress" ? "medium" as const : "low" as const,
+      score: (isPlannerTaskOverdue(task) ? 100 : 0) + (task.priority === "high" ? 40 : 0) + Math.max(0, task.estimateMinutes || 0),
+      tags: ["planner", task.category, task.priority, ...task.tags],
+    }));
 }
