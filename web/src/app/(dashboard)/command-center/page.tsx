@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { Command } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "@/lib/constants";
@@ -118,6 +119,32 @@ export default function CommandCenterPage() {
         <div className="rounded-xl border border-gray-800 px-3 py-2.5 text-sm text-gray-500">
           Showing {visibleActions.length} actions
         </div>
+      </div>
+
+      <div className="space-y-3">
+        {visibleActions.slice(0, 25).map((action) => (
+          <article key={action.id} className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-300">{action.source}</span>
+                  <span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-300">{action.priority}</span>
+                  {action.dueDate && <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-300">{action.dueDate}</span>}
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-white">{action.title}</h3>
+                <p className="mt-1 text-sm text-gray-400">{action.detail}</p>
+              </div>
+              <Link href={action.href} className="rounded-xl border border-gray-700 px-3 py-2 text-sm font-medium text-gray-300 hover:text-white">
+                Open
+              </Link>
+            </div>
+            {action.tags.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {action.tags.slice(0, 8).map((tag) => <span key={tag} className="rounded-full bg-gray-800 px-2 py-1 text-xs text-gray-500">{tag}</span>)}
+              </div>
+            )}
+          </article>
+        ))}
       </div>
     </div>
   );
