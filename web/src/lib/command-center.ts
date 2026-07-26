@@ -1,3 +1,4 @@
+import { careerGoalProgress, isCareerGoalDueSoon, isCareerGoalOverdue, type CareerGoal } from "@/lib/career-goals";
 import { isApplicationFollowUpDue, isApplicationInterviewUpcoming, type JobApplication } from "@/lib/application-tracker";
 import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/lib/career-planner";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
@@ -172,6 +173,28 @@ export function mentorshipCommandActions(contacts: MentorshipContact[]): Command
         priority: due ? "critical" as const : soon || contact.favorite ? "high" as const : contact.confidence <= 5 ? "medium" as const : "low" as const,
         score: (due ? 100 : 0) + (soon ? 70 : 0) + (contact.favorite ? 30 : 0) + Math.max(0, 10 - contact.confidence),
         tags: ["mentorship", contact.relationship, contact.status, ...contact.topics],
+      };
+    });
+}
+
+export function careerGoalCommandActions(goals: CareerGoal[]): CommandCenterAction[] {
+  return goals
+    .filter((goal) => goal.status === "active")
+    .filter((goal) => isCareerGoalOverdue(goal) || isCareerGoalDueSoon(goal) || goal.priority === "high" || careerGoalProgress(goal) < 25)
+    .map((goal) => {
+      const overdue = isCareerGoalOverdue(goal);
+      const dueSoon = isCareerGoalDueSoon(goal);
+      const progress = careerGoalProgress(goal);
+      return {
+        id: `goals:${goal.id}`,
+        source: "goals" as const,
+        title: goal.title,
+        detail: goal.description || goal.notes || `${progress}% complete`,
+        href: "/goals",
+        dueDate: goal.targetDate,
+        priority: overdue ? "critical" as const : dueSoon || goal.priority === "high" ? "high" as const : progress < 25 ? "medium" as const : "low" as const,
+        score: (overdue ? 100 : 0) + (dueSoon ? 70 : 0) + (goal.priority === "high" ? 30 : 0) + (100 - progress),
+        tags: ["goals", goal.category, goal.priority, goal.horizon, ...goal.tags],
       };
     });
 }
