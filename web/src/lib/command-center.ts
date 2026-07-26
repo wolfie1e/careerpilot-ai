@@ -4,6 +4,7 @@ import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/
 import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
+import { isOfferDeadlineOverdue, isOfferDeadlineSoon, offerDecisionScore, offerTotalCompensation, type OfferComparison } from "@/lib/offer-tracker";
 import { isPortfolioProjectOverdue, portfolioProjectReadiness, type PortfolioProject } from "@/lib/portfolio-projects";
 import { isReferenceActionDue, isReferenceActionSoon, referenceProfileCompletion, type ProfessionalReference } from "@/lib/professional-references";
 import { isQuestionReviewDue, questionAnswerCompletion, type QuestionBankItem } from "@/lib/question-bank";
@@ -308,6 +309,27 @@ export function portfolioCommandActions(projects: PortfolioProject[]): CommandCe
         priority: overdue ? "critical" as const : project.priority === "high" ? "high" as const : readiness < 70 ? "medium" as const : "low" as const,
         score: (overdue ? 100 : 0) + (project.priority === "high" ? 40 : 0) + (100 - readiness),
         tags: ["portfolio", project.status, project.priority, project.targetRole, ...project.skills, ...project.tags].filter(Boolean),
+      };
+    });
+}
+
+export function offerCommandActions(offers: OfferComparison[]): CommandCenterAction[] {
+  return offers
+    .filter((offer) => !["accepted", "declined", "archived"].includes(offer.status))
+    .filter((offer) => isOfferDeadlineOverdue(offer) || isOfferDeadlineSoon(offer) || offer.status === "negotiating" || offerTotalCompensation(offer) === 0)
+    .map((offer) => {
+      const overdue = isOfferDeadlineOverdue(offer);
+      const soon = isOfferDeadlineSoon(offer);
+      return {
+        id: `offers:${offer.id}`,
+        source: "offers" as const,
+        title: `${offer.company} — ${offer.role || "Offer"}`,
+        detail: offer.negotiationNotes || offer.notes || `Decision score ${offerDecisionScore(offer)}`,
+        href: "/offers",
+        dueDate: offer.decisionDeadline,
+        priority: overdue ? "critical" as const : soon || offer.status === "negotiating" ? "high" as const : "medium" as const,
+        score: (overdue ? 100 : 0) + (soon ? 70 : 0) + (offer.status === "negotiating" ? 40 : 0) + offerDecisionScore(offer),
+        tags: ["offers", offer.status, offer.workMode, offer.currency, ...offer.tags].filter(Boolean),
       };
     });
 }
