@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Command, Download, Plus } from "lucide-react";
+import { Command, Download, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/shared/CopyButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -102,6 +102,15 @@ export default function CommandCenterPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <label className="relative min-w-64 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+          <input
+            value={preferences.query}
+            onChange={(event) => setPreferences((current) => ({ ...current, query: event.target.value }))}
+            placeholder="Search command actions"
+            className="w-full rounded-xl border border-gray-700 bg-gray-900 py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:border-blue-500"
+          />
+        </label>
         <select
           aria-label="Filter command actions by source"
           value={preferences.source}
