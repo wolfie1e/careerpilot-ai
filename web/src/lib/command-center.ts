@@ -5,6 +5,7 @@ import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress,
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
 import { isReferenceActionDue, isReferenceActionSoon, referenceProfileCompletion, type ProfessionalReference } from "@/lib/professional-references";
+import { isQuestionReviewDue, questionAnswerCompletion, type QuestionBankItem } from "@/lib/question-bank";
 import { companyReadinessScore, isCompanyActionDue, isCompanyActionSoon, type TargetCompany } from "@/lib/target-companies";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
@@ -264,6 +265,27 @@ export function referenceCommandActions(references: ProfessionalReference[]): Co
         priority: due || (reference.status === "used" && !reference.thankYouSent) ? "critical" as const : soon || reference.status === "permission_requested" ? "high" as const : completion < 70 ? "medium" as const : "low" as const,
         score: (due ? 100 : 0) + (soon ? 60 : 0) + (reference.status === "used" && !reference.thankYouSent ? 80 : 0) + (100 - completion),
         tags: ["references", reference.relationship, reference.status, ...reference.strengths],
+      };
+    });
+}
+
+export function questionCommandActions(items: QuestionBankItem[]): CommandCenterAction[] {
+  return items
+    .filter((item) => item.status !== "archived")
+    .filter((item) => isQuestionReviewDue(item) || item.confidence <= 5 || item.difficulty >= 8 || questionAnswerCompletion(item) < 70)
+    .map((item) => {
+      const due = isQuestionReviewDue(item);
+      const completion = questionAnswerCompletion(item);
+      return {
+        id: `questions:${item.id}`,
+        source: "questions" as const,
+        title: item.question,
+        detail: item.answerOutline || `${completion}% answer completion · confidence ${item.confidence}/10`,
+        href: "/question-bank",
+        dueDate: item.nextReviewAt,
+        priority: due ? "critical" as const : item.confidence <= 5 || item.difficulty >= 8 ? "high" as const : completion < 70 ? "medium" as const : "low" as const,
+        score: (due ? 100 : 0) + (item.difficulty >= 8 ? 40 : 0) + (10 - item.confidence) * 5 + (100 - completion),
+        tags: ["questions", item.category, item.status, item.targetRole, ...item.tags].filter(Boolean),
       };
     });
 }
