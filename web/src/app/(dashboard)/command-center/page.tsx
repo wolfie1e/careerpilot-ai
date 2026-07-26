@@ -82,6 +82,19 @@ export default function CommandCenterPage() {
     toast.success("Command action added to planner");
   }
 
+  function addFocusActionsToPlanner() {
+    const existingTags = new Set(plannerTasks.flatMap((task) => task.archived || task.status === "done" ? [] : task.tags));
+    const newTasks = focusActions
+      .filter((action) => !existingTags.has(`command:${action.id}`))
+      .map(commandActionToPlannerTask);
+    if (!newTasks.length) {
+      toast.info("Top command actions are already planned");
+      return;
+    }
+    setPlannerTasks((current) => [...newTasks, ...current]);
+    toast.success(`${newTasks.length} focus actions added to planner`);
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -165,7 +178,12 @@ export default function CommandCenterPage() {
 
       {focusActions.length > 0 && (
         <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-5">
-          <h3 className="text-sm font-semibold text-blue-100">Focus next</h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold text-blue-100">Focus next</h3>
+            <button onClick={addFocusActionsToPlanner} className="rounded-lg border border-blue-400/30 px-3 py-1.5 text-xs font-medium text-blue-100 hover:border-blue-300/60">
+              Add all to planner
+            </button>
+          </div>
           <div className="mt-3 grid gap-2 md:grid-cols-5">
             {focusActions.map((action) => (
               <button key={action.id} onClick={() => addActionToPlanner(action.id)} className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-left text-xs text-blue-100 hover:border-blue-400/40">
