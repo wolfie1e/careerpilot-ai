@@ -4,6 +4,7 @@ import { isPlannerTaskDueSoon, isPlannerTaskOverdue, type PlannerTask } from "@/
 import { isLearningResourceDueSoon, isLearningResourceOverdue, learningProgress, type LearningResource } from "@/lib/learning-path";
 import { isMentorshipFollowUpDue, isMentorshipFollowUpSoon, suggestedMentorshipNextContact, type MentorshipContact } from "@/lib/mentorship";
 import { isNetworkingFollowUpDue, isNetworkingFollowUpSoon, networkingStaleCount, type NetworkingContact } from "@/lib/networking";
+import { companyReadinessScore, isCompanyActionDue, isCompanyActionSoon, type TargetCompany } from "@/lib/target-companies";
 
 export type CommandCenterPriority = "critical" | "high" | "medium" | "low";
 export type CommandCenterSource =
@@ -218,6 +219,28 @@ export function learningCommandActions(resources: LearningResource[]): CommandCe
         priority: overdue ? "critical" as const : dueSoon || resource.priority === "high" ? "high" as const : progress < 25 ? "medium" as const : "low" as const,
         score: (overdue ? 100 : 0) + (dueSoon ? 60 : 0) + (resource.priority === "high" ? 30 : 0) + (100 - progress),
         tags: ["learning", resource.type, resource.priority, resource.skillArea, ...resource.tags].filter(Boolean),
+      };
+    });
+}
+
+export function companyCommandActions(companies: TargetCompany[]): CommandCenterAction[] {
+  return companies
+    .filter((company) => company.stage !== "archived")
+    .filter((company) => isCompanyActionDue(company) || isCompanyActionSoon(company) || company.stage === "ready" || companyReadinessScore(company) < 50)
+    .map((company) => {
+      const due = isCompanyActionDue(company);
+      const soon = isCompanyActionSoon(company);
+      const readiness = companyReadinessScore(company);
+      return {
+        id: `companies:${company.id}`,
+        source: "companies" as const,
+        title: company.name,
+        detail: company.nextAction || company.researchNotes || `${readiness}% company readiness`,
+        href: "/companies",
+        dueDate: company.nextActionDate,
+        priority: due ? "critical" as const : soon || company.stage === "ready" ? "high" as const : readiness < 50 ? "medium" as const : "low" as const,
+        score: (due ? 100 : 0) + (soon ? 70 : 0) + (company.stage === "ready" ? 40 : 0) + (100 - readiness),
+        tags: ["companies", company.stage, company.priority, company.industry, company.targetRole, ...company.tags].filter(Boolean),
       };
     });
 }
