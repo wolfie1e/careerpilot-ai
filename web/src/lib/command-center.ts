@@ -44,6 +44,7 @@ export interface CommandCenterPreferences {
   showLowPriority: boolean;
   query: string;
   hiddenActionIds: string[];
+  snoozedUntilById: Record<string, string>;
 }
 
 export interface CommandCenterData {
@@ -67,6 +68,7 @@ export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   showLowPriority: true,
   query: "",
   hiddenActionIds: [],
+  snoozedUntilById: {},
 };
 
 const PRIORITY_WEIGHT: Record<CommandCenterPriority, number> = {
@@ -91,6 +93,23 @@ export function sortCommandCenterActions(actions: CommandCenterAction[]): Comman
   });
 }
 
+export function isCommandActionSnoozed(
+  action: CommandCenterAction,
+  preferences: CommandCenterPreferences,
+  date = new Date(),
+): boolean {
+  const snoozedUntil = preferences.snoozedUntilById?.[action.id];
+  return Boolean(snoozedUntil && snoozedUntil > commandCenterTodayKey(date));
+}
+
+export function activeCommandCenterSnoozes(
+  preferences: CommandCenterPreferences,
+  date = new Date(),
+): Array<[string, string]> {
+  const today = commandCenterTodayKey(date);
+  return Object.entries(preferences.snoozedUntilById || {}).filter(([, snoozedUntil]) => snoozedUntil > today);
+}
+
 export function filterCommandCenterActions(
   actions: CommandCenterAction[],
   preferences: CommandCenterPreferences,
@@ -98,6 +117,7 @@ export function filterCommandCenterActions(
   const hiddenActionIds = new Set(preferences.hiddenActionIds || []);
   return sortCommandCenterActions(actions).filter((action) => {
     if (hiddenActionIds.has(action.id)) return false;
+    if (isCommandActionSnoozed(action, preferences)) return false;
     if (preferences.source !== "all" && action.source !== preferences.source) return false;
     if (preferences.priority !== "all" && action.priority !== preferences.priority) return false;
     if (!preferences.showLowPriority && action.priority === "low") return false;
