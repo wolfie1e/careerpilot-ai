@@ -131,6 +131,40 @@ export function activeCommandCenterSnoozes(
   return Object.entries(preferences.snoozedUntilById || {}).filter(([, snoozedUntil]) => snoozedUntil > today);
 }
 
+export function pruneCommandCenterPreferences(
+  preferences: Partial<CommandCenterPreferences> | null | undefined,
+  actions: CommandCenterAction[],
+  date = new Date(),
+): CommandCenterPreferences {
+  const normalizedPreferences = normalizeCommandCenterPreferences(preferences);
+  const actionIds = new Set(actions.map((action) => action.id));
+  const today = commandCenterTodayKey(date);
+  return {
+    ...normalizedPreferences,
+    hiddenActionIds: normalizedPreferences.hiddenActionIds.filter((actionId) => actionIds.has(actionId)),
+    snoozedUntilById: Object.fromEntries(
+      Object.entries(normalizedPreferences.snoozedUntilById).filter(([actionId, snoozedUntil]) => (
+        actionIds.has(actionId) && snoozedUntil > today
+      )),
+    ),
+  };
+}
+
+export function staleCommandCenterPauseCount(
+  preferences: Partial<CommandCenterPreferences> | null | undefined,
+  actions: CommandCenterAction[],
+  date = new Date(),
+): number {
+  const normalizedPreferences = normalizeCommandCenterPreferences(preferences);
+  const prunedPreferences = pruneCommandCenterPreferences(normalizedPreferences, actions, date);
+  return (
+    normalizedPreferences.hiddenActionIds.length
+    - prunedPreferences.hiddenActionIds.length
+    + Object.keys(normalizedPreferences.snoozedUntilById).length
+    - Object.keys(prunedPreferences.snoozedUntilById).length
+  );
+}
+
 export function commandCenterDueLabel(action: CommandCenterAction, date = new Date()): string {
   if (!action.dueDate) return "";
   const todayMs = dateKeyToUtcMs(commandCenterTodayKey(date));
