@@ -62,6 +62,15 @@ export interface CommandCenterData {
   certifications: CertificationRecord[];
 }
 
+export interface CommandCenterSourceSummary {
+  source: CommandCenterSource;
+  actions: number;
+  critical: number;
+  high: number;
+  planned: number;
+  topPriority: CommandCenterPriority;
+}
+
 export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   source: "all",
   priority: "all",
@@ -230,6 +239,37 @@ export function commandCenterSourceRows(actions: CommandCenterAction[]) {
       source,
       actions,
     }));
+}
+
+export function commandCenterSourceSummaries(
+  actions: CommandCenterAction[],
+  tasks: PlannerTask[] = [],
+): CommandCenterSourceSummary[] {
+  const summaries = new Map<CommandCenterSource, CommandCenterSourceSummary>();
+  sortCommandCenterActions(actions).forEach((action) => {
+    const summary = summaries.get(action.source) || {
+      source: action.source,
+      actions: 0,
+      critical: 0,
+      high: 0,
+      planned: 0,
+      topPriority: action.priority,
+    };
+    summary.actions += 1;
+    if (action.priority === "critical") summary.critical += 1;
+    if (action.priority === "high") summary.high += 1;
+    if (isCommandActionPlanned(action, tasks)) summary.planned += 1;
+    if (PRIORITY_WEIGHT[action.priority] < PRIORITY_WEIGHT[summary.topPriority]) {
+      summary.topPriority = action.priority;
+    }
+    summaries.set(action.source, summary);
+  });
+  return [...summaries.values()].sort((a, b) => (
+    b.critical - a.critical
+    || b.high - a.high
+    || b.actions - a.actions
+    || a.source.localeCompare(b.source)
+  ));
 }
 
 export function commandCenterPlanningRows(actions: CommandCenterAction[], tasks: PlannerTask[]) {
