@@ -468,6 +468,19 @@ export function topCommandCenterActions(actions: CommandCenterAction[], limit = 
   return sortCommandCenterActions(actions).slice(0, limit);
 }
 
+export function commandActionPlannerTag(action: CommandCenterAction): string {
+  return `command:${action.id}`;
+}
+
+export function isCommandActionPlanned(action: CommandCenterAction, tasks: PlannerTask[]): boolean {
+  const commandTag = commandActionPlannerTag(action);
+  return tasks.some((task) => task.tags.includes(commandTag) && !task.archived && task.status !== "done");
+}
+
+export function plannedCommandActionCount(actions: CommandCenterAction[], tasks: PlannerTask[]): number {
+  return actions.filter((action) => isCommandActionPlanned(action, tasks)).length;
+}
+
 export function commandActionToPlannerTask(action: CommandCenterAction): PlannerTask {
   const now = new Date().toISOString();
   return {
@@ -483,7 +496,7 @@ export function commandActionToPlannerTask(action: CommandCenterAction): Planner
     createdAt: now,
     completedAt: null,
     archived: false,
-    tags: ["command-center", `command:${action.id}`, action.source, ...action.tags.slice(0, 5)],
+    tags: ["command-center", commandActionPlannerTag(action), action.source, ...action.tags.slice(0, 5)],
     recurrence: "none",
   };
 }
