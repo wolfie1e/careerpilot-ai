@@ -26,6 +26,8 @@ import {
   isCommandActionPlanned,
   normalizeCommandCenterPreferences,
   plannedCommandActionCount,
+  pruneCommandCenterPreferences,
+  staleCommandCenterPauseCount,
   topCommandCenterActions,
   type CommandCenterPreferences,
   type CommandCenterPriority,
@@ -81,6 +83,7 @@ export default function CommandCenterPage() {
   const activeSources = Object.keys(sourceCounts).length;
   const activeSnoozes = activeCommandCenterSnoozes(normalizedPreferences);
   const pausedActionCount = normalizedPreferences.hiddenActionIds.length + activeSnoozes.length;
+  const stalePausedActionCount = staleCommandCenterPauseCount(normalizedPreferences, actions);
   const plannedActionCount = plannedCommandActionCount(actions, plannerTasks);
   const plannedActionIds = useMemo(() => new Set(actions.filter((action) => isCommandActionPlanned(action, plannerTasks)).map((action) => action.id)), [actions, plannerTasks]);
   const visibleActions = filterCommandCenterActions(actions, normalizedPreferences);
@@ -144,6 +147,12 @@ export default function CommandCenterPage() {
       snoozedUntilById: {},
     }));
     toast.success("Paused command actions restored");
+  }
+
+  function cleanPausedActions() {
+    if (!stalePausedActionCount) return;
+    setPreferences((current) => pruneCommandCenterPreferences(current, actions));
+    toast.success("Stale command pauses cleaned");
   }
 
   return (
@@ -254,12 +263,19 @@ export default function CommandCenterPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
           <div>
             <p className="text-sm font-medium text-amber-100">{pausedActionCount} paused actions</p>
-            <p className="text-xs text-amber-200/70">{normalizedPreferences.hiddenActionIds.length} hidden · {activeSnoozes.length} snoozed</p>
+            <p className="text-xs text-amber-200/70">{normalizedPreferences.hiddenActionIds.length} hidden · {activeSnoozes.length} snoozed{stalePausedActionCount ? ` · ${stalePausedActionCount} stale` : ""}</p>
           </div>
-          <button onClick={restorePausedActions} className="inline-flex items-center gap-2 rounded-xl border border-amber-300/30 px-3 py-2 text-sm font-medium text-amber-100 hover:border-amber-200/60">
-            <RotateCcw className="h-4 w-4" />
-            Restore paused
-          </button>
+          <div className="flex flex-wrap gap-2">
+            {stalePausedActionCount > 0 && (
+              <button onClick={cleanPausedActions} className="rounded-xl border border-amber-300/30 px-3 py-2 text-sm font-medium text-amber-100 hover:border-amber-200/60">
+                Clean stale
+              </button>
+            )}
+            <button onClick={restorePausedActions} className="inline-flex items-center gap-2 rounded-xl border border-amber-300/30 px-3 py-2 text-sm font-medium text-amber-100 hover:border-amber-200/60">
+              <RotateCcw className="h-4 w-4" />
+              Restore paused
+            </button>
+          </div>
         </div>
       )}
 
