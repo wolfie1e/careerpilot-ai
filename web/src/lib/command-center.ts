@@ -93,6 +93,19 @@ export function sortCommandCenterActions(actions: CommandCenterAction[]): Comman
   });
 }
 
+export function normalizeCommandCenterPreferences(
+  preferences?: Partial<CommandCenterPreferences> | null,
+): CommandCenterPreferences {
+  return {
+    ...DEFAULT_COMMAND_CENTER_PREFERENCES,
+    ...preferences,
+    hiddenActionIds: Array.isArray(preferences?.hiddenActionIds) ? preferences.hiddenActionIds : [],
+    snoozedUntilById: preferences?.snoozedUntilById && typeof preferences.snoozedUntilById === "object"
+      ? preferences.snoozedUntilById
+      : {},
+  };
+}
+
 export function isCommandActionSnoozed(
   action: CommandCenterAction,
   preferences: CommandCenterPreferences,
@@ -114,14 +127,15 @@ export function filterCommandCenterActions(
   actions: CommandCenterAction[],
   preferences: CommandCenterPreferences,
 ): CommandCenterAction[] {
-  const hiddenActionIds = new Set(preferences.hiddenActionIds || []);
+  const normalizedPreferences = normalizeCommandCenterPreferences(preferences);
+  const hiddenActionIds = new Set(normalizedPreferences.hiddenActionIds);
   return sortCommandCenterActions(actions).filter((action) => {
     if (hiddenActionIds.has(action.id)) return false;
-    if (isCommandActionSnoozed(action, preferences)) return false;
-    if (preferences.source !== "all" && action.source !== preferences.source) return false;
-    if (preferences.priority !== "all" && action.priority !== preferences.priority) return false;
-    if (!preferences.showLowPriority && action.priority === "low") return false;
-    const query = preferences.query.trim().toLowerCase();
+    if (isCommandActionSnoozed(action, normalizedPreferences)) return false;
+    if (normalizedPreferences.source !== "all" && action.source !== normalizedPreferences.source) return false;
+    if (normalizedPreferences.priority !== "all" && action.priority !== normalizedPreferences.priority) return false;
+    if (!normalizedPreferences.showLowPriority && action.priority === "low") return false;
+    const query = normalizedPreferences.query.trim().toLowerCase();
     if (query && !`${action.title} ${action.detail} ${action.tags.join(" ")}`.toLowerCase().includes(query)) return false;
     return true;
   });
