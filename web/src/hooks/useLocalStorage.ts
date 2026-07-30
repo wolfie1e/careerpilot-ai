@@ -26,7 +26,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     if (typeof window === "undefined") return initialValue;
     try {
       const raw = window.localStorage.getItem(key);
-      lastRawRef.current = raw;
       return parseStorageValue(raw, initialValue);
     } catch {
       return initialValue;
