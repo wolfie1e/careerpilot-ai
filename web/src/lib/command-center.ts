@@ -209,6 +209,40 @@ export function commandCenterPlanningRows(actions: CommandCenterAction[], tasks:
   }));
 }
 
+export function commandCenterMarkdownReport(
+  actions: CommandCenterAction[],
+  options: { preferences?: Partial<CommandCenterPreferences>; plannerTasks?: PlannerTask[] } = {},
+): string {
+  const sortedActions = sortCommandCenterActions(actions);
+  const preferences = normalizeCommandCenterPreferences(options.preferences);
+  const priorityRows = commandCenterPriorityRows(sortedActions);
+  const sourceRows = commandCenterSourceRows(sortedActions);
+  const plannedCount = options.plannerTasks ? plannedCommandActionCount(sortedActions, options.plannerTasks) : 0;
+  const pausedCount = preferences.hiddenActionIds.length + activeCommandCenterSnoozes(preferences).length;
+  const lines = [
+    "# CareerPilot Command Center",
+    "",
+    `Actions: ${sortedActions.length}`,
+    `Planned: ${plannedCount}`,
+    `Paused: ${pausedCount}`,
+    "",
+    "## Priorities",
+    "",
+    ...priorityRows.map((row) => `- ${row.priority}: ${row.actions}`),
+    "",
+    "## Sources",
+    "",
+    ...(sourceRows.length ? sourceRows.map((row) => `- ${row.source}: ${row.actions}`) : ["- none: 0"]),
+    "",
+    "## Queue",
+    "",
+    ...(sortedActions.length
+      ? sortedActions.map((action, index) => `${index + 1}. [${action.priority}] ${action.title}${commandCenterDueLabel(action) ? ` (${commandCenterDueLabel(action)})` : ""}\n   ${action.detail}\n   Source: ${action.source}`)
+      : ["No command actions."]),
+  ];
+  return lines.join("\n");
+}
+
 export function plannerCommandActions(tasks: PlannerTask[]): CommandCenterAction[] {
   return tasks
     .filter((task) => !task.archived && task.status !== "done")
