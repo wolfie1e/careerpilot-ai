@@ -181,6 +181,34 @@ export function commandCenterRows(actions: CommandCenterAction[]) {
   }));
 }
 
+export function commandCenterPriorityRows(actions: CommandCenterAction[]) {
+  const counts = commandCenterPriorityCounts(actions);
+  return (["critical", "high", "medium", "low"] as const).map((priority) => ({
+    priority,
+    actions: counts[priority],
+  }));
+}
+
+export function commandCenterSourceRows(actions: CommandCenterAction[]) {
+  return Object.entries(commandCenterSourceCounts(actions))
+    .sort((a, b) => b[1] - a[1])
+    .map(([source, actions]) => ({
+      source,
+      actions,
+    }));
+}
+
+export function commandCenterPlanningRows(actions: CommandCenterAction[], tasks: PlannerTask[]) {
+  return sortCommandCenterActions(actions).map((action) => ({
+    source: action.source,
+    priority: action.priority,
+    title: action.title,
+    due_date: action.dueDate,
+    planned: isCommandActionPlanned(action, tasks) ? "yes" : "no",
+    planner_tag: commandActionPlannerTag(action),
+  }));
+}
+
 export function plannerCommandActions(tasks: PlannerTask[]): CommandCenterAction[] {
   return tasks
     .filter((task) => !task.archived && task.status !== "done")
