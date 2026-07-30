@@ -78,8 +78,16 @@ const PRIORITY_WEIGHT: Record<CommandCenterPriority, number> = {
   low: 3,
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 export function commandCenterTodayKey(date = new Date()): string {
   return date.toISOString().slice(0, 10);
+}
+
+function dateKeyToUtcMs(dateKey: string): number | null {
+  const [year, month, day] = dateKey.slice(0, 10).split("-").map(Number);
+  if (!year || !month || !day) return null;
+  return Date.UTC(year, month - 1, day);
 }
 
 export function sortCommandCenterActions(actions: CommandCenterAction[]): CommandCenterAction[] {
@@ -121,6 +129,19 @@ export function activeCommandCenterSnoozes(
 ): Array<[string, string]> {
   const today = commandCenterTodayKey(date);
   return Object.entries(preferences.snoozedUntilById || {}).filter(([, snoozedUntil]) => snoozedUntil > today);
+}
+
+export function commandCenterDueLabel(action: CommandCenterAction, date = new Date()): string {
+  if (!action.dueDate) return "";
+  const todayMs = dateKeyToUtcMs(commandCenterTodayKey(date));
+  const dueMs = dateKeyToUtcMs(action.dueDate);
+  if (todayMs === null || dueMs === null) return action.dueDate;
+  const days = Math.round((dueMs - todayMs) / DAY_MS);
+  if (days < 0) return `${Math.abs(days)}d overdue`;
+  if (days === 0) return "Due today";
+  if (days === 1) return "Due tomorrow";
+  if (days <= 7) return `Due in ${days}d`;
+  return action.dueDate;
 }
 
 export function filterCommandCenterActions(
