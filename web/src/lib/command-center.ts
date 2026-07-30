@@ -43,6 +43,7 @@ export interface CommandCenterPreferences {
   priority: CommandCenterPriority | "all";
   showLowPriority: boolean;
   query: string;
+  hiddenActionIds: string[];
 }
 
 export interface CommandCenterData {
@@ -65,6 +66,7 @@ export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   priority: "all",
   showLowPriority: true,
   query: "",
+  hiddenActionIds: [],
 };
 
 const PRIORITY_WEIGHT: Record<CommandCenterPriority, number> = {
@@ -93,7 +95,9 @@ export function filterCommandCenterActions(
   actions: CommandCenterAction[],
   preferences: CommandCenterPreferences,
 ): CommandCenterAction[] {
+  const hiddenActionIds = new Set(preferences.hiddenActionIds || []);
   return sortCommandCenterActions(actions).filter((action) => {
+    if (hiddenActionIds.has(action.id)) return false;
     if (preferences.source !== "all" && action.source !== preferences.source) return false;
     if (preferences.priority !== "all" && action.priority !== preferences.priority) return false;
     if (!preferences.showLowPriority && action.priority === "low") return false;
