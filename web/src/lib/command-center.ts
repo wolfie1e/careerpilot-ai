@@ -71,6 +71,16 @@ export interface CommandCenterSourceSummary {
   topPriority: CommandCenterPriority;
 }
 
+export interface CommandCenterQueueHealth {
+  total: number;
+  visible: number;
+  urgent: number;
+  planned: number;
+  paused: number;
+  unplanned: number;
+  plannerCoverage: number;
+}
+
 export const DEFAULT_COMMAND_CENTER_PREFERENCES: CommandCenterPreferences = {
   source: "all",
   priority: "all",
@@ -270,6 +280,27 @@ export function commandCenterSourceSummaries(
     || b.actions - a.actions
     || a.source.localeCompare(b.source)
   ));
+}
+
+export function commandCenterQueueHealth(
+  allActions: CommandCenterAction[],
+  visibleActions: CommandCenterAction[],
+  preferences: Partial<CommandCenterPreferences> | null | undefined,
+  tasks: PlannerTask[] = [],
+): CommandCenterQueueHealth {
+  const normalizedPreferences = normalizeCommandCenterPreferences(preferences);
+  const planned = plannedCommandActionCount(allActions, tasks);
+  const paused = normalizedPreferences.hiddenActionIds.length + activeCommandCenterSnoozes(normalizedPreferences).length;
+  const urgent = visibleActions.filter((action) => action.priority === "critical" || action.priority === "high").length;
+  return {
+    total: allActions.length,
+    visible: visibleActions.length,
+    urgent,
+    planned,
+    paused,
+    unplanned: Math.max(0, allActions.length - planned),
+    plannerCoverage: allActions.length ? Math.round((planned / allActions.length) * 100) : 0,
+  };
 }
 
 export function commandCenterPlanningRows(actions: CommandCenterAction[], tasks: PlannerTask[]) {
