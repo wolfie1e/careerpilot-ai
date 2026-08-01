@@ -324,9 +324,12 @@ export default function CommandCenterPage() {
         <div className="rounded-2xl border border-blue-800/50 bg-blue-950/20 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-blue-100">Focus next</h3>
-            <button onClick={addFocusActionsToPlanner} className="rounded-lg border border-blue-400/30 px-3 py-1.5 text-xs font-medium text-blue-100 hover:border-blue-300/60">
-              Add all to planner
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <CopyButton value={commandCenterSummaryText(focusActions)} label="Copy focus" className="rounded-lg px-3 py-1.5 text-xs" />
+              <button onClick={addFocusActionsToPlanner} className="rounded-lg border border-blue-400/30 px-3 py-1.5 text-xs font-medium text-blue-100 hover:border-blue-300/60">
+                Add all to planner
+              </button>
+            </div>
           </div>
           <div className="mt-3 grid gap-2 md:grid-cols-5">
             {focusActions.map((action) => {
