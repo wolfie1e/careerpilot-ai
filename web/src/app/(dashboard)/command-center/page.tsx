@@ -159,6 +159,19 @@ export default function CommandCenterPage() {
     toast.success("Stale command pauses cleaned");
   }
 
+  function hidePlannedActions() {
+    const plannedVisibleActionIds = visibleActions.filter((action) => plannedActionIds.has(action.id)).map((action) => action.id);
+    if (!plannedVisibleActionIds.length) {
+      toast.info("No planned command actions are visible");
+      return;
+    }
+    updatePreferences((current) => ({
+      ...current,
+      hiddenActionIds: Array.from(new Set([...current.hiddenActionIds, ...plannedVisibleActionIds])),
+    }));
+    toast.success(`${plannedVisibleActionIds.length} planned actions hidden`);
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <div>
@@ -243,6 +256,9 @@ export default function CommandCenterPage() {
         </button>
         <button onClick={() => setPreferences(DEFAULT_COMMAND_CENTER_PREFERENCES)} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white">
           Reset filters
+        </button>
+        <button onClick={hidePlannedActions} disabled={!visibleActions.some((action) => plannedActionIds.has(action.id))} className="rounded-xl border border-gray-700 px-3 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-40">
+          Hide planned
         </button>
         <CopyButton value={commandCenterSummaryText(visibleActions) || "No command actions"} label="Copy queue" className="rounded-xl px-3" />
         <button onClick={() => downloadJson("careerpilot-command-center.json", {
