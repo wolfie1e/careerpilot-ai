@@ -26,6 +26,7 @@ Upload your resume, match it with job descriptions, improve your ATS score, and 
 | 🎙️ Voice Mock Interviews | Record audio answers — transcribed and evaluated in real time |
 | 📚 Interview History | All sessions with per-question STAR breakdown and model answer hints |
 | 📈 Analytics Dashboard | Score trends (ATS, interview, match), skill radar, interview type donut, readiness score |
+| 🧭 Command Center | Prioritized cross-tracker action queue with planner handoff, source triage, pause controls, and exports |
 | 📥 Report Export | Download PDF or Markdown reports with score summary and recommendations |
 | 📖 Learning Path | Track courses, books, projects, practice, progress, deadlines, and planner-ready next steps |
 | 🏅 Certification Tracker | Plan exam attempts, track study progress, store credential proof, and monitor renewal windows |
