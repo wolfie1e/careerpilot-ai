@@ -146,6 +146,23 @@ cp .env.example .env
 docker-compose up --build
 ```
 
+### Vercel Frontend Deploy
+
+Deploy the website from the `web/` project root. Vercel should install with `pnpm install --frozen-lockfile` and build with `pnpm build`.
+
+```bash
+cd web
+vercel --prod
+```
+
+Set these Vercel environment variables before production deploys:
+
+| Variable | Purpose |
+|----------|---------|
+| `AI_SERVICE_URL` | Public or private URL for the FastAPI service used by Next.js API routes |
+| `AI_PROXY_TIMEOUT_MS` | Proxy timeout for long AI requests |
+| `NEXT_PUBLIC_APP_URL` | Production website URL |
+
 ---
 
 ## Environment Variables
