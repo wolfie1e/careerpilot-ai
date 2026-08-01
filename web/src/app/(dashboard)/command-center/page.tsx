@@ -18,6 +18,7 @@ import {
   commandCenterRows,
   commandCenterPriorityCounts,
   commandCenterPriorityRows,
+  commandCenterQueueHealth,
   commandCenterSourceCounts,
   commandCenterSourceRows,
   commandCenterSourceSummaries,
@@ -90,6 +91,7 @@ export default function CommandCenterPage() {
   const visibleActions = filterCommandCenterActions(actions, normalizedPreferences);
   const focusActions = topCommandCenterActions(visibleActions, 5);
   const sourceSummaries = commandCenterSourceSummaries(visibleActions, plannerTasks);
+  const queueHealth = commandCenterQueueHealth(actions, visibleActions, normalizedPreferences, plannerTasks);
 
   function updatePreferences(updater: (current: CommandCenterPreferences) => CommandCenterPreferences) {
     setPreferences((current) => updater(normalizeCommandCenterPreferences(current)));
@@ -182,6 +184,27 @@ export default function CommandCenterPage() {
             <div className="mt-1 text-2xl font-bold text-white">{value}</div>
           </div>
         ))}
+      </div>
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold text-white">Queue health</h3>
+            <p className="mt-1 text-xs text-gray-500">{queueHealth.urgent} urgent · {queueHealth.unplanned} unplanned · {queueHealth.paused} paused</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-white">{queueHealth.plannerCoverage}%</div>
+            <div className="text-xs text-gray-500">planned</div>
+          </div>
+        </div>
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-800">
+          <div className="h-full rounded-full bg-emerald-400" style={{ width: `${queueHealth.plannerCoverage}%` }} />
+        </div>
+        <div className="mt-3 grid gap-2 text-xs text-gray-500 sm:grid-cols-3">
+          <span>{queueHealth.visible} visible of {queueHealth.total}</span>
+          <span>{plannedActionCount} active planner links</span>
+          <span>{pausedActionCount} actions paused from the view</span>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
