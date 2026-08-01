@@ -20,6 +20,7 @@ import {
   commandCenterPriorityRows,
   commandCenterSourceCounts,
   commandCenterSourceRows,
+  commandCenterSourceSummaries,
   commandCenterSummaryText,
   commandCenterTodayKey,
   filterCommandCenterActions,
@@ -88,6 +89,7 @@ export default function CommandCenterPage() {
   const plannedActionIds = useMemo(() => new Set(actions.filter((action) => isCommandActionPlanned(action, plannerTasks)).map((action) => action.id)), [actions, plannerTasks]);
   const visibleActions = filterCommandCenterActions(actions, normalizedPreferences);
   const focusActions = topCommandCenterActions(visibleActions, 5);
+  const sourceSummaries = commandCenterSourceSummaries(visibleActions, plannerTasks);
 
   function updatePreferences(updater: (current: CommandCenterPreferences) => CommandCenterPreferences) {
     setPreferences((current) => updater(normalizeCommandCenterPreferences(current)));
@@ -309,14 +311,25 @@ export default function CommandCenterPage() {
       {Object.keys(sourceCounts).length > 0 && (
         <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
           <h3 className="text-sm font-semibold text-white">Source breakdown</h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {Object.entries(sourceCounts).sort((a, b) => b[1] - a[1]).map(([source, count]) => (
+          <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+            {sourceSummaries.map((summary) => (
               <button
-                key={source}
-                onClick={() => setPreferences((current) => ({ ...current, source: source as CommandCenterSource }))}
-                className="rounded-full bg-gray-800 px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700"
+                key={summary.source}
+                onClick={() => updatePreferences((current) => ({ ...current, source: summary.source }))}
+                className={`rounded-xl border p-3 text-left text-xs transition ${
+                  normalizedPreferences.source === summary.source
+                    ? "border-blue-400/60 bg-blue-500/10 text-blue-100"
+                    : "border-gray-800 bg-gray-950/50 text-gray-300 hover:border-gray-700"
+                }`}
               >
-                {source} · {count}
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold">{summary.source}</span>
+                  <span className="rounded-full bg-gray-800 px-2 py-0.5 text-gray-400">{summary.actions}</span>
+                </div>
+                <div className="mt-2 text-gray-500">
+                  {summary.critical} critical · {summary.high} high · {summary.planned} planned
+                </div>
+                <div className="mt-1 text-gray-500">Top priority: {summary.topPriority}</div>
               </button>
             ))}
           </div>
