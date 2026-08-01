@@ -385,6 +385,11 @@ export default function CommandCenterPage() {
             <p className="text-sm text-gray-400">No command actions match this view.</p>
           </div>
         )}
+        {visibleActions.length > 25 && (
+          <div className="rounded-2xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-400">
+            Showing the first 25 actions. Narrow the filters or export the queue to review the remaining {visibleActions.length - 25}.
+          </div>
+        )}
         {visibleActions.slice(0, 25).map((action) => {
           const planned = plannedActionIds.has(action.id);
           const dueLabel = commandCenterDueLabel(action);
